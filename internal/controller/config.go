@@ -27,6 +27,8 @@ type Config struct {
 	Duration time.Duration
 	// TopN is the number of stacks in the text output (0 = all).
 	TopN int
+	// PythonOnly keeps only Python frames in the flamegraph/text output.
+	PythonOnly bool
 
 	ExecutableReporter reporter.ExecutableReporter
 	OnShutdown         func() error

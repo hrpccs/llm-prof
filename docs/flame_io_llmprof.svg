@@ -1,76 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4238 344" font-family="monospace" font-size="12">
-<text x="4" y="16" font-size="14" font-weight="bold">llm-prof flamegraph (4238 samples)</text>
-<rect x="0" y="40" width="4144" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="51">0x657bc4</text>
-<rect x="0" y="56" width="4144" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="67">0x2a28a</text>
-<rect x="0" y="72" width="4144" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="83">0x2a1c9</text>
-<rect x="0" y="88" width="4144" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="99">0x6bc71c</text>
-<rect x="0" y="104" width="4142" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="115">0x6bcc34</text>
-<rect x="0" y="120" width="4142" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="131">0x6b4bce</text>
-<rect x="0" y="136" width="4142" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="147">0x6b4d99</text>
-<rect x="0" y="152" width="4142" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="163">0x6b5032</text>
-<rect x="0" y="168" width="4142" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="179">0x6085a1</text>
-<rect x="0" y="184" width="4142" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="195">0x5d544a</text>
-<rect x="0" y="200" width="4142" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="211">0x5d797c</text>
-<rect x="0" y="216" width="4142" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="227">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
-<rect x="0" y="232" width="4142" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="243">&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49)</text>
-<rect x="0" y="248" width="4142" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="259">main (/home/ubuntu/ai-infra/bench.py:42)</text>
-<rect x="0" y="264" width="4141" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="275">0x64de69</text>
-<rect x="0" y="280" width="4141" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="291">0xecb79</text>
-<rect x="0" y="296" width="4141" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="307">entry_SYSCALL_64_after_hwframe</text>
-<rect x="0" y="312" width="4141" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="323">do_syscall_64</text>
-<rect x="0" y="328" width="4141" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="339">x64_sys_call</text>
-<rect x="4141" y="264" width="1" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-<rect x="4141" y="280" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-<rect x="4141" y="296" width="1" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<rect x="4141" y="312" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-<rect x="4141" y="328" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="104" width="2" height="15" fill="#bebada" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="120" width="1" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="136" width="1" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="152" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="168" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-<rect x="4142" y="184" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-<rect x="4143" y="120" width="1" height="15" fill="#bebada" stroke="#000" stroke-width="0.5"/>
-<rect x="4143" y="136" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
-<rect x="4143" y="152" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<rect x="4143" y="168" width="1" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-<rect x="4143" y="184" width="1" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<rect x="4144" y="40" width="94" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="51">entry_SYSCALL</text>
-<rect x="4144" y="56" width="94" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="67">do_syscall_64</text>
-<rect x="4144" y="72" width="94" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="83">x64_sys_call</text>
-<rect x="4144" y="88" width="94" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="99">__x64_sys_clo</text>
-<rect x="4144" y="104" width="94" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="115">common_nsleep</text>
-<rect x="4144" y="120" width="94" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="131">hrtimer_nanos</text>
-<rect x="4144" y="136" width="94" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="147">do_nanosleep</text>
-<rect x="4144" y="152" width="94" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="163">schedule</text>
-<rect x="4144" y="168" width="94" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-<text x="4146" y="179">finish_task_s</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 344" font-family="monospace" font-size="12">
+<text x="4" y="16" font-size="14" font-weight="bold">llm-prof flamegraph (4562 samples)</text>
+<rect x="0" y="40" width="1200" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="51">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
+<rect x="0" y="56" width="1200" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="67">&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49)</text>
+<rect x="0" y="72" width="1200" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="83">main (/home/ubuntu/ai-infra/bench.py:42)</text>
 </svg>

@@ -21,7 +21,7 @@ func frameTrace(label string) *libpf.Trace {
 }
 
 func TestReportTraceEventOffCPUWeight(t *testing.T) {
-	rep := NewLocalReporter("", 0, 20, 1.0) // 20Hz, p=1.0
+	rep := NewLocalReporter("", 0, 20, 1.0, false) // 20Hz, p=1.0
 
 	// on-CPU sample: weight 1
 	require.NoError(t, rep.ReportTraceEvent(frameTrace("on"), nil))
@@ -46,7 +46,7 @@ func TestReportTraceEventOffCPUWeight(t *testing.T) {
 
 func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
 	// p=0.5: a 100ms blocked sample at 20Hz is worth 2 / 0.5 = 4 intervals.
-	rep := NewLocalReporter("", 0, 20, 0.5)
+	rep := NewLocalReporter("", 0, 20, 0.5, false)
 	offMeta := &samples.TraceEventMeta{
 		ProfileType: &samples.TypeMetadata{SampleType: "off_cpu"},
 		Value:       100_000_000,
@@ -59,6 +59,6 @@ func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
 
 func TestReportTraceEventZeroProbabilityDefaults(t *testing.T) {
 	// p<=0 falls back to 1.0 (disabled off-cpu path must not divide by zero).
-	rep := NewLocalReporter("", 0, 20, 0)
+	rep := NewLocalReporter("", 0, 20, 0, false)
 	require.Equal(t, 1.0, rep.offCPUProbability)
 }

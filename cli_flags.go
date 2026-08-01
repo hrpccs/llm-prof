@@ -131,6 +131,8 @@ func parseArgs() (*controller.Config, error) {
 
 	fs.IntVar(&args.TopN, "topn", 50, "Number of stacks in the text output (0 = all)")
 
+	fs.BoolVar(&args.PythonOnly, "python-only", false, "Keep only Python frames in the output")
+
 	fs.UintVar(&args.FrameCacheSize, "frame-cache-size",
 		uint(defaultArgFrameCacheSize), frameCacheSizeHelp)
 

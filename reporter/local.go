@@ -30,26 +30,40 @@ type LocalReporter struct {
 	topN             int              // text top-N stack count (0 = all)
 	samplesPerSecond int              // on-CPU sampling rate, for off-cpu weight normalization
 	offCPUProbability float64         // off-cpu sampling probability (1/p weight compensation)
+	pythonOnly         bool            // keep only Python frames in output
 }
 
 // NewLocalReporter creates a reporter that writes a flamegraph to outputPath.
 func NewLocalReporter(outputPath string, topN int, samplesPerSecond int,
-	offCPUProbability float64,
+	offCPUProbability float64, pythonOnly bool,
 ) *LocalReporter {
 	if offCPUProbability <= 0 {
 		offCPUProbability = 1.0
 	}
 	return &LocalReporter{
-		stacks:           map[string]int64{},
-		output:           outputPath,
-		topN:             topN,
-		samplesPerSecond: samplesPerSecond,
+		stacks:            map[string]int64{},
+		output:            outputPath,
+		topN:              topN,
+		samplesPerSecond:  samplesPerSecond,
 		offCPUProbability: offCPUProbability,
+		pythonOnly:        pythonOnly,
 	}
 }
 
 // frameLabel renders one frame as "name (file:line)" or "0xADDR" for
 // non-symbolized native frames.
+// isPythonFrameLabel reports whether a frame label looks like a Python frame
+// (symbolized name with a (file:line) suffix), as opposed to a native 0xADDR frame.
+func isPythonFrameLabel(label string) bool {
+	if len(label) < 3 {
+		return false
+	}
+	if label[0] == '0' && label[1] == 'x' {
+		return false
+	}
+	return label[len(label)-1] == ')'
+}
+
 func frameLabel(f libpf.Frame) string {
 	name := f.FunctionName.String()
 	if name == "" {
@@ -76,7 +90,14 @@ func (l *LocalReporter) ReportTraceEvent(trace *libpf.Trace, meta *samples.Trace
 	}
 	parts := make([]string, 0, len(frames))
 	for i := len(frames) - 1; i >= 0; i-- {
-		parts = append(parts, frameLabel(frames[i].Value()))
+		label := frameLabel(frames[i].Value())
+		if l.pythonOnly && !isPythonFrameLabel(label) {
+			continue
+		}
+		parts = append(parts, label)
+	}
+	if len(parts) == 0 {
+		return nil
 	}
 	key := strings.Join(parts, ";")
 	// Weight: on-CPU samples count 1; off-CPU samples carry their blocked
@@ -177,15 +198,19 @@ func flameColor(name string) string {
 }
 
 // writeSVG renders the flamegraph. width is the total sample count.
-func writeSVG(path string, root *flameNode, total int64) error {
+func writeSVG(path string, root *flameNode, total int64, fixedWidth bool) error {
 	const rowH = 16
 	const titleH = 24
 	const maxDepth = 20 // enough for Python frames + native tail in mixed stacks
 	// Scale the layout so narrow profiles still produce a readable flamegraph.
-	// The viewBox width is at least 1000 units; x/width scale proportionally.
+	// The viewBox width is at least 1000 units (fixed at 1200 for fixedWidth
+	// output so side-by-side comparisons with py-spy render at the same size).
 	const minWidth = 1000
+	const fixedWidthPx = 1200
 	scale := 1.0
-	if total < minWidth {
+	if fixedWidth {
+		scale = float64(fixedWidthPx) / float64(total)
+	} else if total < minWidth {
 		scale = float64(minWidth) / float64(total)
 	}
 	viewW := int64(float64(total) * scale)
@@ -281,7 +306,7 @@ func (l *LocalReporter) WriteOutput() error {
 		return fmt.Errorf("no samples collected")
 	}
 	root := l.buildTree()
-	if err := writeSVG(l.output, root, total); err != nil {
+	if err := writeSVG(l.output, root, total, l.pythonOnly); err != nil {
 		return err
 	}
 	topPath := strings.TrimSuffix(l.output, ".svg") + ".txt"

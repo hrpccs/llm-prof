@@ -125,7 +125,7 @@ func mainWithExitCode() exitCode {
 
 	// llm-prof: local flamegraph reporter instead of the OTLP backend.
 	rep := reporter.NewLocalReporter(cfg.OutputPath, cfg.TopN, cfg.SamplesPerSecond,
-		cfg.OffCPUThreshold)
+		cfg.OffCPUThreshold, cfg.PythonOnly)
 	cfg.Reporter = rep
 
 	log.Infof("Starting llm-prof profiling agent %s", version)
