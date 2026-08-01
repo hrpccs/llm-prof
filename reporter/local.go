@@ -180,6 +180,7 @@ func flameColor(name string) string {
 func writeSVG(path string, root *flameNode, total int64) error {
 	const rowH = 16
 	const titleH = 24
+	const maxDepth = 20 // enough for Python frames + native tail in mixed stacks
 	// Scale the layout so narrow profiles still produce a readable flamegraph.
 	// The viewBox width is at least 1000 units; x/width scale proportionally.
 	const minWidth = 1000
@@ -191,7 +192,7 @@ func writeSVG(path string, root *flameNode, total int64) error {
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" `+
-		`font-family="monospace" font-size="12">`+"\n", viewW, titleH+rowH*8)
+		`font-family="monospace" font-size="12">`+"\n", viewW, titleH+rowH*maxDepth)
 	fmt.Fprintf(&b, `<text x="4" y="16" font-size="14" font-weight="bold">llm-prof flamegraph (%d samples)</text>`+"\n", total)
 
 	// Use an explicit DFS via a slice to avoid recursion limits on deep stacks.
@@ -227,7 +228,7 @@ func writeSVG(path string, root *flameNode, total int64) error {
 
 	for _, f := range frames {
 		y := titleH + int64(f.depth)*rowH
-		if f.depth >= 8 {
+		if f.depth >= maxDepth {
 			continue // depth limit for readability
 		}
 		x := int64(float64(f.x) * scale)

@@ -36,8 +36,8 @@ workload does:
 - **on + off-CPU in one flamegraph** — a `sched_switch`-based off-CPU path
   (blocked time as weight, in the same units as on-CPU samples) covers IO
   waits, GIL waits, and data-loading stalls that on-CPU-only profilers miss.
-  On our IO benchmark llm-prof collected **5021 samples vs py-spy's 71** — the
-  same `main (bench.py:42)` wait site, just 70x more signal.
+  On our IO benchmark llm-prof collected **4238 samples vs py-spy's 88** — the
+  same `main (bench.py:42)` wait site, just ~48x more signal.
 - **Mixed stacks** — Python frames (name/file/line) *plus* native (torch/CUDA
   layers) and kernel frames in one trace, which is exactly what you need to
   answer "is it my Python glue or my kernels?"
@@ -47,7 +47,8 @@ workload does:
 ## Honest caveats
 
 - Off-CPU weights are duration-based; py-spy uses sampling-point snapshots.
-  Distribution shapes match (single-thread: 90.9% vs 89.7% on the same line),
+  Distribution shapes match (single-thread: 90.9% vs 89.7% on the same line,
+  IO: both 100% on `main:42`),
   but multi-thread line-level ratios can differ by a few points — ours is
   closer to true time share, but the two tools' numbers aren't drop-in
   interchangeable.
@@ -57,7 +58,8 @@ workload does:
 
 ## Credits
 
-- The eBPF programs and Python unwinder (3.6–3.14) are trimmed from
+- The eBPF programs and Python unwinder (upstream: 3.6–3.14, verified here on
+  3.12/3.13) are trimmed from
   [opentelemetry-ebpf-profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler)
   (Apache-2.0).
 - The on/off-CPU unified sampling idea follows

@@ -37,8 +37,8 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 |---|---|---|
 | 单线程行号分布（cpu_work line16） | 89.7% | **90.9%**（偏差 1.2pp） |
 | 多线程 GIL 等待栈 `_wait_for_tstate_lock` | 1.1% | **1.1%（off-cpu 补齐）** |
-| IO 等待点 `main:42` | 96.6% | **98%** |
-| 等待型负载样本量 | 71 | **5021（约 70 倍）** |
+| IO 等待点 `main:42` | 100% | **100%** |
+| 等待型负载样本量 | 88 | **4238（约 48 倍）** |
 
 ### 同一负载的火焰图对比（IO/sleep 型，100Hz）
 
