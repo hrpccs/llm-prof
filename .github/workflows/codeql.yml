@@ -1,0 +1,39 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "21 6 * * 1"
+
+permissions: read-all
+
+jobs:
+  analyze:
+    permissions:
+      security-events: write # for github/codeql-action/analyze to upload SARIF results
+    name: Analyze Go
+    if: ${{ github.actor != 'dependabot[bot]' && github.repository == 'open-telemetry/opentelemetry-ebpf-profiler' }}
+    runs-on: ubuntu-24.04  # CodeQL CLI only supports x86_64 Linux
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up environment
+        uses: ./.github/workflows/env
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        with:
+          languages: go
+
+      - name: Build Artifact
+        run: make
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        with:
+            category: "/language:Go"
+        timeout-minutes: 10

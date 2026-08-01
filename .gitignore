@@ -1,0 +1,6 @@
+target/
+llm-prof
+tracer.ebpf.amd64
+tracer.ebpf.arm64
+*.o
+*.d

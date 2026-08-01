@@ -1,0 +1,1374 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+// Package tracer contains functionality for populating tracers.
+package tracer // import "go.opentelemetry.io/ebpf-profiler/tracer"
+
+import (
+	"bufio"
+	"context"
+	"errors"
+	"fmt"
+	"math"
+	"math/rand/v2"
+	"os"
+	"path"
+	"runtime"
+	"slices"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+	"unsafe"
+
+	cebpf "github.com/cilium/ebpf"
+	"github.com/cilium/ebpf/asm"
+	"github.com/cilium/ebpf/features"
+	"github.com/cilium/ebpf/link"
+	"github.com/elastic/go-perf"
+	"go.opentelemetry.io/ebpf-profiler/internal/linux"
+	"go.opentelemetry.io/ebpf-profiler/internal/log"
+	"go.opentelemetry.io/ebpf-profiler/interpreter/interpreterconfig"
+	"go.opentelemetry.io/ebpf-profiler/libpf/pfunsafe"
+	"go.opentelemetry.io/ebpf-profiler/reporter/samples"
+
+	"go.opentelemetry.io/ebpf-profiler/kallsyms"
+	"go.opentelemetry.io/ebpf-profiler/libpf"
+	"go.opentelemetry.io/ebpf-profiler/libpf/xsync"
+	"go.opentelemetry.io/ebpf-profiler/metrics"
+	"go.opentelemetry.io/ebpf-profiler/nativeunwind/elfunwindinfo"
+	"go.opentelemetry.io/ebpf-profiler/periodiccaller"
+	pm "go.opentelemetry.io/ebpf-profiler/processmanager"
+	pmebpf "go.opentelemetry.io/ebpf-profiler/processmanager/ebpf"
+	"go.opentelemetry.io/ebpf-profiler/reporter"
+	"go.opentelemetry.io/ebpf-profiler/rlimit"
+	"go.opentelemetry.io/ebpf-profiler/support"
+	"go.opentelemetry.io/ebpf-profiler/times"
+	"go.opentelemetry.io/ebpf-profiler/util"
+)
+
+// Compile time check to make sure times.Times satisfies the interfaces.
+var _ Intervals = (*times.Times)(nil)
+
+const (
+	// ProbabilisticThresholdMax defines the upper bound of the probabilistic profiling
+	// threshold.
+	ProbabilisticThresholdMax = 100
+)
+
+// Constants that define the status of probabilistic profiling.
+const (
+	probProfilingEnable  = 1
+	probProfilingDisable = -1
+)
+
+// Shared map name according to
+// https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/main/devdocs/trace-profile-correlation.md
+const (
+	obiSpanTracesMap = "traces_ctx_v1"
+)
+
+// Intervals is a subset of config.IntervalsAndTimers.
+type Intervals interface {
+	MonitorInterval() time.Duration
+	TracePollInterval() time.Duration
+	PIDCleanupInterval() time.Duration
+	ExecutableUnloadDelay() time.Duration
+}
+
+// onlineCPUs once resolves and caches the list of online CPUs.
+var onlineCPUsOnce = sync.OnceValues(getOnlineCPUIDs)
+
+// Tracer provides an interface for loading and initializing the eBPF components as
+// well as for monitoring the output maps for new traces and count updates.
+type Tracer struct {
+	// ebpfMaps holds the currently loaded eBPF maps.
+	ebpfMaps map[string]*cebpf.Map
+	// ebpfProgs holds the currently loaded eBPF programs.
+	ebpfProgs map[string]*cebpf.Program
+
+	// kernelSymbolizer does kernel fallback symbolization
+	kernelSymbolizer *kallsyms.Symbolizer
+
+	// perfEntrypoints holds a list of frequency based perf events that are opened on the system.
+	perfEntrypoints xsync.RWMutex[[]*perf.Event]
+
+	// hooks holds references to loaded eBPF hooks.
+	hooks map[hookPoint]link.Link
+
+	// processManager keeps track of loading, unloading and organization of information
+	// that is required to unwind processes in the kernel. This includes maintaining the
+	// associated eBPF maps.
+	processManager *pm.ProcessManager
+
+	// tracePool is cache of libpf.EbpfTrace to avoid GC pressure
+	tracePool sync.Pool
+
+	// targetPID restricts trace processing to a single process (0 = all).
+	targetPID uint32
+
+	// triggerPIDProcessing is used as manual trigger channel to request immediate
+	// processing of pending PIDs. This is requested on notifications from eBPF code
+	// when process events take place (new, exit, unknown PC).
+	triggerPIDProcessing chan bool
+
+	// pidEvents notifies the tracer of new PID events. Each PID event is a 64bit integer
+	// value, see bpf_get_current_pid_tgid for information on how the value is encoded.
+	// It needs to be buffered to avoid locking the writers and stacking up resources when we
+	// read new PIDs at startup or notified via eBPF.
+	pidEvents chan libpf.PIDTID
+
+	// intervals provides access to globally configured timers and counters.
+	intervals Intervals
+
+	// samplesPerSecond holds the configured number of samples per second.
+	samplesPerSecond int
+
+	// probabilisticInterval is the time interval for which probabilistic profiling will be enabled.
+	probabilisticInterval time.Duration
+
+	// probabilisticThreshold holds the threshold for probabilistic profiling.
+	probabilisticThreshold uint
+
+	// customLabels validates custom label keys/values pulled from eBPF and
+	// tracks how many were dropped due to invalid UTF-8.
+	customLabels customLabelValidator
+
+	// origins is the tracer-wide registry origin IDs are assigned from and
+	// profile type metadata is looked up by.
+	origins *originRegistry
+
+	// done is closed when the tracer encounters an unrecoverable error.
+	// Use Done() to obtain a read-only channel for use in select statements.
+	done     chan libpf.Void
+	doneOnce sync.Once
+}
+
+// Done returns a channel that is closed when the tracer encounters an
+// unrecoverable error. It can be used in select statements to detect
+// when the tracer should be stopped.
+func (t *Tracer) Done() <-chan libpf.Void {
+	return t.done
+}
+
+// signalDone closes the done channel to indicate an unrecoverable error.
+// It is safe to call multiple times.
+func (t *Tracer) signalDone() {
+	t.doneOnce.Do(func() { close(t.done) })
+}
+
+type Config struct {
+	// ExecutableReporter allows to configure a ExecutableReporter to hook seen executables.
+	// NOTE: This is used by external implementations embedding opentelemtry-ebpf-profiler.
+	ExecutableReporter reporter.ExecutableReporter
+	// TraceReporter is the interface to report traces with.
+	TraceReporter reporter.TraceReporter
+	// Intervals provides access to globally configured timers and counters.
+	Intervals Intervals
+	// InterpretersConfig holds per-interpreter configuration.
+	InterpretersConfig interpreterconfig.Config
+	// SamplesPerSecond holds the number of samples per second.
+	SamplesPerSecond int
+	// TargetPID, if non-zero, restricts profiling to this single process.
+	TargetPID uint32
+	// MapScaleFactor is the scaling factor for eBPF map sizes.
+	MapScaleFactor int
+	// FrameCacheSize is the maximum size of the user-mode frame cache.
+	FrameCacheSize uint32
+	// FilterErrorFrames indicates whether error frames should be filtered.
+	FilterErrorFrames bool
+	// FilterIdleFrames indicates whether idle frames should be filtered.
+	FilterIdleFrames bool
+	// FilterMinProcessAge filters samples from processes younger than this duration.
+	// A zero duration disables the filter.
+	FilterMinProcessAge time.Duration
+	// KernelVersionCheck indicates whether the kernel version should be checked.
+	KernelVersionCheck bool
+	// VerboseMode indicates whether to enable verbose output of eBPF tracers.
+	VerboseMode bool
+	// BPFVerifierLogLevel is the log level of the eBPF verifier output.
+	BPFVerifierLogLevel uint32
+	// ProbabilisticInterval is the time interval for which probabilistic profiling will be enabled.
+	ProbabilisticInterval time.Duration
+	// ProbabilisticThreshold is the threshold for probabilistic profiling.
+	ProbabilisticThreshold uint
+	// OffCPUThreshold is the user defined threshold for off-cpu profiling.
+	OffCPUThreshold uint32
+	// IncludeEnvVars holds a list of environment variables that should be captured and reported
+	// from processes
+	IncludeEnvVars libpf.Set[string]
+	// Probes holds a list of probe_type:target[:symbol] elements to which
+	// a probe will be attached.
+	ProbeLinks []string
+	// LoadProbe indicates whether the generic eBPF program should be loaded
+	// without being attached to something.
+	LoadProbe bool
+	// BPFFSRoot is the root path to BPF filesystem for pinned maps and programs.
+	BPFFSRoot string
+	// OBIProcessCtx enable the use of a known shared eBPF map with OBI.
+	OBIProcessCtx bool
+	// PIDNamespaceTranslation toggles translation of host-level PIDs/TGIDs into
+	// their container-namespace equivalents. Useful for sidecar deployments where
+	// the profiler and the target application share a PID namespace but not host PIDs.
+	PIDNamespaceTranslation bool
+}
+
+// hookPoint specifies the group and name of the hooked point in the kernel.
+type hookPoint struct {
+	group, name string
+}
+
+// progLoaderHelper supports the loading process of eBPF programs.
+type progLoaderHelper struct {
+	// enable tells whether a prog shall be loaded.
+	enable bool
+	// name of the eBPF program
+	name string
+	// progID defines the ID for the eBPF program that is used as key in the tailcallMap.
+	progID uint32
+	// noTailCallTarget indicates if this eBPF program should be added to the tailcallMap.
+	noTailCallTarget bool
+}
+
+func newTracePool() sync.Pool {
+	return sync.Pool{
+		New: func() any {
+			return &libpf.EbpfTrace{}
+		},
+	}
+}
+
+// NewTracer loads eBPF code and map definitions from the ELF module at the configured path.
+func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
+	kernelSymbolizer, err := kallsyms.NewSymbolizer()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read kernel symbols: %v", err)
+	}
+
+	kmod, err := kernelSymbolizer.Snapshot().GetModuleByName(kallsyms.Kernel)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read kernel symbols: %v", err)
+	}
+
+	origins := &originRegistry{}
+	// Based on includeTracers we decide later which are loaded into the kernel.
+	ebpfMaps, ebpfProgs, stackdeltaInnerMapSpec, err := initializeMapsAndPrograms(kmod, cfg, origins)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load eBPF code: %v", err)
+	}
+
+	ebpfHandler, err := pmebpf.LoadMaps(ctx, cfg.InterpretersConfig, ebpfMaps, stackdeltaInnerMapSpec)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load eBPF maps: %v", err)
+	}
+
+	processManager, err := pm.New(ctx, pm.Config{
+		InterpretersConfig:    cfg.InterpretersConfig,
+		MonitorInterval:       cfg.Intervals.MonitorInterval(),
+		ExecutableUnloadDelay: cfg.Intervals.ExecutableUnloadDelay(),
+		EbpfHandler:           ebpfHandler,
+		TraceReporter:         cfg.TraceReporter,
+		ExecutableReporter:    cfg.ExecutableReporter,
+		StackDeltaProvider:    elfunwindinfo.NewStackDeltaProvider(),
+		KernelSymbolizer:      kernelSymbolizer,
+		FrameCacheSize:        cfg.FrameCacheSize,
+		FilterErrorFrames:     cfg.FilterErrorFrames,
+		IncludeEnvVars:        cfg.IncludeEnvVars,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create processManager: %v", err)
+	}
+
+	perfEventList := []*perf.Event{}
+
+	tracer := &Tracer{
+		kernelSymbolizer:       kernelSymbolizer,
+		processManager:         processManager,
+		triggerPIDProcessing:   make(chan bool, 1),
+		tracePool:              newTracePool(),
+		pidEvents:              make(chan libpf.PIDTID, pidEventBufferSize),
+		ebpfMaps:               ebpfMaps,
+		ebpfProgs:              ebpfProgs,
+		hooks:                  make(map[hookPoint]link.Link),
+		intervals:              cfg.Intervals,
+		perfEntrypoints:        xsync.NewRWMutex(perfEventList),
+		samplesPerSecond:       cfg.SamplesPerSecond,
+		probabilisticInterval:  cfg.ProbabilisticInterval,
+		probabilisticThreshold: cfg.ProbabilisticThreshold,
+		done:                   make(chan libpf.Void),
+		origins:                origins,
+		targetPID:              cfg.TargetPID,
+	}
+
+	return tracer, nil
+}
+
+// Close provides functionality for Tracer to perform cleanup tasks.
+// NOTE: Close may be called multiple times in succession.
+func (t *Tracer) Close() {
+	events := t.perfEntrypoints.WLock()
+	terminatePerfEvents(*events)
+	*events = nil
+	t.perfEntrypoints.WUnlock(&events)
+
+	// Avoid resource leakage by closing all kernel hooks.
+	for hookPoint, hook := range t.hooks {
+		if err := hook.Close(); err != nil {
+			log.Errorf("Failed to close '%s/%s': %v", hookPoint.group, hookPoint.name, err)
+		}
+		delete(t.hooks, hookPoint)
+	}
+
+	t.processManager.Close()
+	t.kernelSymbolizer.Close()
+	t.signalDone()
+}
+
+// initializeMapsAndPrograms loads the definitions for the eBPF maps and programs provided
+// by the embedded elf file and loads these into the kernel.
+func initializeMapsAndPrograms(kmod *kallsyms.Module, cfg *Config, origins *originRegistry) (
+	ebpfMaps map[string]*cebpf.Map, ebpfProgs map[string]*cebpf.Program,
+	stackdeltaInnerMapSpec *cebpf.MapSpec, err error,
+) {
+	// Loading specifications about eBPF programs and maps from the embedded elf file
+	// does not load them into the kernel.
+	// A collection specification holds the information about eBPF programs and maps.
+	// References to eBPF maps in the eBPF programs are just placeholders that need to be
+	// replaced by the actual loaded maps later on with rewriteMaps before loading the
+	// programs into the kernel.
+	major, minor, patch, err := linux.GetCurrentKernelVersion()
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to get kernel version: %v", err)
+	}
+
+	coll, err := support.LoadCollectionSpec()
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to load specification for tracers: %v", err)
+	}
+
+	// Initialize eBPF variables before loading programs and maps.
+	if err = loadRodataVars(coll, kmod, cfg, major, minor, origins); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to set RODATA variables: %v", err)
+	}
+
+	ebpfMaps = make(map[string]*cebpf.Map)
+	ebpfProgs = make(map[string]*cebpf.Program)
+
+	// Use the specification of the first exe_id_to_Y_stack_deltas inner map
+	// as template for further updates.
+	innerMapTemplate := coll.Maps["exe_id_to_8_stack_deltas"].InnerMap.Copy()
+
+	// Since we load maps individually with cebpf.NewMap, we must manually propagate
+	// variable values back into the map spec contents before creating the maps.
+	if err = syncVariablesToMapSpecs(coll); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to sync variables to map specs: %v", err)
+	}
+
+	// Load all maps into the kernel that are used later on in eBPF programs. So we can rewrite
+	// in the next step the placesholders in the eBPF programs with the file descriptors of the
+	// loaded maps in the kernel.
+	if err = loadAllMaps(coll, cfg, ebpfMaps); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to load eBPF maps: %v", err)
+	}
+
+	// Replace the place holders for map access in the eBPF programs with
+	// the file descriptors of the loaded maps.
+	if err = rewriteMaps(coll, ebpfMaps); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to rewrite maps: %v", err)
+	}
+
+	if cfg.KernelVersionCheck {
+		if hasProbeReadBug(major, minor, patch) {
+			if err = checkForMaccessPatch(coll, ebpfMaps, kmod); err != nil {
+				return nil, nil, nil, fmt.Errorf("your kernel version %d.%d.%d may be "+
+					"affected by a Linux kernel bug that can lead to system "+
+					"freezes, terminating host agent now to avoid "+
+					"triggering this bug.\n"+
+					"If you are certain your kernel is not affected, "+
+					"you can override this check at your own risk "+
+					"with -no-kernel-version-check.\n"+
+					"Error: %v", major, minor, patch, err)
+			}
+		}
+	}
+
+	tailCallProgs := []progLoaderHelper{
+		{
+			progID: uint32(support.ProgUnwindStop),
+			name:   "unwind_stop",
+			enable: true,
+		},
+		{
+			progID: uint32(support.ProgUnwindNative),
+			name:   "unwind_native",
+			enable: true,
+		},
+		{
+			progID: uint32(support.ProgUnwindPython),
+			name:   "unwind_python",
+			enable: !cfg.InterpretersConfig.Python.IsDisabled(),
+		},
+	}
+
+	if err = loadPerfUnwinders(coll, ebpfProgs, ebpfMaps["perf_progs"], tailCallProgs,
+		cfg.BPFVerifierLogLevel); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to load perf eBPF programs: %v", err)
+	}
+
+	if cfg.OffCPUThreshold > 0 || len(cfg.ProbeLinks) > 0 || cfg.LoadProbe {
+		// Load the tail call destinations if any kind of event profiling is enabled.
+		// loadProbeUnwinders repoints the probe unwinder's per_cpu_records references
+		// to per_cpu_records_kp so a perf sampler can't clobber an in-flight uprobe unwind;
+		// the perf unwinder keeps per_cpu_records.
+		if err = loadProbeUnwinders(coll, ebpfProgs, ebpfMaps["kprobe_progs"], tailCallProgs,
+			cfg.BPFVerifierLogLevel, ebpfMaps["perf_progs"].FD(),
+			ebpfMaps["per_cpu_records"].FD(), ebpfMaps["per_cpu_records_kp"]); err != nil {
+			return nil, nil, nil, fmt.Errorf("failed to load kprobe eBPF programs: %v", err)
+		}
+	}
+
+	if cfg.OffCPUThreshold > 0 {
+		offCPUProgs := []progLoaderHelper{
+			{
+				name:             "finish_task_switch",
+				noTailCallTarget: true,
+				enable:           true,
+			},
+			{
+				name:             "tracepoint__sched_switch",
+				noTailCallTarget: true,
+				enable:           true,
+			},
+		}
+		if err = loadProbeUnwinders(coll, ebpfProgs, ebpfMaps["kprobe_progs"], offCPUProgs,
+			cfg.BPFVerifierLogLevel, ebpfMaps["perf_progs"].FD(),
+			ebpfMaps["per_cpu_records"].FD(), ebpfMaps["per_cpu_records_kp"]); err != nil {
+			return nil, nil, nil, fmt.Errorf("failed to load kprobe eBPF programs: %v", err)
+		}
+	}
+
+	if len(cfg.ProbeLinks) > 0 || cfg.LoadProbe {
+		probeProgs := []progLoaderHelper{
+			{
+				name:             genericProgName,
+				noTailCallTarget: true,
+				enable:           true,
+			},
+		}
+		if err = loadProbeUnwinders(coll, ebpfProgs, ebpfMaps["kprobe_progs"], probeProgs,
+			cfg.BPFVerifierLogLevel, ebpfMaps["perf_progs"].FD(),
+			ebpfMaps["per_cpu_records"].FD(), ebpfMaps["per_cpu_records_kp"]); err != nil {
+			return nil, nil, nil, fmt.Errorf("failed to load uprobe eBPF programs: %v", err)
+		}
+	}
+
+	if err = removeTemporaryMaps(ebpfMaps); err != nil {
+		return nil, nil, nil, fmt.Errorf("failed to remove temporary maps: %v", err)
+	}
+
+	return ebpfMaps, ebpfProgs, innerMapTemplate, nil
+}
+
+// removeTemporaryMaps unloads and deletes eBPF maps that are only required for the
+// initialization.
+func removeTemporaryMaps(ebpfMaps map[string]*cebpf.Map) error {
+	for _, mapName := range []string{"system_analysis"} {
+		if err := ebpfMaps[mapName].Close(); err != nil {
+			log.Errorf("Failed to close %s: %v", mapName, err)
+			return err
+		}
+		delete(ebpfMaps, mapName)
+	}
+	return nil
+}
+
+// rewriteMaps replaces all references to named eBPF maps.
+// This means that pre-existing maps are used, instead of new ones created
+// when calling NewCollection. Any named eBPF maps are removed from CollectionSpec.Maps.
+//
+// This function used to be part of cilium/ebpf before it got deprecated and finally removed.
+// As we require to resize maps in loadAllMaps() we still need this functionality.
+// cilium/ebpf deprecated this function as FDs from *cebpf.Map are taken, but no references to
+// the Map entries are kept. If no one else holds a reference to these Map entries, they can
+// get GCd, the FD closed and the program load fails.
+//
+// Returns an error if a named eBPF map isn't used in at least one program.
+func rewriteMaps(coll *cebpf.CollectionSpec, maps map[string]*cebpf.Map) error {
+	for symbol, m := range maps {
+		// have we seen a program that uses this symbol / map
+		seen := false
+		for progName, progSpec := range coll.Programs {
+			err := progSpec.Instructions.AssociateMap(symbol, m)
+
+			switch {
+			case err == nil:
+				seen = true
+
+			case errors.Is(err, asm.ErrUnreferencedSymbol):
+				// Not all programs need to use the map
+
+			default:
+				return fmt.Errorf("program %s: %w", progName, err)
+			}
+		}
+
+		if !seen {
+			return fmt.Errorf("map %s not referenced by any programs", symbol)
+		}
+
+		// Prevent NewCollection from creating rewritten maps
+		delete(coll.Maps, symbol)
+	}
+
+	return nil
+}
+
+// syncVariablesToMapSpecs copies VariableSpec values back into the corresponding
+// MapSpec contents. This is necessary starting from cilium/ebpf v0.21.0, as
+// VariableSpec.Set() only updates VariableSpec.Value and no longer directly
+// modifies the underlying MapSpec.Contents byte slice.
+func syncVariablesToMapSpecs(coll *cebpf.CollectionSpec) error {
+	for mapName, mapSpec := range coll.Maps {
+		if len(mapSpec.Contents) == 0 {
+			continue
+		}
+		data, ok := mapSpec.Contents[0].Value.([]byte)
+		if !ok {
+			continue
+		}
+		modified := false
+		for _, v := range coll.Variables {
+			if v.SectionName != mapName || len(v.Value) == 0 {
+				continue
+			}
+			end := int(v.Offset) + len(v.Value)
+			if end > len(data) {
+				return fmt.Errorf("variable %s (offset %d, size %d) exceeds map %s data size %d",
+					v.Name, v.Offset, len(v.Value), mapName, len(data))
+			}
+			if !modified {
+				// Clone the underlying slice to avoid modifying shared data
+				// (MapSpec.Copy performs a shallow copy of Contents).
+				data = slices.Clone(data)
+				modified = true
+			}
+			copy(data[v.Offset:end], v.Value)
+		}
+		if modified {
+			mapSpec.Contents[0] = cebpf.MapKV{Key: uint32(0), Value: data}
+		}
+	}
+	return nil
+}
+
+// probeNoPrealloc tests if the kernel allows perf_event programs to use
+// non-preallocated hash maps. This requires both creating the map and
+// verifying a perf_event program that references it.
+func probeNoPrealloc() bool {
+	m, err := cebpf.NewMap(&cebpf.MapSpec{
+		Type:       cebpf.Hash,
+		KeySize:    4,
+		ValueSize:  4,
+		MaxEntries: 1,
+		Flags:      features.BPF_F_NO_PREALLOC,
+	})
+	if err != nil {
+		return false
+	}
+	defer m.Close()
+
+	prog, err := cebpf.NewProgram(&cebpf.ProgramSpec{
+		Type: cebpf.PerfEvent,
+		Instructions: asm.Instructions{
+			asm.Mov.Imm(asm.R2, 0),
+			asm.StoreMem(asm.RFP, -4, asm.R2, asm.Word),
+			asm.Mov.Reg(asm.R2, asm.RFP),
+			asm.Add.Imm(asm.R2, -4),
+			asm.LoadMapPtr(asm.R1, m.FD()),
+			asm.FnMapLookupElem.Call(),
+			asm.Mov.Imm(asm.R0, 0),
+			asm.Return(),
+		},
+		License: "GPL",
+	})
+	if err != nil {
+		return false
+	}
+	prog.Close()
+	return true
+}
+
+// loadAllMaps loads all eBPF maps that are used in our eBPF programs.
+func loadAllMaps(coll *cebpf.CollectionSpec, cfg *Config,
+	ebpfMaps map[string]*cebpf.Map) error {
+	restoreRlimit, err := rlimit.MaximizeMemlock()
+	if err != nil {
+		return fmt.Errorf("failed to adjust rlimit: %v", err)
+	}
+	defer restoreRlimit()
+
+	// Redefine the maximum number of map entries for selected eBPF maps.
+	adaption := make(map[string]uint32, 4)
+
+	const (
+		// The following sizes X are used as 2^X, and determined empirically.
+		// 1 million executable pages / 4GB of executable address space
+		pidPageMappingInfoSize   = 20
+		stackDeltaPageToInfoSize = 16
+		exeIDToStackDeltasSize   = 16
+	)
+
+	adaption["pid_page_to_mapping_info"] = 1 << uint32(pidPageMappingInfoSize+cfg.MapScaleFactor)
+
+	adaption["stack_delta_page_to_info"] = 1 << uint32(stackDeltaPageToInfoSize+cfg.MapScaleFactor)
+
+	// Allow for 1s of 'burst' trace data (sizing by Trace length worst-case)
+	// TODO: Base this on present CPUs instead, as runtime.NumCPU is fixed for the lifetime
+	// of the process?
+	ringbufSize := uint64(cfg.SamplesPerSecond * runtime.NumCPU() * support.Sizeof_Trace)
+	adaption["trace_events"] = uint32(min(util.NextPowerOfTwo(ringbufSize), 1<<31))
+	adaption["sched_times"] = schedTimesSize(cfg.OffCPUThreshold)
+
+	for i := support.StackDeltaBucketSmallest; i <= support.StackDeltaBucketLargest; i++ {
+		mapName := fmt.Sprintf("exe_id_to_%d_stack_deltas", i)
+		adaption[mapName] = 1 << uint32(exeIDToStackDeltasSize+cfg.MapScaleFactor)
+	}
+
+	noPrealloc := probeNoPrealloc()
+
+	for mapName, mapSpec := range coll.Maps {
+		if mapName == "sched_times" && cfg.OffCPUThreshold == 0 {
+			// Off CPU Profiling is disabled. So do not load this map.
+			continue
+		}
+		if mapName == "sched_times" && cfg.OffCPUThreshold == 0 {
+			// Off CPU Profiling is disabled. So do not load this map.
+			continue
+		}
+		if mapName == obiSpanTracesMap {
+			if cfg.BPFFSRoot == "" || !cfg.OBIProcessCtx {
+				// As BPF FS is not set or process context sharing with OBI is not
+				// enabled, the map can not be shared with other OTel components.
+				// To reduce the memory footprint in this case reduce the size of the map.
+				mapSpec.MaxEntries = 1
+			} else {
+				// Try to load it from a known path:
+				mPath := path.Join(cfg.BPFFSRoot, "otel", mapName)
+				ebpfMap, err := cebpf.LoadPinnedMap(mPath, &cebpf.LoadPinOptions{})
+				if err == nil {
+					log.Infof("Using shared map for OBI span/trace ID communication")
+					ebpfMaps[mapName] = ebpfMap
+					continue
+				}
+				// The shared map does not yet exist or BPF FS is not set - so continue as usual
+			}
+		}
+
+		if !cfg.InterpretersConfig.IsMapEnabled(mapName) {
+			log.Debugf("Skipping eBPF map %s: tracer not enabled", mapName)
+			continue
+		}
+		if newSize, ok := adaption[mapName]; ok {
+			log.Debugf("Size of eBPF map %s: %v", mapName, newSize)
+			mapSpec.MaxEntries = newSize
+		}
+		if noPrealloc && strings.HasPrefix(mapName, "exe_id_to_") &&
+			strings.HasSuffix(mapName, "_stack_deltas") {
+			mapSpec.Flags |= features.BPF_F_NO_PREALLOC
+		}
+		ebpfMap, err := cebpf.NewMap(mapSpec)
+		if err != nil {
+			return fmt.Errorf("failed to load %s: %v", mapName, err)
+		}
+		ebpfMaps[mapName] = ebpfMap
+
+		if mapName == obiSpanTracesMap {
+			if cfg.BPFFSRoot == "" || !cfg.OBIProcessCtx {
+				// In environments, where BPF FS is not available,
+				// we just load the map to not break eBPF programs.
+				log.Infof("Skip pinning eBPF map to share OTel span/trace IDs")
+				continue
+			}
+
+			// Pin the loaded map to a known path, so that other
+			// OTel components can also use it.
+			otelBPFFS := path.Join(cfg.BPFFSRoot, "otel")
+			if err := os.MkdirAll(otelBPFFS, 0o1700); err != nil {
+				// This is a non-fatal error for the functionality
+				// of the profiler. So just log it.
+				log.Warnf("Failed to create '%s'. OTel span/trace IDs can not be shared: %v",
+					otelBPFFS, err)
+				continue
+			}
+			if err := ebpfMap.Pin(path.Join(otelBPFFS, mapName)); err != nil {
+				// This is a non-fatal error for the functionality
+				// of the profiler. So just log it.
+				log.Warnf("Failed to pin '%s'. OTel span/trace IDs can not be shared: %v",
+					mapName, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// schedTimesSize calculates the size of the sched_times map based on the
+// configured off-cpu threshold.
+// To not lose too many scheduling events but also not oversize sched_times,
+// calculate a size based on an assumed upper bound of scheduler events per
+// second (1000hz) multiplied by an average time a task remains off CPU (3s),
+// scaled by the probability of capturing a trace.
+func schedTimesSize(threshold uint32) uint32 {
+	size := uint32((4096 * uint64(threshold)) / math.MaxUint32)
+	if size < 16 {
+		// Guarantee a minimal size of 16.
+		return 16
+	}
+	if size > 4096 {
+		// Guarantee a maximum size of 4096.
+		return 4096
+	}
+	return size
+}
+
+// loadPerfUnwinders loads all perf eBPF Programs and their tail call targets.
+func loadPerfUnwinders(coll *cebpf.CollectionSpec, ebpfProgs map[string]*cebpf.Program,
+	tailcallMap *cebpf.Map, tailCallProgs []progLoaderHelper,
+	bpfVerifierLogLevel uint32,
+) error {
+	programOptions := cebpf.ProgramOptions{
+		LogLevel: cebpf.LogLevel(bpfVerifierLogLevel),
+	}
+
+	progs := make([]progLoaderHelper, len(tailCallProgs)+2)
+	copy(progs, tailCallProgs)
+
+	progs = append(progs,
+		progLoaderHelper{
+			name:             "native_tracer_entry",
+			noTailCallTarget: true,
+			enable:           true,
+		})
+
+	for _, unwindProg := range progs {
+		if !unwindProg.enable {
+			continue
+		}
+
+		unwindProgName := unwindProg.name
+		if !unwindProg.noTailCallTarget {
+			unwindProgName = "perf_" + unwindProg.name
+		}
+
+		progSpec, ok := coll.Programs[unwindProgName]
+		if !ok {
+			return fmt.Errorf("program %s does not exist", unwindProgName)
+		}
+
+		if err := loadProgram(ebpfProgs, tailcallMap, unwindProg.progID, progSpec,
+			programOptions, unwindProg.noTailCallTarget); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// progArrayReferences returns a list of instructions which load a specified tail
+// call FD.
+func progArrayReferences(perfTailCallMapFD int, insns asm.Instructions) []int {
+	insNos := []int{}
+	for i := range insns {
+		ins := &insns[i]
+		if asm.OpCode(ins.OpCode.Class()) != asm.OpCode(asm.LdClass) {
+			continue
+		}
+		m := ins.Map()
+		if m == nil {
+			continue
+		}
+		if perfTailCallMapFD == m.FD() {
+			insNos = append(insNos, i)
+		}
+	}
+	return insNos
+}
+
+// loadProbeUnwinders reuses large parts of loadPerfUnwinders. By default all eBPF programs
+// are written as perf event eBPF programs. loadProbeUnwinders dynamically rewrites the
+// specification of these programs to xProbe eBPF programs and adjusts tail call maps.
+func loadProbeUnwinders(coll *cebpf.CollectionSpec, ebpfProgs map[string]*cebpf.Program,
+	tailcallMap *cebpf.Map, progs []progLoaderHelper,
+	bpfVerifierLogLevel uint32, perfTailCallMapFD int,
+	perCPURecordsFD int, perCPURecordsKprobeMap *cebpf.Map,
+) error {
+	programOptions := cebpf.ProgramOptions{
+		LogLevel: cebpf.LogLevel(bpfVerifierLogLevel),
+	}
+
+	for _, unwindProg := range progs {
+		if !unwindProg.enable {
+			continue
+		}
+
+		unwindProgName := unwindProg.name
+		if !unwindProg.noTailCallTarget {
+			unwindProgName = "kprobe_" + unwindProg.name
+		}
+
+		progSpec, ok := coll.Programs[unwindProgName]
+		if !ok {
+			return fmt.Errorf("program %s does not exist", unwindProgName)
+		}
+
+		// Replace the prog array for the tail calls.
+		insns := progArrayReferences(perfTailCallMapFD, progSpec.Instructions)
+		for _, ins := range insns {
+			if err := progSpec.Instructions[ins].AssociateMap(tailcallMap); err != nil {
+				return fmt.Errorf("failed to rewrite map ptr: %v", err)
+			}
+		}
+
+		// Repoint per_cpu_records to the probe unwinder's own record map.
+		recInsns := progArrayReferences(perCPURecordsFD, progSpec.Instructions)
+		for _, ins := range recInsns {
+			if err := progSpec.Instructions[ins].AssociateMap(perCPURecordsKprobeMap); err != nil {
+				return fmt.Errorf("failed to rewrite per_cpu_records ptr: %v", err)
+			}
+		}
+
+		if err := loadProgram(ebpfProgs, tailcallMap, unwindProg.progID, progSpec,
+			programOptions, unwindProg.noTailCallTarget); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// loadProgram loads an eBPF program from progSpec and populates the related maps.
+func loadProgram(ebpfProgs map[string]*cebpf.Program, tailcallMap *cebpf.Map,
+	progID uint32, progSpec *cebpf.ProgramSpec, programOptions cebpf.ProgramOptions,
+	noTailCallTarget bool,
+) error {
+	restoreRlimit, err := rlimit.MaximizeMemlock()
+	if err != nil {
+		return fmt.Errorf("failed to adjust rlimit: %v", err)
+	}
+	defer restoreRlimit()
+
+	// Load the eBPF program into the kernel. If no error is returned,
+	// the eBPF program can be used/called/triggered from now on.
+	unwinder, err := cebpf.NewProgramWithOptions(progSpec, programOptions)
+	if err != nil {
+		// These errors tend to have hundreds of lines (or more),
+		// so we print each line individually.
+		if ve, ok := err.(*cebpf.VerifierError); ok {
+			for _, line := range ve.Log {
+				log.Errorf("%s", line)
+			}
+		} else {
+			scanner := bufio.NewScanner(strings.NewReader(err.Error()))
+			for scanner.Scan() {
+				log.Errorf("%s", scanner.Text())
+			}
+		}
+		return fmt.Errorf("failed to load %s", progSpec.Name)
+	}
+	ebpfProgs[progSpec.Name] = unwinder
+
+	if noTailCallTarget {
+		return nil
+	}
+	fd := uint32(unwinder.FD())
+	if err := tailcallMap.Update(unsafe.Pointer(&progID), unsafe.Pointer(&fd),
+		cebpf.UpdateAny); err != nil {
+		// Every eBPF program that is loaded within loadUnwinders can be the
+		// destination of a tail call of another eBPF program. If we can not update
+		// the eBPF map that manages these destinations our unwinding will fail.
+		return fmt.Errorf("failed to update tailcall map: %v", err)
+	}
+	return nil
+}
+
+// enableEvent removes the entry of given eventType from the inhibitEvents map
+// so that the eBPF code will send the event again.
+func (t *Tracer) enableEvent(eventType int) {
+	inhibitEventsMap := t.ebpfMaps["inhibit_events"]
+
+	// The map entry might not exist, so just ignore the potential error.
+	et := uint32(eventType)
+	_ = inhibitEventsMap.Delete(unsafe.Pointer(&et))
+}
+
+// monitorPIDEventsMap iterates over the eBPF map pid_events in batches,
+// collects PIDs and writes them to the keys slice.
+func (t *Tracer) monitorPIDEventsMap(keys *[]libpf.PIDTID) error {
+	eventsMap := t.ebpfMaps["pid_events"]
+
+	removed := make([]uint64, 128)
+	values := make([]bool, len(removed))
+
+	cursor := cebpf.MapBatchCursor{}
+
+	for {
+		n, err := eventsMap.BatchLookupAndDelete(&cursor, removed, values, nil)
+
+		// There can be results even if there's an error.
+		for i := range n {
+			*keys = append(*keys, libpf.PIDTID(removed[i]))
+		}
+
+		if errors.Is(err, cebpf.ErrKeyNotExist) {
+			break
+		}
+
+		if err != nil {
+			return fmt.Errorf("Failed to batch lookup and delete entries from pid_events map: %v", err)
+		}
+	}
+
+	return nil
+}
+
+// eBPFMetricsCollector retrieves the eBPF metrics, calculates their delta values,
+// and translates eBPF IDs into Metric ID.
+// Returns a slice of Metric ID/Value pairs.
+func (t *Tracer) eBPFMetricsCollector(
+	translateIDs []metrics.MetricID,
+	previousMetricValue []metrics.MetricValue,
+) []metrics.Metric {
+	metricsMap := t.ebpfMaps["metrics"]
+	metricsUpdates := make([]metrics.Metric, 0, len(translateIDs))
+
+	// Iterate over all known metric IDs
+	for ebpfID, metricID := range translateIDs {
+		var perCPUValues []uint64
+
+		// Checking for 'gaps' in the translation table.
+		// That allows non-contiguous metric IDs, e.g. after removal/deprecation of a metric ID.
+		if metricID == metrics.IDInvalid {
+			continue
+		}
+
+		eID := uint32(ebpfID)
+		if err := metricsMap.Lookup(unsafe.Pointer(&eID), &perCPUValues); err != nil {
+			log.Errorf("Failed trying to lookup per CPU element: %v", err)
+			continue
+		}
+		value := metrics.MetricValue(0)
+		for _, val := range perCPUValues {
+			value += metrics.MetricValue(val)
+		}
+
+		// The monitoring infrastructure expects instantaneous values (gauges).
+		// => for cumulative metrics (counters), send deltas of the observed values, so they
+		// can be interpreted as gauges.
+		if ebpfID < support.MetricIDBeginCumulative {
+			// We don't assume 64bit counters to overflow
+			deltaValue := value - previousMetricValue[ebpfID]
+
+			// 0 deltas add no value when summed up for display purposes in the UI
+			if deltaValue == 0 {
+				continue
+			}
+
+			previousMetricValue[ebpfID] = value
+			value = deltaValue
+		}
+
+		// Collect the metrics for reporting
+		metricsUpdates = append(metricsUpdates, metrics.Metric{
+			ID:    metricID,
+			Value: value,
+		})
+	}
+
+	return metricsUpdates
+}
+
+// Various bpf trace handling related errors:
+var (
+	errRecordTooSmall       = errors.New("trace record too small")
+	errRecordUnexpectedSize = errors.New("unexpected record size")
+	errOriginUnexpected     = errors.New("unexpected origin")
+)
+
+// loadBpfTrace parses a raw BPF trace into a `host.Trace` instance.
+func (t *Tracer) loadBpfTrace(raw []byte) (*libpf.EbpfTrace, error) {
+	frameListOffs := int(unsafe.Offsetof(support.Trace{}.Frame_data))
+
+	if len(raw) < frameListOffs {
+		return nil, fmt.Errorf("%d < %d: %w", len(raw), frameListOffs, errRecordTooSmall)
+	}
+
+	ptr := traceFromRaw(raw)
+	frameDataLen := int(ptr.Frame_data_len) * 8
+
+	// NOTE: can't do exact check here: kernel adds a few padding bytes to messages.
+	if len(raw) < frameListOffs+frameDataLen {
+		return nil, fmt.Errorf("%d < %d: %w", len(raw), frameListOffs+frameDataLen,
+			errRecordUnexpectedSize)
+	}
+
+	trace := t.tracePool.Get().(*libpf.EbpfTrace)
+	*trace = libpf.EbpfTrace{
+		Comm:             libpf.NewComm(ptr.Comm),
+		APMTraceID:       *(*libpf.APMTraceID)(unsafe.Pointer(&ptr.Apm_trace_id)),
+		APMTransactionID: *(*libpf.APMTransactionID)(unsafe.Pointer(&ptr.Apm_transaction_id)),
+		PID:              libpf.PID(ptr.Pid),
+		TID:              libpf.PID(ptr.Tid),
+		Origin:           ptr.Origin,
+		Value:            int64(ptr.Value),
+		KTime:            int64(ptr.Ktime),
+		CpuID:            ptr.Cpu_id,
+	}
+
+	if t.origins.lookup(trace.Origin) == nil {
+		return nil, fmt.Errorf("origin %d: %w", trace.Origin, errOriginUnexpected)
+	}
+
+	if ptr.Custom_labels.Len > 0 {
+		trace.CustomLabels = make(map[libpf.String]libpf.String, int(ptr.Custom_labels.Len))
+		for i := 0; i < int(ptr.Custom_labels.Len); i++ {
+			lbl := ptr.Custom_labels.Labels[i]
+			keyBytes, ok := t.customLabels.validateKey(lbl.Key[:])
+			if !ok {
+				log.Debugf("Dropping Go custom label with empty or invalid UTF-8 name")
+				continue
+			}
+			key := libpf.Intern(pfunsafe.ToString(keyBytes))
+			valBytes, ok := t.customLabels.validateValue(lbl.Val[:])
+			if !ok {
+				log.Debugf("Dropping Go custom label %s with invalid UTF-8 value", key)
+				continue
+			}
+			trace.CustomLabels[key] = libpf.Intern(pfunsafe.ToString(valBytes))
+		}
+	}
+
+	numKernelFrames := int(ptr.Num_kernel_frames)
+	if numKernelFrames > int(ptr.Frame_data_len) {
+		return nil, fmt.Errorf("%d > %d: %w", numKernelFrames, ptr.Frame_data_len,
+			errRecordUnexpectedSize)
+	}
+
+	trace.NumFrames = ptr.Num_frames
+	trace.NumKernelFrames = ptr.Num_kernel_frames
+	frameDataWords := int(ptr.Frame_data_len)
+	trace.FrameData = trace.FrameDataBuf[:frameDataWords]
+	// Kernel frames are raw addresses at the front of FrameData. The process
+	// manager splits and symbolizes them so all frame processing shares one cache.
+	copy(trace.FrameData, ptr.Frame_data[:frameDataWords])
+
+	return trace, nil
+}
+
+// StartMapMonitors starts goroutines for collecting metrics and monitoring eBPF
+// maps for tracepoints, new traces, trace count updates and unknown PCs.
+func (t *Tracer) StartMapMonitors(ctx context.Context, traceOutChan chan<- *libpf.EbpfTrace) error {
+	onlineCPUs, err := onlineCPUsOnce()
+	if err != nil {
+		return fmt.Errorf("failed to get online cpus: %w", err)
+	}
+
+	if err := t.kernelSymbolizer.StartMonitor(ctx, onlineCPUs); err != nil {
+		log.Warnf("Failed to start kallsyms monitor: %v", err)
+	}
+	eventMetricCollector, err := t.startEventMonitor(ctx)
+	if err != nil {
+		return err
+	}
+	traceEventMetricCollector, err := t.startTraceEventMonitor(ctx, traceOutChan)
+	if err != nil {
+		return err
+	}
+
+	pidEvents := make([]libpf.PIDTID, 0)
+	periodiccaller.StartWithManualTrigger(ctx, t.intervals.MonitorInterval(),
+		t.triggerPIDProcessing, func(_ bool) bool {
+			t.enableEvent(support.EventTypeGenericPID)
+			err := t.monitorPIDEventsMap(&pidEvents)
+			if err != nil {
+				log.Errorf("Failed to monitor PID events: %v", err)
+				t.signalDone()
+				return false
+			}
+
+			for _, pidTid := range pidEvents {
+				log.Debugf("=> %v", pidTid)
+				t.pidEvents <- pidTid
+			}
+
+			// Keep the underlying array alive to avoid GC pressure
+			pidEvents = pidEvents[:0]
+			return true
+		})
+
+	// translateIDs is a translation table for eBPF IDs into Metric IDs.
+	// Index is the ebpfID, value is the corresponding metricID.
+	translateIDs := support.MetricsTranslation
+
+	// previousMetricValue stores the previously retrieved metric values to
+	// calculate and store delta values.
+	previousMetricValue := make([]metrics.MetricValue, len(translateIDs))
+
+	periodiccaller.Start(ctx, t.intervals.MonitorInterval(), func() {
+		metrics.AddSlice(eventMetricCollector())
+		metrics.AddSlice(traceEventMetricCollector())
+		metrics.AddSlice(t.eBPFMetricsCollector(translateIDs, previousMetricValue))
+		metrics.AddSlice(t.customLabels.getAndResetMetrics())
+	})
+
+	return nil
+}
+
+// terminatePerfEvents disables perf events and closes their file descriptor.
+func terminatePerfEvents(events []*perf.Event) {
+	for _, event := range events {
+		if err := event.Disable(); err != nil {
+			log.Errorf("Failed to disable perf event: %v", err)
+		}
+		if err := event.Close(); err != nil {
+			log.Errorf("Failed to close perf event: %v", err)
+		}
+	}
+}
+
+// AttachTracer attaches the main tracer entry point to the perf interrupt events. The tracer
+// entry point is always the native tracer. The native tracer will determine when to invoke the
+// interpreter tracers based on address range information.
+func (t *Tracer) AttachTracer(targetCPUs []int) error {
+	tracerProg, ok := t.ebpfProgs["native_tracer_entry"]
+	if !ok {
+		return errors.New("entry program is not available")
+	}
+
+	perfAttribute := new(perf.Attr)
+	perfAttribute.SetSampleFreq(uint64(t.samplesPerSecond))
+	if err := perf.CPUClock.Configure(perfAttribute); err != nil {
+		return fmt.Errorf("failed to configure software perf event: %v", err)
+	}
+
+	onlineCPUs, err := onlineCPUsOnce()
+	if err != nil {
+		return fmt.Errorf("failed to get online cpus: %w", err)
+	}
+
+	if len(targetCPUs) == 0 {
+		targetCPUs = onlineCPUs
+	} else {
+		targetCPUs, err = intersectCPURanges(onlineCPUs, targetCPUs)
+		if err != nil {
+			return err
+		}
+	}
+
+	events := t.perfEntrypoints.WLock()
+	defer t.perfEntrypoints.WUnlock(&events)
+	for _, id := range targetCPUs {
+		perfEvent, err := perf.Open(perfAttribute, perf.AllThreads, id, nil)
+		if err != nil {
+			terminatePerfEvents(*events)
+			return fmt.Errorf("failed to attach to perf event on CPU %d: %v", id, err)
+		}
+		if err := perfEvent.SetBPF(uint32(tracerProg.FD())); err != nil {
+			terminatePerfEvents(*events)
+			return fmt.Errorf("failed to attach eBPF program to perf event: %v", err)
+		}
+		*events = append(*events, perfEvent)
+	}
+
+	return nil
+}
+
+// EnableProfiling enables the perf interrupt events with the attached eBPF programs.
+func (t *Tracer) EnableProfiling() error {
+	events := t.perfEntrypoints.WLock()
+	defer t.perfEntrypoints.WUnlock(&events)
+	if len(*events) == 0 {
+		return errors.New("no perf events available to enable for profiling")
+	}
+	for id, event := range *events {
+		if err := event.Enable(); err != nil {
+			return fmt.Errorf("failed to enable perf event on CPU %d: %v", id, err)
+		}
+	}
+	return nil
+}
+
+// probabilisticProfile performs a single iteration of probabilistic profiling. It will generate
+// a random number between 0 and ProbabilisticThresholdMax-1 every interval. If the random
+// number is smaller than threshold it will enable the frequency based sampling for this
+// time interval. Otherwise the frequency based sampling events are disabled.
+func (t *Tracer) probabilisticProfile(interval time.Duration, threshold uint) {
+	enableSampling := false
+	probProfilingStatus := probProfilingDisable
+
+	//nolint:gosec
+	if rand.UintN(ProbabilisticThresholdMax) < threshold {
+		enableSampling = true
+		probProfilingStatus = probProfilingEnable
+		log.Debugf("Start sampling for next interval (%v)", interval)
+	} else {
+		log.Debugf("Stop sampling for next interval (%v)", interval)
+	}
+
+	events := t.perfEntrypoints.WLock()
+	defer t.perfEntrypoints.WUnlock(&events)
+	var enableErr, disableErr metrics.MetricValue
+	for _, event := range *events {
+		if enableSampling {
+			if err := event.Enable(); err != nil {
+				enableErr++
+				log.Errorf("Failed to enable frequency based sampling: %v",
+					err)
+			}
+			continue
+		}
+		if err := event.Disable(); err != nil {
+			disableErr++
+			log.Errorf("Failed to disable frequency based sampling: %v", err)
+		}
+	}
+	if enableErr != 0 {
+		metrics.Add(metrics.IDPerfEventEnableErr, enableErr)
+	}
+	if disableErr != 0 {
+		metrics.Add(metrics.IDPerfEventDisableErr, disableErr)
+	}
+	metrics.Add(metrics.IDProbProfilingStatus,
+		metrics.MetricValue(probProfilingStatus))
+}
+
+// StartProbabilisticProfiling periodically runs probabilistic profiling.
+func (t *Tracer) StartProbabilisticProfiling(ctx context.Context) {
+	metrics.Add(metrics.IDProbProfilingInterval,
+		metrics.MetricValue(t.probabilisticInterval.Seconds()))
+
+	// Run a single iteration of probabilistic profiling to avoid needing
+	// to wait for the first interval to pass with periodiccaller.Start()
+	// before getting called.
+	t.probabilisticProfile(t.probabilisticInterval, t.probabilisticThreshold)
+
+	periodiccaller.Start(ctx, t.probabilisticInterval, func() {
+		t.probabilisticProfile(t.probabilisticInterval, t.probabilisticThreshold)
+	})
+}
+
+// StartOffCPUProfiling starts off-cpu profiling by attaching the programs to the hooks.
+func (t *Tracer) StartOffCPUProfiling() error {
+	// Attach the second hook for off-cpu profiling first.
+	kprobeProg, ok := t.ebpfProgs["finish_task_switch"]
+	if !ok {
+		return errors.New("off-cpu program finish_task_switch is not available")
+	}
+
+	kmod, err := t.kernelSymbolizer.Snapshot().GetModuleByName(kallsyms.Kernel)
+	if err != nil {
+		return err
+	}
+
+	hookSymbolPrefix := "finish_task_switch"
+	kprobeSymbs := kmod.LookupSymbolsByPrefix(hookSymbolPrefix)
+	if len(kprobeSymbs) == 0 {
+		return errors.New("no finish_task_switch symbols found")
+	}
+
+	attached := false
+	// Attach to all symbols with the prefix finish_task_switch.
+	for _, symb := range kprobeSymbs {
+		kprobeLink, linkErr := link.Kprobe(string(symb.Name), kprobeProg, nil)
+		if linkErr != nil {
+			log.Warnf("Failed to attach to %s: %v", symb.Name, linkErr)
+			continue
+		}
+		attached = true
+		t.hooks[hookPoint{group: "kprobe", name: string(symb.Name)}] = kprobeLink
+	}
+	if !attached {
+		return fmt.Errorf("failed to attach to one of %d symbols with prefix '%s'",
+			len(kprobeSymbs), hookSymbolPrefix)
+	}
+
+	// Attach the first hook that enables off-cpu profiling.
+	tpProg, ok := t.ebpfProgs["tracepoint__sched_switch"]
+	if !ok {
+		return errors.New("tracepoint__sched_switch is not available")
+	}
+	tpLink, err := link.Tracepoint("sched", "sched_switch", tpProg, nil)
+	if err != nil {
+		return fmt.Errorf("failed to attach sched_switch tracepoint: %w", err)
+	}
+	t.hooks[hookPoint{group: "sched", name: "sched_switch"}] = tpLink
+
+	return nil
+}
+
+func (t *Tracer) AttachProbes(probes []string) error {
+	for _, probeStr := range probes {
+		probeSpec, err := ParseProbe(probeStr)
+		if err != nil {
+			return err
+		}
+
+		uProbeProg, ok := t.ebpfProgs[probeSpec.ProgName]
+		if !ok {
+			return fmt.Errorf("%s is not available", probeSpec.ProgName)
+		}
+
+		probeLink, err := AttachProbe(uProbeProg, probeSpec)
+		if err != nil {
+			return err
+		}
+
+		t.hooks[hookPoint{group: probeSpec.Type.String(), name: probeStr}] = probeLink
+	}
+	return nil
+}
+
+func (t *Tracer) HandleTrace(bpfTrace *libpf.EbpfTrace) {
+	if t.targetPID != 0 && bpfTrace.PID != libpf.PID(t.targetPID) {
+		// llm-prof: --pid filter. Only process traces from the target process
+		// to minimize agent-side CPU usage.
+		t.tracePool.Put(bpfTrace)
+		return
+	}
+	t.processManager.HandleTrace(bpfTrace, t.origins.lookup(bpfTrace.Origin))
+
+	// Reclaim the EbpfTrace
+	t.tracePool.Put(bpfTrace)
+}
+
+// originRegistry is the tracer-wide registry origin IDs are assigned from
+// and profile type metadata is looked up by. IDs are handed out by
+// atomically incrementing lastID, which guarantees they never collide, even
+// when profile types are registered dynamically after load time.
+type originRegistry struct {
+	// lastID is the most recently assigned origin ID.
+	lastID atomic.Uint32
+
+	// types maps a trace origin (uint16) to its *samples.TypeMetadata.
+	types sync.Map
+}
+
+// register hands out a fresh origin ID and stores metadata for it, keyed by
+// that ID.
+func (r *originRegistry) register(metadata *samples.TypeMetadata) (uint16, error) {
+	if last := r.lastID.Load(); last >= math.MaxUint16 {
+		return 0, fmt.Errorf("maximum number of origin registry entries exceeded")
+	}
+	id := uint16(r.lastID.Add(1))
+	r.types.Store(id, metadata)
+	return id, nil
+}
+
+// lookup returns the profile type metadata registered for origin, or nil if
+// origin is unknown.
+func (r *originRegistry) lookup(origin uint16) *samples.TypeMetadata {
+	v, ok := r.types.Load(origin)
+	if !ok {
+		return nil
+	}
+	return v.(*samples.TypeMetadata)
+}

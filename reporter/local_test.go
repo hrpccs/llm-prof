@@ -1,0 +1,64 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+package reporter
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"go.opentelemetry.io/ebpf-profiler/libpf"
+	"go.opentelemetry.io/ebpf-profiler/reporter/samples"
+)
+
+// frame builds a single-frame trace with the given label.
+func frameTrace(label string) *libpf.Trace {
+	f := libpf.Frame{FunctionName: libpf.Intern(label)}
+	var frames libpf.Frames
+	frames.Append(&f)
+	return &libpf.Trace{Frames: frames}
+}
+
+func TestReportTraceEventOffCPUWeight(t *testing.T) {
+	rep := NewLocalReporter("", 0, 20, 1.0) // 20Hz, p=1.0
+
+	// on-CPU sample: weight 1
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("on"), nil))
+	// off-CPU sample: 5ms blocked at 20Hz -> 5e6 ns * 20 / 1e9 = 0.1 -> clamped to 1
+	offMeta := &samples.TraceEventMeta{
+		ProfileType: &samples.TypeMetadata{SampleType: "off_cpu"},
+		Value:       5_000_000, // 5ms in ns
+	}
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("off"), offMeta))
+	// off-CPU sample: 100ms blocked at 20Hz -> 1e8 * 20 / 1e9 = 2
+	offMeta2 := &samples.TraceEventMeta{
+		ProfileType: &samples.TypeMetadata{SampleType: "off_cpu"},
+		Value:       100_000_000, // 100ms in ns
+	}
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("off"), offMeta2))
+
+	rep.mu.Lock()
+	defer rep.mu.Unlock()
+	require.Equal(t, int64(1), rep.stacks["on"])
+	require.Equal(t, int64(3), rep.stacks["off"]) // 1 (5ms clamped) + 2 (100ms)
+}
+
+func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
+	// p=0.5: a 100ms blocked sample at 20Hz is worth 2 / 0.5 = 4 intervals.
+	rep := NewLocalReporter("", 0, 20, 0.5)
+	offMeta := &samples.TraceEventMeta{
+		ProfileType: &samples.TypeMetadata{SampleType: "off_cpu"},
+		Value:       100_000_000,
+	}
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("off"), offMeta))
+	rep.mu.Lock()
+	defer rep.mu.Unlock()
+	require.Equal(t, int64(4), rep.stacks["off"])
+}
+
+func TestReportTraceEventZeroProbabilityDefaults(t *testing.T) {
+	// p<=0 falls back to 1.0 (disabled off-cpu path must not divide by zero).
+	rep := NewLocalReporter("", 0, 20, 0)
+	require.Equal(t, 1.0, rep.offCPUProbability)
+}
