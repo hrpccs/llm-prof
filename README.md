@@ -40,6 +40,14 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 | IO 等待点 `main:42` | 96.6% | **98%** |
 | 等待型负载样本量 | 71 | **5021（约 70 倍）** |
 
+### 同一负载的火焰图对比（IO/sleep 型，100Hz）
+
+左侧 py-spy（采样点快照），右侧 llm-prof（on+off 统一，时长加权）——同样的等待点 `main (bench.py:42)`，llm-prof 的样本量约为 70 倍：
+
+| py-spy | llm-prof |
+|---|---|
+| ![py-spy](docs/flame_io_pyspy.svg) | ![llm-prof](docs/flame_io_llmprof.svg) |
+
 ### 1000Hz 的观测者效应（重要发现）
 
 1000Hz 下 **py-spy 的 GIL 等待样本从 1.1% 虚高到 16.7%**——每毫秒暂停冻结全部线程本身就在加剧 GIL 争用，火焰图里多出的"等待"很大部分是采样器自己造成的；llm-prof（无暂停）保持 0.8%，更接近真实。
