@@ -4,6 +4,7 @@
 package reporter
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -55,6 +56,26 @@ func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
 	rep.mu.Lock()
 	defer rep.mu.Unlock()
 	require.Equal(t, int64(4), rep.stacks["off"])
+}
+
+func TestWriteOutputInfernoStyleSVG(t *testing.T) {
+	rep := NewLocalReporter("/tmp/llmprof_svg_test.svg", 0, 20, 1.0, true)
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("cpu_work (bench.py:16)"), nil))
+	require.NoError(t, rep.ReportTraceEvent(frameTrace("cpu_work (bench.py:15)"), nil))
+	require.NoError(t, rep.WriteOutput())
+
+	// Check the inferno-style static structure is present and well-formed.
+	b, err := os.ReadFile("/tmp/llmprof_svg_test.svg")
+	require.NoError(t, err)
+	out := string(b)
+	require.Contains(t, out, `<!DOCTYPE svg PUBLIC`)
+	require.Contains(t, out, `linearGradient id="background"`)
+	require.Contains(t, out, `#frames > *:hover`)
+	require.Contains(t, out, `<g id="frames">`)
+	require.Contains(t, out, `<title>cpu_work (bench.py:16)</title>`)
+	require.Contains(t, out, `<text`)
+	require.Contains(t, out, `viewBox="0 0 1200`)
+	require.Contains(t, out, `</svg>`)
 }
 
 func TestReportTraceEventZeroProbabilityDefaults(t *testing.T) {

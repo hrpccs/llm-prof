@@ -214,9 +214,11 @@ func writeSVG(path string, root *flameNode, total int64, fixedWidth bool) error 
 		scale = float64(minWidth) / float64(total)
 	}
 	viewW := int64(float64(total) * scale)
-	viewH := titleH + rowH*maxDepth
+	// maxDepth rows of frames (depth 1..maxDepth-1 after the virtual root)
+	// plus one spare row for the footer hint, so it never overlaps frames.
+	viewH := titleH + rowH*maxDepth + rowH
 
-	// Use an explicit DFS via a slice to avoid recursion limits on deep stacks.
+	// DFS via a recursive closure; stack depth is bounded by maxDepth.
 	children := func(n *flameNode) []*flameNode {
 		cs := make([]*flameNode, 0, len(n.children))
 		for _, c := range n.children {
