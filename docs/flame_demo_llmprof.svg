@@ -1,0 +1,197 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
+<stop stop-color="#eeeeee" offset="5%"/><stop stop-color="#eeeeb0" offset="95%"/>
+</linearGradient></defs>
+<style type="text/css">
+text { font-family:monospace; font-size:12px }
+#title { font-size:17px; font-weight:bold; }
+#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }
+</style>
+<rect x="0" y="0" width="1200" height="360" fill="url(#background)"/>
+<text id="title" x="4" y="17">llm-prof flamegraph (2305 samples)</text>
+<g id="frames">
+<g x="0" y="40" width="1200" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="0" y="40" width="1200" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="51">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
+</g>
+<g x="0" y="56" width="1200" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97)</title>
+<rect x="0" y="56" width="1200" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="67">&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97)</text>
+</g>
+<g x="0" y="72" width="1200" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91)</title>
+<rect x="0" y="72" width="1200" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="83">main (/home/ubuntu/ai-infra/train_like.py:91)</text>
+</g>
+<g x="0" y="88" width="954" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69)</title>
+<rect x="0" y="88" width="954" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="99">train_step (/home/ubuntu/ai-infra/train_like.py:69)</text>
+</g>
+<g x="0" y="104" width="941" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:20)</title>
+<rect x="0" y="104" width="941" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
+<text x="2" y="115">load_batch (/home/ubuntu/ai-infra/train_like.py:20)</text>
+</g>
+<g x="941" y="104" width="8" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:21)</title>
+<rect x="941" y="104" width="8" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="104" width="3" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23)</title>
+<rect x="950" y="104" width="3" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="120" width="3" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="950" y="120" width="3" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="136" width="3" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334)</title>
+<rect x="950" y="136" width="3" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="152" width="2" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334);_wrapfunc (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:54)</title>
+<rect x="950" y="152" width="2" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="168" width="2" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334);_wrapfunc (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:54);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="950" y="168" width="2" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="950" y="184" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334);_wrapfunc (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:54);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:113)</title>
+<rect x="950" y="184" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="951" y="184" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334);_wrapfunc (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:54);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:97)</title>
+<rect x="951" y="184" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="952" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:69);load_batch (/home/ubuntu/ai-infra/train_like.py:23);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);clip (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2334);_wrapfunc (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:49)</title>
+<rect x="952" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="954" y="88" width="149" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73)</title>
+<rect x="954" y="88" width="149" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
+<text x="956" y="99">train_step (/home/ubu</text>
+</g>
+<g x="954" y="104" width="141" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:48)</title>
+<rect x="954" y="104" width="141" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
+<text x="956" y="115">backward_numeric (/h</text>
+</g>
+<g x="1095" y="104" width="8" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46)</title>
+<rect x="1095" y="104" width="8" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1095" y="120" width="7" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="1095" y="120" width="7" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1095" y="136" width="5" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);zeros_like (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/numeric.py:166)</title>
+<rect x="1095" y="136" width="5" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1101" y="136" width="2" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);zeros_like (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/numeric.py:161)</title>
+<rect x="1101" y="136" width="2" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1101" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);zeros_like (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/numeric.py:161);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="1101" y="152" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1103" y="136" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:73);backward_numeric (/home/ubuntu/ai-infra/train_like.py:46);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);zeros_like (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/numeric.py:167)</title>
+<rect x="1103" y="136" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1104" y="88" width="56" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:70)</title>
+<rect x="1104" y="88" width="56" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
+<text x="1106" y="99">train_st</text>
+</g>
+<g x="1104" y="104" width="27" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:70);forward (/home/ubuntu/ai-infra/train_like.py:31)</title>
+<rect x="1104" y="104" width="27" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1131" y="104" width="15" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:70);forward (/home/ubuntu/ai-infra/train_like.py:30)</title>
+<rect x="1131" y="104" width="15" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1147" y="104" width="13" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:70);forward (/home/ubuntu/ai-infra/train_like.py:29)</title>
+<rect x="1147" y="104" width="13" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1160" y="88" width="26" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:71)</title>
+<rect x="1160" y="88" width="26" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1187" y="88" width="8" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72)</title>
+<rect x="1187" y="88" width="8" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1187" y="104" width="4" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:37)</title>
+<rect x="1187" y="104" width="4" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1191" y="104" width="3" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38)</title>
+<rect x="1191" y="104" width="3" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1191" y="120" width="2" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
+<rect x="1191" y="120" width="2" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1191" y="136" width="2" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862)</title>
+<rect x="1191" y="136" width="2" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1191" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:132)</title>
+<rect x="1191" y="152" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1192" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120)</title>
+<rect x="1192" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1192" y="168" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120);_count_reduce_items (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:83)</title>
+<rect x="1192" y="168" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1193" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:142)</title>
+<rect x="1193" y="152" width="1" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1193" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:72);loss_fn (/home/ubuntu/ai-infra/train_like.py:38);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:116)</title>
+<rect x="1193" y="152" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1195" y="88" width="4" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75)</title>
+<rect x="1195" y="88" width="4" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1195" y="104" width="3" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75);checkpoint (/home/ubuntu/ai-infra/train_like.py:63)</title>
+<rect x="1195" y="104" width="3" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1195" y="120" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75);checkpoint (/home/ubuntu/ai-infra/train_like.py:63);dumps (/usr/lib/python3.12/json/__init__.py:231)</title>
+<rect x="1195" y="120" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1195" y="136" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75);checkpoint (/home/ubuntu/ai-infra/train_like.py:63);dumps (/usr/lib/python3.12/json/__init__.py:231);JSONEncoder.encode (/usr/lib/python3.12/json/encoder.py:200)</title>
+<rect x="1195" y="136" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1195" y="152" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75);checkpoint (/home/ubuntu/ai-infra/train_like.py:63);dumps (/usr/lib/python3.12/json/__init__.py:231);JSONEncoder.encode (/usr/lib/python3.12/json/encoder.py:200);JSONEncoder.iterencode (/usr/lib/python3.12/json/encoder.py:258)</title>
+<rect x="1195" y="152" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="1199" y="104" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/train_like.py:97);main (/home/ubuntu/ai-infra/train_like.py:91);train_step (/home/ubuntu/ai-infra/train_like.py:75);checkpoint (/home/ubuntu/ai-infra/train_like.py:64)</title>
+<rect x="1199" y="104" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
+</g>
+</g>
+<text x="4" y="354" font-size="11" fill="#999">llm-prof — hover a frame for the full stack path</text>
+</svg>

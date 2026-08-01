@@ -48,6 +48,26 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 |---|---|
 | ![py-spy](docs/flame_io_pyspy.svg) | ![llm-prof](docs/flame_io_llmprof.svg) |
 
+### 训练循环 demo（模拟 LLM 训练：数据加载 IO + 前向 + 数值反向 + checkpoint）
+
+同一 demo（train_like.py，python3.12+numpy，100Hz）双工具采样，**top5 栈完全重合**，
+但瓶颈排序不同：
+
+| 栈顶帧 | py-spy（采样点快照） | llm-prof（off-cpu 时长加权） |
+|---|---|---|
+| `load_batch`（含模拟 IO 等待） | 22.4% | **78.5%** |
+| `backward_numeric`（numpy 数值反向） | 47.1% | 11.8% |
+| `forward`（前向传播） | 8.3% | 3.6% |
+
+**关键**：demo 每步有 2ms 模拟 IO（sleep）——真实时间分配中等待占约 78%。
+llm-prof 的 off-cpu 时长加权正确揭示"瓶颈在 IO 等待"；py-spy 的采样点快照
+（ptrace 难以停住睡眠线程）**低估等待时间约 3.5 倍**，会把你的优化方向
+误导到 `backward_numeric`（只占真实时间 12%）。
+
+| py-spy | llm-prof |
+|---|---|
+| ![py-spy](docs/flame_demo_pyspy.svg) | ![llm-prof](docs/flame_demo_llmprof.svg) |
+
 ### 1000Hz 的观测者效应（重要发现）
 
 1000Hz 下 **py-spy 的 GIL 等待样本从 1.1% 虚高到 16.7%**——每毫秒暂停冻结全部线程本身就在加剧 GIL 争用，火焰图里多出的"等待"很大部分是采样器自己造成的；llm-prof（无暂停）保持 0.8%，更接近真实。
