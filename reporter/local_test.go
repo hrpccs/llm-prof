@@ -4,7 +4,9 @@
 package reporter
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -58,14 +60,24 @@ func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
 	require.Equal(t, int64(4), rep.stacks["off"])
 }
 
+func deepFrameTrace(n int) *libpf.Trace {
+	var frames libpf.Frames
+	for i := 0; i < n; i++ {
+		f := libpf.Frame{FunctionName: libpf.Intern(fmt.Sprintf("frame%d (bench.py:%d)", i, i+1))}
+		frames.Append(&f)
+	}
+	return &libpf.Trace{Frames: frames}
+}
+
 func TestWriteOutputInfernoStyleSVG(t *testing.T) {
-	rep := NewLocalReporter("/tmp/llmprof_svg_test.svg", 0, 20, 1.0, true)
+	svgPath := t.TempDir() + "/out.svg"
+	rep := NewLocalReporter(svgPath, 0, 20, 1.0, true)
 	require.NoError(t, rep.ReportTraceEvent(frameTrace("cpu_work (bench.py:16)"), nil))
-	require.NoError(t, rep.ReportTraceEvent(frameTrace("cpu_work (bench.py:15)"), nil))
+	// A deep stack (maxDepth-1 frames) exercises the footer overlap fix.
+	require.NoError(t, rep.ReportTraceEvent(deepFrameTrace(19), nil))
 	require.NoError(t, rep.WriteOutput())
 
-	// Check the inferno-style static structure is present and well-formed.
-	b, err := os.ReadFile("/tmp/llmprof_svg_test.svg")
+	b, err := os.ReadFile(svgPath)
 	require.NoError(t, err)
 	out := string(b)
 	require.Contains(t, out, `<!DOCTYPE svg PUBLIC`)
@@ -73,9 +85,15 @@ func TestWriteOutputInfernoStyleSVG(t *testing.T) {
 	require.Contains(t, out, `#frames > *:hover`)
 	require.Contains(t, out, `<g id="frames">`)
 	require.Contains(t, out, `<title>cpu_work (bench.py:16)</title>`)
-	require.Contains(t, out, `<text`)
 	require.Contains(t, out, `viewBox="0 0 1200`)
 	require.Contains(t, out, `</svg>`)
+
+	// The deepest rendered frame (depth 19) must not overlap the footer:
+	// the footer hint text must appear after the last frame row.
+	footerIdx := strings.Index(out, "hover a frame for the full stack path")
+	require.Greater(t, footerIdx, 0, "footer hint text should exist")
+	lastFrameBottom := strings.LastIndex(out, `height="15" fill=`)
+	require.Greater(t, footerIdx, lastFrameBottom, "footer must come after the deepest frame row")
 }
 
 func TestReportTraceEventZeroProbabilityDefaults(t *testing.T) {
