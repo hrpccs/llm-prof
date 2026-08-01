@@ -42,7 +42,9 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 | IO 等待点 `main:42` | ≈100% | **≈100%** |
 | 等待型负载样本量 | 88 | **4238（约 48 倍）** |
 
-### 同一负载的火焰图对比（IO/sleep 型，100Hz）
+### 同一负载的对比图（IO/sleep 型，100Hz）
+
+所有对比图统一流程：py-spy 与 llm-prof 都先输出 **pprof**（llm-prof 直接 `-o .pb.gz`，py-spy raw 经 `pyraw2pprof` 转换），再用 `go tool pprof -svg` 统一渲染（`demo-cases/gen_unified_svgs.sh`），两侧渲染风格完全一致。
 
 左侧 py-spy（采样点快照），右侧 llm-prof（on+off 统一，时长加权）——同样的等待点 `main (bench.py:42)`，llm-prof 的样本量约为 48 倍：
 
@@ -113,7 +115,7 @@ llm-prof 全配置 <1%）；**负载含任何等待（锁/IO/sleep）时 py-spy 
 sleep 只看到 5-21%，且把等待负载误显示为"计算占 84%"；llm-prof 开 `-off-cpu-threshold 1.0`
 后等待可见性 73-89% 与真实时间分配吻合，1000Hz 下开销仍接近零。
 
-火焰图对比（GIL 争用 case，左侧 py-spy 全显示计算、右侧 llm-prof off-cpu 揭示 89% 等锁）：
+火焰图对比（GIL 争用 case，左侧 py-spy 全显示计算、右侧 llm-prof off-cpu 揭示 89% 等锁；两图均为 `go tool pprof -svg` 统一渲染）：
 
 | py-spy | llm-prof |
 |---|---|

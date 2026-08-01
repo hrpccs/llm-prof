@@ -1,417 +1,950 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
-<stop stop-color="#eeeeee" offset="5%"/><stop stop-color="#eeeeb0" offset="95%"/>
-</linearGradient></defs>
-<style type="text/css">
-text { font-family:monospace; font-size:12px }
-#title { font-size:17px; font-weight:bold; }
-#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }
-</style>
-<rect x="0" y="0" width="1200" height="360" fill="url(#background)"/>
-<text id="title" x="4" y="17">llm-prof flamegraph (4614 samples)</text>
-<g id="frames">
-<g x="0" y="40" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="0" y="40" width="1200" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="51">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
-</g>
-<g x="0" y="56" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69)</title>
-<rect x="0" y="56" width="1200" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="67">&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69)</text>
-</g>
-<g x="0" y="72" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194)</title>
-<rect x="0" y="72" width="1200" height="15" fill="#bebada" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="83">run (/usr/lib/python3.12/asyncio/runners.py:194)</text>
-</g>
-<g x="0" y="88" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118)</title>
-<rect x="0" y="88" width="1200" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="99">Runner.run (/usr/lib/python3.12/asyncio/runners.py:118)</text>
-</g>
-<g x="0" y="104" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674)</title>
-<rect x="0" y="104" width="1200" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="115">BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674)</text>
-</g>
-<g x="0" y="120" width="1200" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641)</title>
-<rect x="0" y="120" width="1200" height="15" fill="#bebada" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="131">BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641)</text>
-</g>
-<g x="0" y="136" width="920" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949)</title>
-<rect x="0" y="136" width="920" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="147">BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949)</text>
-</g>
-<g x="0" y="152" width="917" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949);EpollSelector.select (/usr/lib/python3.12/selectors.py:468)</title>
-<rect x="0" y="152" width="917" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-<text x="2" y="163">EpollSelector.select (/usr/lib/python3.12/selectors.py:468)</text>
-</g>
-<g x="917" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949);EpollSelector.select (/usr/lib/python3.12/selectors.py:464)</title>
-<rect x="917" y="152" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="918" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949);EpollSelector.select (/usr/lib/python3.12/selectors.py:471)</title>
-<rect x="918" y="152" width="1" height="15" fill="#bc80bd" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="918" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949);EpollSelector.select (/usr/lib/python3.12/selectors.py:459)</title>
-<rect x="918" y="152" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="919" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1949);EpollSelector.select (/usr/lib/python3.12/selectors.py:454)</title>
-<rect x="919" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="920" y="136" width="271" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987)</title>
-<rect x="920" y="136" width="271" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="147">BaseEventLoop._run_once (/usr/lib/pyth</text>
-</g>
-<g x="920" y="152" width="270" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88)</title>
-<rect x="920" y="152" width="270" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="163">Handle._run (/usr/lib/python3.12/async</text>
-</g>
-<g x="920" y="168" width="266" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="920" y="168" width="266" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="179">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
-</g>
-<g x="920" y="184" width="248" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60)</title>
-<rect x="920" y="184" width="248" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="195">main (/home/ubuntu/ai-infra/infer_a</text>
-</g>
-<g x="920" y="200" width="248" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43)</title>
-<rect x="920" y="200" width="248" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="211">scheduler (/home/ubuntu/ai-infra/in</text>
-</g>
-<g x="920" y="216" width="241" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27)</title>
-<rect x="920" y="216" width="241" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="227">decode_loop (/home/ubuntu/ai-infra</text>
-</g>
-<g x="920" y="232" width="170" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:17)</title>
-<rect x="920" y="232" width="170" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-<text x="922" y="243">fake_forward (/home/ubun</text>
-</g>
-<g x="1091" y="232" width="43" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:18)</title>
-<rect x="1091" y="232" width="43" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-<text x="1093" y="243">fake_f</text>
-</g>
-<g x="1134" y="232" width="26" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19)</title>
-<rect x="1134" y="232" width="26" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1134" y="248" width="25" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1134" y="248" width="25" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1134" y="264" width="8" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:132)</title>
-<rect x="1134" y="264" width="8" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1143" y="264" width="6" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:142)</title>
-<rect x="1143" y="264" width="6" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1149" y="264" width="5" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120)</title>
-<rect x="1149" y="264" width="5" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1149" y="280" width="4" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120);_count_reduce_items (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:84)</title>
-<rect x="1149" y="280" width="4" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1153" y="280" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120);_count_reduce_items (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:83)</title>
-<rect x="1153" y="280" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1154" y="280" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:120);_count_reduce_items (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:78)</title>
-<rect x="1154" y="280" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1155" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:121)</title>
-<rect x="1155" y="264" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1157" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:133)</title>
-<rect x="1157" y="264" width="1" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1157" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:126)</title>
-<rect x="1157" y="264" width="1" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1158" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:128)</title>
-<rect x="1158" y="264" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1159" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:27);fake_forward (/home/ubuntu/ai-infra/infer_asyncio.py:19);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_mean (/home/ubuntu/.local/lib/python3.12/site-packages/numpy/_core/_methods.py:138)</title>
-<rect x="1159" y="264" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="216" width="7" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25)</title>
-<rect x="1161" y="216" width="7" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="232" width="4" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660)</title>
-<rect x="1161" y="232" width="4" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="248" width="4" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761)</title>
-<rect x="1161" y="248" width="4" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="264" width="3" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1161" y="264" width="3" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="280" width="3" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778)</title>
-<rect x="1161" y="280" width="3" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="296" width="3" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1161" y="296" width="3" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="312" width="3" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:111)</title>
-<rect x="1161" y="312" width="3" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="328" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:111);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:44)</title>
-<rect x="1161" y="328" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1161" y="328" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:111);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:40)</title>
-<rect x="1161" y="328" width="1" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1164" y="280" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:781)</title>
-<rect x="1164" y="280" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1164" y="296" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:781);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1164" y="296" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1164" y="312" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:781);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__lt__ (/usr/lib/python3.12/asyncio/events.py:127)</title>
-<rect x="1164" y="312" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1165" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);BaseEventLoop.time (/usr/lib/python3.12/asyncio/base_events.py:741)</title>
-<rect x="1165" y="264" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1165" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:666)</title>
-<rect x="1165" y="232" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1165" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:157)</title>
-<rect x="1165" y="248" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1165" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:157);Handle.cancel (/usr/lib/python3.12/asyncio/events.py:74)</title>
-<rect x="1165" y="264" width="1" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1166" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:157);Handle.cancel (/usr/lib/python3.12/asyncio/events.py:75)</title>
-<rect x="1166" y="264" width="1" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1166" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:156)</title>
-<rect x="1166" y="248" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1166" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:664)</title>
-<rect x="1166" y="232" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1167" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:658)</title>
-<rect x="1167" y="232" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1167" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:659)</title>
-<rect x="1167" y="232" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1167" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:43);decode_loop (/home/ubuntu/ai-infra/infer_asyncio.py:25);sleep (/usr/lib/python3.12/asyncio/tasks.py:659);BaseEventLoop.create_future (/usr/lib/python3.12/asyncio/base_events.py:449)</title>
-<rect x="1167" y="248" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1168" y="200" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:45)</title>
-<rect x="1168" y="200" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1168" y="216" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:45);sleep (/usr/lib/python3.12/asyncio/tasks.py:666)</title>
-<rect x="1168" y="216" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1168" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);main (/home/ubuntu/ai-infra/infer_asyncio.py:60);scheduler (/home/ubuntu/ai-infra/infer_asyncio.py:45);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:157)</title>
-<rect x="1168" y="232" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="184" width="13" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315)</title>
-<rect x="1169" y="184" width="13" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="200" width="11" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1169" y="200" width="11" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="216" width="11" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799)</title>
-<rect x="1169" y="216" width="11" height="15" fill="#bebada" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="232" width="11" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799);BaseEventLoop._call_soon (/usr/lib/python3.12/asyncio/base_events.py:815)</title>
-<rect x="1169" y="232" width="11" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799);BaseEventLoop._call_soon (/usr/lib/python3.12/asyncio/base_events.py:815);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1169" y="248" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799);BaseEventLoop._call_soon (/usr/lib/python3.12/asyncio/base_events.py:815);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:45)</title>
-<rect x="1169" y="264" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799);BaseEventLoop._call_soon (/usr/lib/python3.12/asyncio/base_events.py:815);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:44)</title>
-<rect x="1169" y="264" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1169" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:799);BaseEventLoop._call_soon (/usr/lib/python3.12/asyncio/base_events.py:815);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:40)</title>
-<rect x="1169" y="264" width="1" height="15" fill="#fdb462" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1180" y="216" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:315);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_soon (/usr/lib/python3.12/asyncio/base_events.py:795)</title>
-<rect x="1180" y="216" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="184" width="4" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51)</title>
-<rect x="1182" y="184" width="4" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="200" width="2" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660)</title>
-<rect x="1182" y="200" width="2" height="15" fill="#fccde5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="216" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761)</title>
-<rect x="1182" y="216" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="232" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1182" y="232" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778)</title>
-<rect x="1182" y="248" width="1" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="264" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
-<rect x="1182" y="264" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="280" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:112)</title>
-<rect x="1182" y="280" width="1" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="280" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:111)</title>
-<rect x="1182" y="280" width="1" height="15" fill="#ccebc5" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1182" y="296" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:778);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);TimerHandle.__init__ (/usr/lib/python3.12/asyncio/events.py:111);Handle.__init__ (/usr/lib/python3.12/asyncio/events.py:36)</title>
-<rect x="1182" y="296" width="1" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1183" y="248" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:660);BaseEventLoop.call_later (/usr/lib/python3.12/asyncio/base_events.py:761);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);BaseEventLoop.call_at (/usr/lib/python3.12/asyncio/base_events.py:781)</title>
-<rect x="1183" y="248" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1184" y="200" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:664)</title>
-<rect x="1184" y="200" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1184" y="200" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:666)</title>
-<rect x="1184" y="200" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1184" y="216" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:666);TimerHandle.cancel (/usr/lib/python3.12/asyncio/events.py:155)</title>
-<rect x="1184" y="216" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1184" y="200" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:654)</title>
-<rect x="1184" y="200" width="1" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1184" y="200" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);metrics_loop (/home/ubuntu/ai-infra/infer_asyncio.py:51);sleep (/usr/lib/python3.12/asyncio/tasks.py:659)</title>
-<rect x="1184" y="200" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1186" y="184" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1987);Handle._run (/usr/lib/python3.12/asyncio/events.py:88);&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);_set_result_unless_cancelled (/usr/lib/python3.12/asyncio/futures.py:313)</title>
-<rect x="1186" y="184" width="1" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1191" y="136" width="3" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1947)</title>
-<rect x="1191" y="136" width="3" height="15" fill="#ffffb3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1191" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1947);BaseEventLoop.time (/usr/lib/python3.12/asyncio/base_events.py:741)</title>
-<rect x="1191" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1194" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1955)</title>
-<rect x="1194" y="136" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1194" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1955);BaseEventLoop.time (/usr/lib/python3.12/asyncio/base_events.py:741)</title>
-<rect x="1194" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1196" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1960)</title>
-<rect x="1196" y="136" width="1" height="15" fill="#1f78b4" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1196" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1970)</title>
-<rect x="1196" y="136" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1197" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1988)</title>
-<rect x="1197" y="136" width="1" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1198" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1973)</title>
-<rect x="1198" y="136" width="1" height="15" fill="#e31a1c" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1198" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1956)</title>
-<rect x="1198" y="136" width="1" height="15" fill="#80b1d3" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1198" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1971)</title>
-<rect x="1198" y="136" width="1" height="15" fill="#8dd3c7" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1199" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1918)</title>
-<rect x="1199" y="136" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1199" y="136" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1950)</title>
-<rect x="1199" y="136" width="1" height="15" fill="#ffed6f" stroke="#000" stroke-width="0.5"/>
-</g>
-<g x="1199" y="152" width="1" height="15">
-<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/infer_asyncio.py:69);run (/usr/lib/python3.12/asyncio/runners.py:194);Runner.run (/usr/lib/python3.12/asyncio/runners.py:118);BaseEventLoop.run_until_complete (/usr/lib/python3.12/asyncio/base_events.py:674);BaseEventLoop.run_forever (/usr/lib/python3.12/asyncio/base_events.py:641);BaseEventLoop._run_once (/usr/lib/python3.12/asyncio/base_events.py:1950);BaseSelectorEventLoop._process_events (/usr/lib/python3.12/asyncio/selector_events.py:751)</title>
-<rect x="1199" y="152" width="1" height="15" fill="#b3de69" stroke="#000" stroke-width="0.5"/>
-</g>
-</g>
-<text x="4" y="354" font-size="11" fill="#999">llm-prof — hover a frame for the full stack path</text>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.43.0 (0)
+ -->
+<!-- Title: unnamed Pages: 1 -->
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<script type="text/ecmascript"><![CDATA[
+/**
+ *  SVGPan library 1.2.2
+ * ======================
+ *
+ * Given an unique existing element with id "viewport" (or when missing, the
+ * first g-element), including the library into any SVG adds the following
+ * capabilities:
+ *
+ *  - Mouse panning
+ *  - Mouse zooming (using the wheel)
+ *  - Object dragging
+ *
+ * You can configure the behaviour of the pan/zoom/drag with the variables
+ * listed in the CONFIGURATION section of this file.
+ *
+ * Known issues:
+ *
+ *  - Zooming (while panning) on Safari has still some issues
+ *
+ * Releases:
+ *
+ * 1.2.2, Tue Aug 30 17:21:56 CEST 2011, Andrea Leofreddi
+ *	- Fixed viewBox on root tag (#7)
+ *	- Improved zoom speed (#2)
+ *
+ * 1.2.1, Mon Jul  4 00:33:18 CEST 2011, Andrea Leofreddi
+ *	- Fixed a regression with mouse wheel (now working on Firefox 5)
+ *	- Working with viewBox attribute (#4)
+ *	- Added "use strict;" and fixed resulting warnings (#5)
+ *	- Added configuration variables, dragging is disabled by default (#3)
+ *
+ * 1.2, Sat Mar 20 08:42:50 GMT 2010, Zeng Xiaohui
+ *	Fixed a bug with browser mouse handler interaction
+ *
+ * 1.1, Wed Feb  3 17:39:33 GMT 2010, Zeng Xiaohui
+ *	Updated the zoom code to support the mouse wheel on Safari/Chrome
+ *
+ * 1.0, Andrea Leofreddi
+ *	First release
+ *
+ * This code is licensed under the following BSD license:
+ *
+ * Copyright 2009-2017 Andrea Leofreddi <a.leofreddi@vleo.net>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    2. Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    3. Neither the name of the copyright holder nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and should not be interpreted as representing official policies, either expressed
+ * or implied, of Andrea Leofreddi.
+ */
+
+"use strict";
+
+/// CONFIGURATION
+/// ====>
+
+var enablePan = 1; // 1 or 0: enable or disable panning (default enabled)
+var enableZoom = 1; // 1 or 0: enable or disable zooming (default enabled)
+var enableDrag = 0; // 1 or 0: enable or disable dragging (default disabled)
+var zoomScale = 0.2; // Zoom sensitivity
+
+/// <====
+/// END OF CONFIGURATION
+
+var root = document.documentElement;
+
+var state = 'none', svgRoot = null, stateTarget, stateOrigin, stateTf;
+
+setupHandlers(root);
+
+/**
+ * Register handlers
+ */
+function setupHandlers(root){
+	setAttributes(root, {
+		"onmouseup" : "handleMouseUp(evt)",
+		"onmousedown" : "handleMouseDown(evt)",
+		"onmousemove" : "handleMouseMove(evt)",
+		//"onmouseout" : "handleMouseUp(evt)", // Decomment this to stop the pan functionality when dragging out of the SVG element
+	});
+
+	if(navigator.userAgent.toLowerCase().indexOf('webkit') >= 0)
+		window.addEventListener('mousewheel', handleMouseWheel, false); // Chrome/Safari
+	else
+		window.addEventListener('DOMMouseScroll', handleMouseWheel, false); // Others
+}
+
+/**
+ * Retrieves the root element for SVG manipulation. The element is then cached into the svgRoot global variable.
+ */
+function getRoot(root) {
+	if(svgRoot == null) {
+		var r = root.getElementById("viewport") ? root.getElementById("viewport") : root.documentElement, t = r;
+
+		while(t != root) {
+			if(t.getAttribute("viewBox")) {
+				setCTM(r, t.getCTM());
+
+				t.removeAttribute("viewBox");
+			}
+
+			t = t.parentNode;
+		}
+
+		svgRoot = r;
+	}
+
+	return svgRoot;
+}
+
+/**
+ * Instance an SVGPoint object with given event coordinates.
+ */
+function getEventPoint(evt) {
+	var p = root.createSVGPoint();
+
+	p.x = evt.clientX;
+	p.y = evt.clientY;
+
+	return p;
+}
+
+/**
+ * Sets the current transform matrix of an element.
+ */
+function setCTM(element, matrix) {
+	var s = "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + matrix.e + "," + matrix.f + ")";
+
+	element.setAttribute("transform", s);
+}
+
+/**
+ * Dumps a matrix to a string (useful for debug).
+ */
+function dumpMatrix(matrix) {
+	var s = "[ " + matrix.a + ", " + matrix.c + ", " + matrix.e + "\n  " + matrix.b + ", " + matrix.d + ", " + matrix.f + "\n  0, 0, 1 ]";
+
+	return s;
+}
+
+/**
+ * Sets attributes of an element.
+ */
+function setAttributes(element, attributes){
+	for (var i in attributes)
+		element.setAttributeNS(null, i, attributes[i]);
+}
+
+/**
+ * Handle mouse wheel event.
+ */
+function handleMouseWheel(evt) {
+	if(!enableZoom)
+		return;
+
+	if(evt.preventDefault)
+		evt.preventDefault();
+
+	evt.returnValue = false;
+
+	var svgDoc = evt.target.ownerDocument;
+
+	var delta;
+
+	if(evt.wheelDelta)
+		delta = evt.wheelDelta / 360; // Chrome/Safari
+	else
+		delta = evt.detail / -9; // Mozilla
+
+	var z = Math.pow(1 + zoomScale, delta);
+
+	var g = getRoot(svgDoc);
+	
+	var p = getEventPoint(evt);
+
+	p = p.matrixTransform(g.getCTM().inverse());
+
+	// Compute new scale matrix in current mouse position
+	var k = root.createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
+
+        setCTM(g, g.getCTM().multiply(k));
+
+	if(typeof(stateTf) == "undefined")
+		stateTf = g.getCTM().inverse();
+
+	stateTf = stateTf.multiply(k.inverse());
+}
+
+/**
+ * Handle mouse move event.
+ */
+function handleMouseMove(evt) {
+	if(evt.preventDefault)
+		evt.preventDefault();
+
+	evt.returnValue = false;
+
+	var svgDoc = evt.target.ownerDocument;
+
+	var g = getRoot(svgDoc);
+
+	if(state == 'pan' && enablePan) {
+		// Pan mode
+		var p = getEventPoint(evt).matrixTransform(stateTf);
+
+		setCTM(g, stateTf.inverse().translate(p.x - stateOrigin.x, p.y - stateOrigin.y));
+	} else if(state == 'drag' && enableDrag) {
+		// Drag mode
+		var p = getEventPoint(evt).matrixTransform(g.getCTM().inverse());
+
+		setCTM(stateTarget, root.createSVGMatrix().translate(p.x - stateOrigin.x, p.y - stateOrigin.y).multiply(g.getCTM().inverse()).multiply(stateTarget.getCTM()));
+
+		stateOrigin = p;
+	}
+}
+
+/**
+ * Handle click event.
+ */
+function handleMouseDown(evt) {
+	if(evt.preventDefault)
+		evt.preventDefault();
+
+	evt.returnValue = false;
+
+	var svgDoc = evt.target.ownerDocument;
+
+	var g = getRoot(svgDoc);
+
+	if(
+		evt.target.tagName == "svg"
+		|| !enableDrag // Pan anyway when drag is disabled and the user clicked on an element
+	) {
+		// Pan mode
+		state = 'pan';
+
+		stateTf = g.getCTM().inverse();
+
+		stateOrigin = getEventPoint(evt).matrixTransform(stateTf);
+	} else {
+		// Drag mode
+		state = 'drag';
+
+		stateTarget = evt.target;
+
+		stateTf = g.getCTM().inverse();
+
+		stateOrigin = getEventPoint(evt).matrixTransform(stateTf);
+	}
+}
+
+/**
+ * Handle mouse button release event.
+ */
+function handleMouseUp(evt) {
+	if(evt.preventDefault)
+		evt.preventDefault();
+
+	evt.returnValue = false;
+
+	var svgDoc = evt.target.ownerDocument;
+
+	if(state == 'pan' || state == 'drag') {
+		// Quit pan mode
+		state = '';
+	}
+}
+]]></script><g id="viewport" transform="scale(0.5,0.5) translate(0,0)"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1540)">
+<title>unnamed</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-1540 1720,-1540 1720,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>cluster_L</title>
+<polygon fill="none" stroke="black" points="8,-1359 8,-1528 762,-1528 762,-1359 8,-1359"/>
+</g>
+<!-- Type: samples -->
+<g id="node1" class="node">
+<title>Type: samples</title>
+<polygon fill="#f8f8f8" stroke="black" points="754,-1520 16,-1520 16,-1367 754,-1367 754,-1520"/>
+<text text-anchor="start" x="24" y="-1503.2" font-family="Times,serif" font-size="16.00">Type: samples</text>
+<text text-anchor="start" x="24" y="-1485.2" font-family="Times,serif" font-size="16.00">Time: Aug 1, 2026 at 3:32pm (UTC)</text>
+<text text-anchor="start" x="24" y="-1467.2" font-family="Times,serif" font-size="16.00">Active filters:</text>
+<text text-anchor="start" x="24" y="-1449.2" font-family="Times,serif" font-size="16.00"> &#160;&#160;ignore=asm_sysvec|sysvec_|irqentry|entry_SYSCALL|do_syscall_64|x64_sys_call|fini…</text>
+<text text-anchor="start" x="24" y="-1431.2" font-family="Times,serif" font-size="16.00">Showing nodes accounting for 5483, 42.07% of 13034 total</text>
+<text text-anchor="start" x="24" y="-1413.2" font-family="Times,serif" font-size="16.00">Dropped 186 nodes (cum &lt;= 65)</text>
+<text text-anchor="start" x="24" y="-1376.2" font-family="Times,serif" font-size="16.00">See https://git.io/JfYMW for how to read the graph</text>
+</g>
+<!-- N1 -->
+<g id="node1" class="node">
+<title>N1</title>
+<g id="a_node1"><a xlink:title="0x4357d7 (4259)">
+<polygon fill="#eddcd5" stroke="#b23200" points="930.5,-1229 707.5,-1229 707.5,-1143 930.5,-1143 930.5,-1229"/>
+<text text-anchor="middle" x="819" y="-1205.8" font-family="Times,serif" font-size="24.00">0x4357d7</text>
+<text text-anchor="middle" x="819" y="-1179.8" font-family="Times,serif" font-size="24.00">4258 (32.67%)</text>
+<text text-anchor="middle" x="819" y="-1153.8" font-family="Times,serif" font-size="24.00">of 4259 (32.68%)</text>
+</a>
+</g>
+</g>
+<!-- N2 -->
+<g id="node2" class="node">
+<title>N2</title>
+<g id="a_node2"><a xlink:title="0x9cb83 (5317)">
+<polygon fill="#eddbd5" stroke="#b22a00" points="866,-1316 772,-1316 772,-1280 866,-1280 866,-1316"/>
+<text text-anchor="middle" x="819" y="-1300.6" font-family="Times,serif" font-size="8.00">0x9cb83</text>
+<text text-anchor="middle" x="819" y="-1291.6" font-family="Times,serif" font-size="8.00">0 of 5317 (40.79%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N1 -->
+<g id="edge2" class="edge">
+<title>N2&#45;&gt;N1</title>
+<g id="a_edge2"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d7 (4259)">
+<path fill="none" stroke="#b23200" stroke-width="2" d="M819,-1279.81C819,-1268.82 819,-1253.91 819,-1239.26"/>
+<polygon fill="#b23200" stroke="#b23200" stroke-width="2" points="822.5,-1239.21 819,-1229.21 815.5,-1239.21 822.5,-1239.21"/>
+</a>
+</g>
+<g id="a_edge2&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d7 (4259)">
+<text text-anchor="middle" x="839.5" y="-1250.8" font-family="Times,serif" font-size="14.00"> 4259</text>
+</a>
+</g>
+</g>
+<!-- N5 -->
+<g id="node5" class="node">
+<title>N5</title>
+<g id="a_node5"><a xlink:title="0x4357df (226)">
+<polygon fill="#edeceb" stroke="#b2ada3" points="1037.5,-1204 948.5,-1204 948.5,-1168 1037.5,-1168 1037.5,-1204"/>
+<text text-anchor="middle" x="993" y="-1189.4" font-family="Times,serif" font-size="12.00">0x4357df</text>
+<text text-anchor="middle" x="993" y="-1176.4" font-family="Times,serif" font-size="12.00">226 (1.73%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N5 -->
+<g id="edge3" class="edge">
+<title>N2&#45;&gt;N5</title>
+<g id="a_edge3"><a xlink:title="0x9cb83 &#45;&gt; 0x4357df (226)">
+<path fill="none" stroke="#b2ada3" d="M852.11,-1279.92C876.65,-1266.86 910.61,-1247.94 939,-1229 947.51,-1223.33 956.4,-1216.72 964.46,-1210.45"/>
+<polygon fill="#b2ada3" stroke="#b2ada3" points="966.83,-1213.03 972.5,-1204.08 962.48,-1207.54 966.83,-1213.03"/>
+</a>
+</g>
+<g id="a_edge3&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357df (226)">
+<text text-anchor="middle" x="926" y="-1250.8" font-family="Times,serif" font-size="14.00"> 226</text>
+</a>
+</g>
+</g>
+<!-- N6 -->
+<g id="node6" class="node">
+<title>N6</title>
+<g id="a_node6"><a xlink:title="0x4357d9 (192)">
+<polygon fill="#edeceb" stroke="#b2aea5" points="1144.5,-1204 1055.5,-1204 1055.5,-1168 1144.5,-1168 1144.5,-1204"/>
+<text text-anchor="middle" x="1100" y="-1189.4" font-family="Times,serif" font-size="12.00">0x4357d9</text>
+<text text-anchor="middle" x="1100" y="-1176.4" font-family="Times,serif" font-size="12.00">192 (1.47%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N6 -->
+<g id="edge4" class="edge">
+<title>N2&#45;&gt;N6</title>
+<g id="a_edge4"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d9 (192)">
+<path fill="none" stroke="#b2aea5" d="M866.13,-1288.77C913.81,-1279.14 988.6,-1260.37 1047,-1229 1056.31,-1224 1065.62,-1217.32 1073.79,-1210.77"/>
+<polygon fill="#b2aea5" stroke="#b2aea5" points="1076.08,-1213.41 1081.53,-1204.32 1071.6,-1208.03 1076.08,-1213.41"/>
+</a>
+</g>
+<g id="a_edge4&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d9 (192)">
+<text text-anchor="middle" x="1021" y="-1250.8" font-family="Times,serif" font-size="14.00"> 192</text>
+</a>
+</g>
+</g>
+<!-- N7 -->
+<g id="node7" class="node">
+<title>N7</title>
+<g id="a_node7"><a xlink:title="0x4357d3 (190)">
+<polygon fill="#edeceb" stroke="#b2aea5" points="1251.5,-1204 1162.5,-1204 1162.5,-1168 1251.5,-1168 1251.5,-1204"/>
+<text text-anchor="middle" x="1207" y="-1189.4" font-family="Times,serif" font-size="12.00">0x4357d3</text>
+<text text-anchor="middle" x="1207" y="-1176.4" font-family="Times,serif" font-size="12.00">190 (1.46%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N7 -->
+<g id="edge5" class="edge">
+<title>N2&#45;&gt;N7</title>
+<g id="a_edge5"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d3 (190)">
+<path fill="none" stroke="#b2aea5" d="M866.08,-1295.49C933.45,-1291.59 1059.63,-1277.78 1154,-1229 1163.54,-1224.07 1173.03,-1217.29 1181.29,-1210.63"/>
+<polygon fill="#b2aea5" stroke="#b2aea5" points="1183.69,-1213.18 1189.1,-1204.07 1179.19,-1207.82 1183.69,-1213.18"/>
+</a>
+</g>
+<g id="a_edge5&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357d3 (190)">
+<text text-anchor="middle" x="1127" y="-1250.8" font-family="Times,serif" font-size="14.00"> 190</text>
+</a>
+</g>
+</g>
+<!-- N8 -->
+<g id="node8" class="node">
+<title>N8</title>
+<g id="a_node8"><a xlink:title="0x4357c4 (168)">
+<polygon fill="#edeceb" stroke="#b2afa6" points="1358.5,-1204 1269.5,-1204 1269.5,-1168 1358.5,-1168 1358.5,-1204"/>
+<text text-anchor="middle" x="1314" y="-1189.4" font-family="Times,serif" font-size="12.00">0x4357c4</text>
+<text text-anchor="middle" x="1314" y="-1176.4" font-family="Times,serif" font-size="12.00">168 (1.29%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N8 -->
+<g id="edge6" class="edge">
+<title>N2&#45;&gt;N8</title>
+<g id="a_edge6"><a xlink:title="0x9cb83 &#45;&gt; 0x4357c4 (168)">
+<path fill="none" stroke="#b2afa6" d="M866.1,-1294.58C930.16,-1290.69 1048.1,-1281.43 1147,-1262 1198.76,-1251.83 1214.12,-1253.17 1261,-1229 1270.55,-1224.08 1280.04,-1217.31 1288.3,-1210.64"/>
+<polygon fill="#b2afa6" stroke="#b2afa6" points="1290.7,-1213.2 1296.1,-1204.08 1286.2,-1207.84 1290.7,-1213.2"/>
+</a>
+</g>
+<g id="a_edge6&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357c4 (168)">
+<text text-anchor="middle" x="1233" y="-1250.8" font-family="Times,serif" font-size="14.00"> 168</text>
+</a>
+</g>
+</g>
+<!-- N9 -->
+<g id="node9" class="node">
+<title>N9</title>
+<g id="a_node9"><a xlink:title="0x4357cf (164)">
+<polygon fill="#edeceb" stroke="#b2afa7" points="1465.5,-1204 1376.5,-1204 1376.5,-1168 1465.5,-1168 1465.5,-1204"/>
+<text text-anchor="middle" x="1421" y="-1189.4" font-family="Times,serif" font-size="12.00">0x4357cf</text>
+<text text-anchor="middle" x="1421" y="-1176.4" font-family="Times,serif" font-size="12.00">164 (1.26%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N9 -->
+<g id="edge7" class="edge">
+<title>N2&#45;&gt;N9</title>
+<g id="a_edge7"><a xlink:title="0x9cb83 &#45;&gt; 0x4357cf (164)">
+<path fill="none" stroke="#b2afa7" d="M866.28,-1296.26C946.45,-1294.31 1113.93,-1287.3 1253,-1262 1305.32,-1252.48 1320.71,-1253.31 1368,-1229 1377.55,-1224.09 1387.05,-1217.32 1395.31,-1210.66"/>
+<polygon fill="#b2afa7" stroke="#b2afa7" points="1397.71,-1213.21 1403.11,-1204.09 1393.2,-1207.85 1397.71,-1213.21"/>
+</a>
+</g>
+<g id="a_edge7&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x4357cf (164)">
+<text text-anchor="middle" x="1342" y="-1250.8" font-family="Times,serif" font-size="14.00"> 164</text>
+</a>
+</g>
+</g>
+<!-- N17 -->
+<g id="node17" class="node">
+<title>N17</title>
+<g id="a_node17"><a xlink:title="0x43585b (115)">
+<polygon fill="#edecec" stroke="#b2b0aa" points="1566.5,-1204 1483.5,-1204 1483.5,-1168 1566.5,-1168 1566.5,-1204"/>
+<text text-anchor="middle" x="1525" y="-1188.6" font-family="Times,serif" font-size="8.00">0x43585b</text>
+<text text-anchor="middle" x="1525" y="-1179.6" font-family="Times,serif" font-size="8.00">0 of 115 (0.88%)</text>
+</a>
+</g>
+</g>
+<!-- N2&#45;&gt;N17 -->
+<g id="edge9" class="edge">
+<title>N2&#45;&gt;N17</title>
+<g id="a_edge9"><a xlink:title="0x9cb83 &#45;&gt; 0x43585b (115)">
+<path fill="none" stroke="#b2b0aa" d="M866.26,-1297.43C961.05,-1297.52 1180.81,-1293.9 1362,-1262 1413.53,-1252.93 1428.87,-1253.69 1475,-1229 1483.96,-1224.21 1492.77,-1217.63 1500.44,-1211.09"/>
+<polygon fill="#b2b0aa" stroke="#b2b0aa" points="1503.13,-1213.38 1508.27,-1204.11 1498.47,-1208.15 1503.13,-1213.38"/>
+</a>
+</g>
+<g id="a_edge9&#45;label"><a xlink:title="0x9cb83 &#45;&gt; 0x43585b (115)">
+<text text-anchor="middle" x="1450" y="-1250.8" font-family="Times,serif" font-size="14.00"> 115</text>
+</a>
+</g>
+</g>
+<!-- N3 -->
+<g id="node3" class="node">
+<title>N3</title>
+<g id="a_node3"><a xlink:title="0x129d6b (5317)">
+<polygon fill="#eddbd5" stroke="#b22a00" points="866,-1461.5 772,-1461.5 772,-1425.5 866,-1425.5 866,-1461.5"/>
+<text text-anchor="middle" x="819" y="-1446.1" font-family="Times,serif" font-size="8.00">0x129d6b</text>
+<text text-anchor="middle" x="819" y="-1437.1" font-family="Times,serif" font-size="8.00">0 of 5317 (40.79%)</text>
+</a>
+</g>
+</g>
+<!-- N3&#45;&gt;N2 -->
+<g id="edge1" class="edge">
+<title>N3&#45;&gt;N2</title>
+<g id="a_edge1"><a xlink:title="0x129d6b &#45;&gt; 0x9cb83 (5317)">
+<path fill="none" stroke="#b22a00" stroke-width="3" d="M819,-1425.48C819,-1400.99 819,-1355.56 819,-1326.33"/>
+<polygon fill="#b22a00" stroke="#b22a00" stroke-width="3" points="822.5,-1326 819,-1316 815.5,-1326 822.5,-1326"/>
+</a>
+</g>
+<g id="a_edge1&#45;label"><a xlink:title="0x129d6b &#45;&gt; 0x9cb83 (5317)">
+<text text-anchor="middle" x="839.5" y="-1337.8" font-family="Times,serif" font-size="14.00"> 5317</text>
+</a>
+</g>
+</g>
+<!-- N4 -->
+<g id="node4" class="node">
+<title>N4</title>
+<g id="a_node4"><a xlink:title="[unwind&#45;error] (280)">
+<polygon fill="#edecea" stroke="#b2ac9f" points="1328.5,-1461.5 1215.5,-1461.5 1215.5,-1425.5 1328.5,-1425.5 1328.5,-1461.5"/>
+<text text-anchor="middle" x="1272" y="-1447.1" font-family="Times,serif" font-size="13.00">[unwind&#45;error]</text>
+<text text-anchor="middle" x="1272" y="-1433.1" font-family="Times,serif" font-size="13.00">280 (2.15%)</text>
+</a>
+</g>
+</g>
+<!-- N10 -->
+<g id="node10" class="node">
+<title>N10</title>
+<g id="a_node10"><a xlink:title="0x435588 (115)">
+<polygon fill="#edecec" stroke="#b2b0aa" points="1566.5,-1092 1483.5,-1092 1483.5,-1056 1566.5,-1056 1566.5,-1092"/>
+<text text-anchor="middle" x="1525" y="-1076.6" font-family="Times,serif" font-size="8.00">0x435588</text>
+<text text-anchor="middle" x="1525" y="-1067.6" font-family="Times,serif" font-size="8.00">0 of 115 (0.88%)</text>
+</a>
+</g>
+</g>
+<!-- N11 -->
+<g id="node11" class="node">
+<title>N11</title>
+<g id="a_node11"><a xlink:title="0x21bfb9 (37)">
+<polygon fill="#ededec" stroke="#b2b2af" points="1493,-1005 1415,-1005 1415,-969 1493,-969 1493,-1005"/>
+<text text-anchor="middle" x="1454" y="-989.6" font-family="Times,serif" font-size="8.00">0x21bfb9</text>
+<text text-anchor="middle" x="1454" y="-980.6" font-family="Times,serif" font-size="8.00">0 of 37 (0.28%)</text>
+</a>
+</g>
+</g>
+<!-- N10&#45;&gt;N11 -->
+<g id="edge10" class="edge">
+<title>N10&#45;&gt;N11</title>
+<g id="a_edge10"><a xlink:title="0x435588 &#45;&gt; 0x21bfb9 (37)">
+<path fill="none" stroke="#b2b2af" d="M1510.63,-1055.8C1500.33,-1043.47 1486.31,-1026.68 1474.79,-1012.89"/>
+<polygon fill="#b2b2af" stroke="#b2b2af" points="1477.44,-1010.61 1468.35,-1005.18 1472.07,-1015.09 1477.44,-1010.61"/>
+</a>
+</g>
+<g id="a_edge10&#45;label"><a xlink:title="0x435588 &#45;&gt; 0x21bfb9 (37)">
+<text text-anchor="middle" x="1504.5" y="-1026.8" font-family="Times,serif" font-size="14.00"> 37</text>
+</a>
+</g>
+</g>
+<!-- N14 -->
+<g id="node14" class="node">
+<title>N14</title>
+<g id="a_node14"><a xlink:title="0x21b921 (28)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1589,-1005 1511,-1005 1511,-969 1589,-969 1589,-1005"/>
+<text text-anchor="middle" x="1550" y="-989.6" font-family="Times,serif" font-size="8.00">0x21b921</text>
+<text text-anchor="middle" x="1550" y="-980.6" font-family="Times,serif" font-size="8.00">0 of 28 (0.21%)</text>
+</a>
+</g>
+</g>
+<!-- N10&#45;&gt;N14 -->
+<g id="edge26" class="edge">
+<title>N10&#45;&gt;N14</title>
+<g id="a_edge26"><a xlink:title="0x435588 &#45;&gt; 0x21b921 (28)">
+<path fill="none" stroke="#b2b2b0" d="M1530.06,-1055.8C1533.52,-1044.05 1538.17,-1028.24 1542.11,-1014.84"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1545.48,-1015.76 1544.95,-1005.18 1538.77,-1013.78 1545.48,-1015.76"/>
+</a>
+</g>
+<g id="a_edge26&#45;label"><a xlink:title="0x435588 &#45;&gt; 0x21b921 (28)">
+<text text-anchor="middle" x="1549.5" y="-1026.8" font-family="Times,serif" font-size="14.00"> 28</text>
+</a>
+</g>
+</g>
+<!-- N12 -->
+<g id="node12" class="node">
+<title>N12</title>
+<g id="a_node12"><a xlink:title="BaseEventLoop._run_once (32)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1714,-48 1626,-48 1626,0 1714,0 1714,-48"/>
+<text text-anchor="middle" x="1670" y="-36.8" font-family="Times,serif" font-size="9.00">BaseEventLoop</text>
+<text text-anchor="middle" x="1670" y="-26.8" font-family="Times,serif" font-size="9.00">_run_once</text>
+<text text-anchor="middle" x="1670" y="-16.8" font-family="Times,serif" font-size="9.00">5 (0.038%)</text>
+<text text-anchor="middle" x="1670" y="-6.8" font-family="Times,serif" font-size="9.00">of 32 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N13 -->
+<g id="node13" class="node">
+<title>N13</title>
+<g id="a_node13"><a xlink:title="0x680fbd (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-1461.5 1631,-1461.5 1631,-1425.5 1709,-1425.5 1709,-1461.5"/>
+<text text-anchor="middle" x="1670" y="-1446.1" font-family="Times,serif" font-size="8.00">0x680fbd</text>
+<text text-anchor="middle" x="1670" y="-1437.1" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N16 -->
+<g id="node16" class="node">
+<title>N16</title>
+<g id="a_node16"><a xlink:title="0x2a28a (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-1316 1631,-1316 1631,-1280 1709,-1280 1709,-1316"/>
+<text text-anchor="middle" x="1670" y="-1300.6" font-family="Times,serif" font-size="8.00">0x2a28a</text>
+<text text-anchor="middle" x="1670" y="-1291.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N13&#45;&gt;N16 -->
+<g id="edge14" class="edge">
+<title>N13&#45;&gt;N16</title>
+<g id="a_edge14"><a xlink:title="0x680fbd &#45;&gt; 0x2a28a (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-1425.48C1670,-1400.99 1670,-1355.56 1670,-1326.33"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-1326 1670,-1316 1666.5,-1326 1673.5,-1326"/>
+</a>
+</g>
+<g id="a_edge14&#45;label"><a xlink:title="0x680fbd &#45;&gt; 0x2a28a (33)">
+<text text-anchor="middle" x="1681.5" y="-1337.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N15 -->
+<g id="node15" class="node">
+<title>N15</title>
+<g id="a_node15"><a xlink:title="0x2a1c9 (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-1204 1631,-1204 1631,-1168 1709,-1168 1709,-1204"/>
+<text text-anchor="middle" x="1670" y="-1188.6" font-family="Times,serif" font-size="8.00">0x2a1c9</text>
+<text text-anchor="middle" x="1670" y="-1179.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N19 -->
+<g id="node19" class="node">
+<title>N19</title>
+<g id="a_node19"><a xlink:title="0x681d78 (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-1092 1631,-1092 1631,-1056 1709,-1056 1709,-1092"/>
+<text text-anchor="middle" x="1670" y="-1076.6" font-family="Times,serif" font-size="8.00">0x681d78</text>
+<text text-anchor="middle" x="1670" y="-1067.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N15&#45;&gt;N19 -->
+<g id="edge11" class="edge">
+<title>N15&#45;&gt;N19</title>
+<g id="a_edge11"><a xlink:title="0x2a1c9 &#45;&gt; 0x681d78 (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-1167.81C1670,-1150.21 1670,-1122.61 1670,-1102.07"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-1102.07 1670,-1092.07 1666.5,-1102.07 1673.5,-1102.07"/>
+</a>
+</g>
+<g id="a_edge11&#45;label"><a xlink:title="0x2a1c9 &#45;&gt; 0x681d78 (33)">
+<text text-anchor="middle" x="1681.5" y="-1113.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N16&#45;&gt;N15 -->
+<g id="edge12" class="edge">
+<title>N16&#45;&gt;N15</title>
+<g id="a_edge12"><a xlink:title="0x2a28a &#45;&gt; 0x2a1c9 (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-1279.81C1670,-1262.21 1670,-1234.61 1670,-1214.07"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-1214.07 1670,-1204.07 1666.5,-1214.07 1673.5,-1214.07"/>
+</a>
+</g>
+<g id="a_edge12&#45;label"><a xlink:title="0x2a28a &#45;&gt; 0x2a1c9 (33)">
+<text text-anchor="middle" x="1681.5" y="-1250.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N17&#45;&gt;N10 -->
+<g id="edge8" class="edge">
+<title>N17&#45;&gt;N10</title>
+<g id="a_edge8"><a xlink:title="0x43585b &#45;&gt; 0x435588 (115)">
+<path fill="none" stroke="#b2b0aa" d="M1525,-1167.81C1525,-1150.21 1525,-1122.61 1525,-1102.07"/>
+<polygon fill="#b2b0aa" stroke="#b2b0aa" points="1528.5,-1102.07 1525,-1092.07 1521.5,-1102.07 1528.5,-1102.07"/>
+</a>
+</g>
+<g id="a_edge8&#45;label"><a xlink:title="0x43585b &#45;&gt; 0x435588 (115)">
+<text text-anchor="middle" x="1541" y="-1113.8" font-family="Times,serif" font-size="14.00"> 115</text>
+</a>
+</g>
+</g>
+<!-- N18 -->
+<g id="node18" class="node">
+<title>N18</title>
+<g id="a_node18"><a xlink:title="0x6281f7 (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-657 1631,-657 1631,-621 1709,-621 1709,-657"/>
+<text text-anchor="middle" x="1670" y="-641.6" font-family="Times,serif" font-size="8.00">0x6281f7</text>
+<text text-anchor="middle" x="1670" y="-632.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N20 -->
+<g id="node20" class="node">
+<title>N20</title>
+<g id="a_node20"><a xlink:title="0x68e4d7 (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-570 1631,-570 1631,-534 1709,-534 1709,-570"/>
+<text text-anchor="middle" x="1670" y="-554.6" font-family="Times,serif" font-size="8.00">0x68e4d7</text>
+<text text-anchor="middle" x="1670" y="-545.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N18&#45;&gt;N20 -->
+<g id="edge13" class="edge">
+<title>N18&#45;&gt;N20</title>
+<g id="a_edge13"><a xlink:title="0x6281f7 &#45;&gt; 0x68e4d7 (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-620.8C1670,-609.16 1670,-593.55 1670,-580.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-580.18 1670,-570.18 1666.5,-580.18 1673.5,-580.18"/>
+</a>
+</g>
+<g id="a_edge13&#45;label"><a xlink:title="0x6281f7 &#45;&gt; 0x68e4d7 (33)">
+<text text-anchor="middle" x="1681.5" y="-591.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N21 -->
+<g id="node21" class="node">
+<title>N21</title>
+<g id="a_node21"><a xlink:title="0x6c1766 (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-1005 1631,-1005 1631,-969 1709,-969 1709,-1005"/>
+<text text-anchor="middle" x="1670" y="-989.6" font-family="Times,serif" font-size="8.00">0x6c1766</text>
+<text text-anchor="middle" x="1670" y="-980.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N19&#45;&gt;N21 -->
+<g id="edge15" class="edge">
+<title>N19&#45;&gt;N21</title>
+<g id="a_edge15"><a xlink:title="0x681d78 &#45;&gt; 0x6c1766 (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-1055.8C1670,-1044.16 1670,-1028.55 1670,-1015.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-1015.18 1670,-1005.18 1666.5,-1015.18 1673.5,-1015.18"/>
+</a>
+</g>
+<g id="a_edge15&#45;label"><a xlink:title="0x681d78 &#45;&gt; 0x6c1766 (33)">
+<text text-anchor="middle" x="1681.5" y="-1026.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N25 -->
+<g id="node25" class="node">
+<title>N25</title>
+<g id="a_node25"><a xlink:title="&lt;unknown&gt; (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-483 1631,-483 1631,-447 1709,-447 1709,-483"/>
+<text text-anchor="middle" x="1670" y="-467.6" font-family="Times,serif" font-size="8.00">&lt;unknown&gt;</text>
+<text text-anchor="middle" x="1670" y="-458.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N20&#45;&gt;N25 -->
+<g id="edge16" class="edge">
+<title>N20&#45;&gt;N25</title>
+<g id="a_edge16"><a xlink:title="0x68e4d7 ... &lt;unknown&gt; (33)">
+<path fill="none" stroke="#b2b2b0" stroke-dasharray="1,5" d="M1670,-533.8C1670,-522.16 1670,-506.55 1670,-493.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-493.18 1670,-483.18 1666.5,-493.18 1673.5,-493.18"/>
+</a>
+</g>
+<g id="a_edge16&#45;label"><a xlink:title="0x68e4d7 ... &lt;unknown&gt; (33)">
+<text text-anchor="middle" x="1681.5" y="-504.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N22 -->
+<g id="node22" class="node">
+<title>N22</title>
+<g id="a_node22"><a xlink:title="0x6c315a (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-918 1631,-918 1631,-882 1709,-882 1709,-918"/>
+<text text-anchor="middle" x="1670" y="-902.6" font-family="Times,serif" font-size="8.00">0x6c315a</text>
+<text text-anchor="middle" x="1670" y="-893.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N21&#45;&gt;N22 -->
+<g id="edge17" class="edge">
+<title>N21&#45;&gt;N22</title>
+<g id="a_edge17"><a xlink:title="0x6c1766 &#45;&gt; 0x6c315a (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-968.8C1670,-957.16 1670,-941.55 1670,-928.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-928.18 1670,-918.18 1666.5,-928.18 1673.5,-928.18"/>
+</a>
+</g>
+<g id="a_edge17&#45;label"><a xlink:title="0x6c1766 &#45;&gt; 0x6c315a (33)">
+<text text-anchor="middle" x="1681.5" y="-939.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N23 -->
+<g id="node23" class="node">
+<title>N23</title>
+<g id="a_node23"><a xlink:title="0x6c332a (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-831 1631,-831 1631,-795 1709,-795 1709,-831"/>
+<text text-anchor="middle" x="1670" y="-815.6" font-family="Times,serif" font-size="8.00">0x6c332a</text>
+<text text-anchor="middle" x="1670" y="-806.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N22&#45;&gt;N23 -->
+<g id="edge18" class="edge">
+<title>N22&#45;&gt;N23</title>
+<g id="a_edge18"><a xlink:title="0x6c315a &#45;&gt; 0x6c332a (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-881.8C1670,-870.16 1670,-854.55 1670,-841.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-841.18 1670,-831.18 1666.5,-841.18 1673.5,-841.18"/>
+</a>
+</g>
+<g id="a_edge18&#45;label"><a xlink:title="0x6c315a &#45;&gt; 0x6c332a (33)">
+<text text-anchor="middle" x="1681.5" y="-852.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N24 -->
+<g id="node24" class="node">
+<title>N24</title>
+<g id="a_node24"><a xlink:title="0x6c366f (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-744 1631,-744 1631,-708 1709,-708 1709,-744"/>
+<text text-anchor="middle" x="1670" y="-728.6" font-family="Times,serif" font-size="8.00">0x6c366f</text>
+<text text-anchor="middle" x="1670" y="-719.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N23&#45;&gt;N24 -->
+<g id="edge19" class="edge">
+<title>N23&#45;&gt;N24</title>
+<g id="a_edge19"><a xlink:title="0x6c332a &#45;&gt; 0x6c366f (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-794.8C1670,-783.16 1670,-767.55 1670,-754.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-754.18 1670,-744.18 1666.5,-754.18 1673.5,-754.18"/>
+</a>
+</g>
+<g id="a_edge19&#45;label"><a xlink:title="0x6c332a &#45;&gt; 0x6c366f (33)">
+<text text-anchor="middle" x="1681.5" y="-765.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N24&#45;&gt;N18 -->
+<g id="edge20" class="edge">
+<title>N24&#45;&gt;N18</title>
+<g id="a_edge20"><a xlink:title="0x6c366f &#45;&gt; 0x6281f7 (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-707.8C1670,-696.16 1670,-680.55 1670,-667.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-667.18 1670,-657.18 1666.5,-667.18 1673.5,-667.18"/>
+</a>
+</g>
+<g id="a_edge20&#45;label"><a xlink:title="0x6c366f &#45;&gt; 0x6281f7 (33)">
+<text text-anchor="middle" x="1681.5" y="-678.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N29 -->
+<g id="node29" class="node">
+<title>N29</title>
+<g id="a_node29"><a xlink:title="run (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-396 1631,-396 1631,-360 1709,-360 1709,-396"/>
+<text text-anchor="middle" x="1670" y="-380.6" font-family="Times,serif" font-size="8.00">run</text>
+<text text-anchor="middle" x="1670" y="-371.6" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N25&#45;&gt;N29 -->
+<g id="edge21" class="edge">
+<title>N25&#45;&gt;N29</title>
+<g id="a_edge21"><a xlink:title="&lt;unknown&gt; &#45;&gt; run (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-446.8C1670,-435.16 1670,-419.55 1670,-406.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-406.18 1670,-396.18 1666.5,-406.18 1673.5,-406.18"/>
+</a>
+</g>
+<g id="a_edge21&#45;label"><a xlink:title="&lt;unknown&gt; &#45;&gt; run (33)">
+<text text-anchor="middle" x="1681.5" y="-417.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N26 -->
+<g id="node26" class="node">
+<title>N26</title>
+<g id="a_node26"><a xlink:title="BaseEventLoop.run_forever (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-135 1631,-135 1631,-99 1709,-99 1709,-135"/>
+<text text-anchor="middle" x="1670" y="-124.1" font-family="Times,serif" font-size="8.00">BaseEventLoop</text>
+<text text-anchor="middle" x="1670" y="-115.1" font-family="Times,serif" font-size="8.00">run_forever</text>
+<text text-anchor="middle" x="1670" y="-106.1" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N26&#45;&gt;N12 -->
+<g id="edge25" class="edge">
+<title>N26&#45;&gt;N12</title>
+<g id="a_edge25"><a xlink:title="BaseEventLoop.run_forever &#45;&gt; BaseEventLoop._run_once (32)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-98.88C1670,-87.48 1670,-72.11 1670,-58.34"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-58.22 1670,-48.22 1666.5,-58.22 1673.5,-58.22"/>
+</a>
+</g>
+<g id="a_edge25&#45;label"><a xlink:title="BaseEventLoop.run_forever &#45;&gt; BaseEventLoop._run_once (32)">
+<text text-anchor="middle" x="1681.5" y="-69.8" font-family="Times,serif" font-size="14.00"> 32</text>
+</a>
+</g>
+</g>
+<!-- N27 -->
+<g id="node27" class="node">
+<title>N27</title>
+<g id="a_node27"><a xlink:title="BaseEventLoop.run_until_complete (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1716,-222 1624,-222 1624,-186 1716,-186 1716,-222"/>
+<text text-anchor="middle" x="1670" y="-211.1" font-family="Times,serif" font-size="8.00">BaseEventLoop</text>
+<text text-anchor="middle" x="1670" y="-202.1" font-family="Times,serif" font-size="8.00">run_until_complete</text>
+<text text-anchor="middle" x="1670" y="-193.1" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N27&#45;&gt;N26 -->
+<g id="edge22" class="edge">
+<title>N27&#45;&gt;N26</title>
+<g id="a_edge22"><a xlink:title="BaseEventLoop.run_until_complete &#45;&gt; BaseEventLoop.run_forever (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-185.8C1670,-174.16 1670,-158.55 1670,-145.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-145.18 1670,-135.18 1666.5,-145.18 1673.5,-145.18"/>
+</a>
+</g>
+<g id="a_edge22&#45;label"><a xlink:title="BaseEventLoop.run_until_complete &#45;&gt; BaseEventLoop.run_forever (33)">
+<text text-anchor="middle" x="1681.5" y="-156.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N28 -->
+<g id="node28" class="node">
+<title>N28</title>
+<g id="a_node28"><a xlink:title="Runner.run (33)">
+<polygon fill="#ededec" stroke="#b2b2b0" points="1709,-309 1631,-309 1631,-273 1709,-273 1709,-309"/>
+<text text-anchor="middle" x="1670" y="-298.1" font-family="Times,serif" font-size="8.00">Runner</text>
+<text text-anchor="middle" x="1670" y="-289.1" font-family="Times,serif" font-size="8.00">run</text>
+<text text-anchor="middle" x="1670" y="-280.1" font-family="Times,serif" font-size="8.00">0 of 33 (0.25%)</text>
+</a>
+</g>
+</g>
+<!-- N28&#45;&gt;N27 -->
+<g id="edge23" class="edge">
+<title>N28&#45;&gt;N27</title>
+<g id="a_edge23"><a xlink:title="Runner.run &#45;&gt; BaseEventLoop.run_until_complete (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-272.8C1670,-261.16 1670,-245.55 1670,-232.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-232.18 1670,-222.18 1666.5,-232.18 1673.5,-232.18"/>
+</a>
+</g>
+<g id="a_edge23&#45;label"><a xlink:title="Runner.run &#45;&gt; BaseEventLoop.run_until_complete (33)">
+<text text-anchor="middle" x="1681.5" y="-243.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+<!-- N29&#45;&gt;N28 -->
+<g id="edge24" class="edge">
+<title>N29&#45;&gt;N28</title>
+<g id="a_edge24"><a xlink:title="run &#45;&gt; Runner.run (33)">
+<path fill="none" stroke="#b2b2b0" d="M1670,-359.8C1670,-348.16 1670,-332.55 1670,-319.24"/>
+<polygon fill="#b2b2b0" stroke="#b2b2b0" points="1673.5,-319.18 1670,-309.18 1666.5,-319.18 1673.5,-319.18"/>
+</a>
+</g>
+<g id="a_edge24&#45;label"><a xlink:title="run &#45;&gt; Runner.run (33)">
+<text text-anchor="middle" x="1681.5" y="-330.8" font-family="Times,serif" font-size="14.00"> 33</text>
+</a>
+</g>
+</g>
+</g>
+</g></svg>
