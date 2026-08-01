@@ -51,7 +51,7 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 ### 训练循环 demo（模拟 LLM 训练：数据加载 IO + 前向 + 数值反向 + checkpoint）
 
 同一 demo（train_like.py，python3.12+numpy，100Hz）双工具采样，**top5 栈完全重合**，
-但瓶颈排序不同：
+但瓶颈排序不同（栈顶帧分布，analyze_compare.py 口径，排除空栈行）：
 
 | 栈顶帧 | py-spy（采样点快照） | llm-prof（off-cpu 时长加权） |
 |---|---|---|
