@@ -318,21 +318,11 @@ func htmlEscape(s string) string {
 func (l *LocalReporter) WriteOutput() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	var total int64
-	for _, v := range l.stacks {
-		total += v
-	}
-	if total == 0 {
+	if l.totalSamples() == 0 {
 		return fmt.Errorf("no samples collected")
 	}
-	root := l.buildTree()
-	if err := writeSVG(l.output, root, total, l.pythonOnly); err != nil {
+	if _, err := l.writeOutput(); err != nil {
 		return err
 	}
-	topPath := strings.TrimSuffix(l.output, ".svg") + ".txt"
-	n := l.topN
-	if n <= 0 {
-		n = len(l.stacks)
-	}
-	return l.writeTopN(topPath, n)
+	return nil
 }

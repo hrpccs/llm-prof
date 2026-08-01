@@ -140,16 +140,40 @@ IO 等待 case（左侧 py-spy 采不到睡眠线程、右侧 llm-prof off-cpu �
 # attach 运行中的进程，采样 10 秒（on+off CPU），输出火焰图
 sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 
+# 输出 Google pprof 格式（.pprof/.pb/.pb.gz），与 py-spy 统一对比：
+sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.pb.gz
+
 # 参数
 #   -pid <PID>            目标进程（0 = 全部）
 #   -d <duration>         采样时长（0 = 直到 SIGINT）
 #   -samples-per-second N 采样率（每 CPU，默认 20）
 #   -off-cpu-threshold P  off-cpu 采样概率 [0..1]，0 禁用（默认），1.0 全采
 #   -topn N               文本输出栈数（0 = 全部）
-#   -o <path>             火焰图 SVG 输出路径
+#   -o <path>             输出路径，按扩展名选择格式：
+#                            .svg   火焰图（默认）+ 同路径 .txt（top-N）
+#                            .pprof / .pb / .pb.gz   Google pprof protobuf（.gz 压缩）
 ```
 
-输出：`out.svg`（火焰图）+ `out.txt`（top-N 栈统计）。
+输出：`out.svg`（火焰图）+ `out.txt`（top-N 栈统计）；或 `out.pb.gz`（pprof）+ `out.txt`。
+
+### 与 py-spy 的 pprof 统一对比
+
+py-spy 本身不输出 pprof，但它的 raw 文本可以一键转换（根到叶、带计数，与 llm-prof 栈格式同构）：
+
+```bash
+py-spy record -r 100 --format raw -o py.txt --pid <PID> -d 12
+llm-prof/llm-prof -pid <PID> -d 12s -o lp.pb.gz          # 或 llm-prof 目录下构建的二进制
+go build -o pyraw2pprof ./cmd/pyraw2pprof && ./pyraw2pprof py.txt py.pb.gz
+
+# 统一用 go tool pprof / pprof 分析两份数据：
+go tool pprof -top py.pb.gz
+go tool pprof -top lp.pb.gz
+go tool pprof -diff_base=py.pb.gz lp.pb.gz   # 或直接并排对比
+```
+
+注意：llm-prof 开 off-cpu 时样本按**阻塞时长加权**，且 off-cpu 样本的栈顶是调度器帧
+（`finish_task_switch`）——用 `-cum` 视图或过滤内核帧可看到真实等待点（如 GIL 的
+`futex_wait` / `do_futex`）；py-spy 只有 on-CPU 采样点快照，看不到睡眠中的等待。
 
 ## 构建
 

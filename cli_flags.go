@@ -121,7 +121,8 @@ func parseArgs() (*controller.Config, error) {
 
 	fs.UintVar(&args.TargetPID, "pid", 0, "Restrict profiling to this single process (0 = all processes)")
 
-	fs.StringVar(&args.OutputPath, "o", "profile.svg", "Output flamegraph SVG path")
+	fs.StringVar(&args.OutputPath, "o", "profile.svg",
+		"Output path; extension selects format: .svg flamegraph, .pprof/.pb/.pb.gz Google pprof")
 
 	fs.Float64Var(&args.OffCPUThreshold, "off-cpu-threshold", 0,
 		"Off-CPU sampling probability in [0..1]. 0 disables off-cpu profiling. "+
