@@ -1,10 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 344" font-family="monospace" font-size="12">
-<text x="4" y="16" font-size="14" font-weight="bold">llm-prof flamegraph (4562 samples)</text>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" viewBox="0 0 1200 344" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
+<stop stop-color="#eeeeee" offset="5%"/><stop stop-color="#eeeeb0" offset="95%"/>
+</linearGradient></defs>
+<style type="text/css">
+text { font-family:monospace; font-size:12px }
+#title { font-size:17px; font-weight:bold; }
+#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }
+</style>
+<rect x="0" y="0" width="1200" height="344" fill="url(#background)"/>
+<text id="title" x="4" y="17">llm-prof flamegraph (4925 samples)</text>
+<g id="frames">
+<g x="0" y="40" width="1200" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</title>
 <rect x="0" y="40" width="1200" height="15" fill="#d9d9d9" stroke="#000" stroke-width="0.5"/>
 <text x="2" y="51">&lt;interpreter trampoline&gt; (&lt;shim&gt;:1)</text>
+</g>
+<g x="0" y="56" width="1200" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49)</title>
 <rect x="0" y="56" width="1200" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
 <text x="2" y="67">&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49)</text>
-<rect x="0" y="72" width="1200" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
+</g>
+<g x="0" y="72" width="1199" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49);main (/home/ubuntu/ai-infra/bench.py:42)</title>
+<rect x="0" y="72" width="1199" height="15" fill="#33a02c" stroke="#000" stroke-width="0.5"/>
 <text x="2" y="83">main (/home/ubuntu/ai-infra/bench.py:42)</text>
+</g>
+<g x="1199" y="72" width="1" height="15">
+<title>&lt;interpreter trampoline&gt; (&lt;shim&gt;:1);&lt;module&gt; (/home/ubuntu/ai-infra/bench.py:49);main (/home/ubuntu/ai-infra/bench.py:41)</title>
+<rect x="1199" y="72" width="1" height="15" fill="#fb8072" stroke="#000" stroke-width="0.5"/>
+</g>
+</g>
+<text x="4" y="338" font-size="11" fill="#999">llm-prof — hover a frame for the full stack path</text>
 </svg>

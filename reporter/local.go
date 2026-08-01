@@ -214,11 +214,7 @@ func writeSVG(path string, root *flameNode, total int64, fixedWidth bool) error 
 		scale = float64(minWidth) / float64(total)
 	}
 	viewW := int64(float64(total) * scale)
-	var b strings.Builder
-	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
-	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" `+
-		`font-family="monospace" font-size="12">`+"\n", viewW, titleH+rowH*maxDepth)
-	fmt.Fprintf(&b, `<text x="4" y="16" font-size="14" font-weight="bold">llm-prof flamegraph (%d samples)</text>`+"\n", total)
+	viewH := titleH + rowH*maxDepth
 
 	// Use an explicit DFS via a slice to avoid recursion limits on deep stacks.
 	children := func(n *flameNode) []*flameNode {
@@ -230,27 +226,45 @@ func writeSVG(path string, root *flameNode, total int64, fixedWidth bool) error 
 		return cs
 	}
 
-	// We do a manual pre-order traversal; root is the virtual root.
+	// Pre-order traversal collecting frames with their full stack path.
 	type frame struct {
 		name  string
+		path  string // root -> this frame, for the hover <title>
 		x     int64
 		w     int64
 		depth int
 	}
 	var frames []frame
-	var dfs func(n *flameNode, x int64, depth int)
-	dfs = func(n *flameNode, x int64, depth int) {
+	var dfs func(n *flameNode, x int64, depth int, path []string)
+	dfs = func(n *flameNode, x int64, depth int, path []string) {
 		if n.name != "root" {
-			frames = append(frames, frame{n.name, x, n.count, depth})
+			frames = append(frames, frame{n.name, strings.Join(path, ";"), x, n.count, depth})
 		}
 		var cx int64
 		for _, c := range children(n) {
-			dfs(c, x+cx, depth+1)
+			dfs(c, x+cx, depth+1, append(path, c.name))
 			cx += c.count
 		}
 	}
-	dfs(root, 0, 0)
+	dfs(root, 0, 0, nil)
 
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" standalone="no"?>` + "\n")
+	b.WriteString(`<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">` + "\n")
+	fmt.Fprintf(&b, `<svg version="1.1" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg">`+"\n",
+		viewW, viewH)
+	b.WriteString(`<defs><linearGradient id="background" x1="0" y1="0" x2="0" y2="1">` + "\n")
+	b.WriteString(`<stop stop-color="#eeeeee" offset="5%"/><stop stop-color="#eeeeb0" offset="95%"/>` + "\n")
+	b.WriteString(`</linearGradient></defs>` + "\n")
+	b.WriteString(`<style type="text/css">` + "\n")
+	b.WriteString(`text { font-family:monospace; font-size:12px }` + "\n")
+	b.WriteString(`#title { font-size:17px; font-weight:bold; }` + "\n")
+	b.WriteString(`#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }` + "\n")
+	b.WriteString(`</style>` + "\n")
+	fmt.Fprintf(&b, `<rect x="0" y="0" width="%d" height="%d" fill="url(#background)"/>`+"\n", viewW, viewH)
+	fmt.Fprintf(&b, `<text id="title" x="4" y="17">llm-prof flamegraph (%d samples)</text>`+"\n", total)
+
+	b.WriteString(`<g id="frames">` + "\n")
 	for _, f := range frames {
 		y := titleH + int64(f.depth)*rowH
 		if f.depth >= maxDepth {
@@ -261,23 +275,27 @@ func writeSVG(path string, root *flameNode, total int64, fixedWidth bool) error 
 		if w < 1 {
 			w = 1 // review fix: avoid zero-width rects with overflowing labels
 		}
-		fmt.Fprintf(&b,
-			`<rect x="%d" y="%d" width="%d" height="%d" fill="%s" stroke="#000" stroke-width="0.5"/>`+"\n",
+		fmt.Fprintf(&b, `<g x="%d" y="%d" width="%d" height="%d">`+"\n", x, y, w, rowH-1)
+		fmt.Fprintf(&b, `<title>%s</title>`+"\n", htmlEscape(f.path))
+		fmt.Fprintf(&b, `<rect x="%d" y="%d" width="%d" height="%d" fill="%s" stroke="#000" stroke-width="0.5"/>`+"\n",
 			x, y, w, rowH-1, flameColor(f.name))
-		// Truncate label to the rect width; skip text entirely for tiny rects.
+		// Show the full label when it fits, otherwise a truncated prefix;
+		// the <title> above always carries the complete stack path.
 		label := f.name
 		chars := int(w) / 7
-		if chars < 4 {
-			continue // review fix: too narrow to render a readable label
+		if chars >= 4 {
+			if runes := []rune(label); len(runes) > chars {
+				label = string(runes[:chars])
+			}
+			fmt.Fprintf(&b, `<text x="%d" y="%d">%s</text>`+"\n",
+				x+2, y+rowH-5, htmlEscape(label))
 		}
-		// Truncate by runes, not bytes, to keep valid UTF-8 in the SVG.
-		if runes := []rune(label); len(runes) > chars {
-			label = string(runes[:chars])
-		}
-		fmt.Fprintf(&b, `<text x="%d" y="%d">%s</text>`+"\n",
-			x+2, y+rowH-5, htmlEscape(label))
+		b.WriteString(`</g>` + "\n")
 	}
-	b.WriteString("</svg>\n")
+	b.WriteString(`</g>` + "\n")
+	fmt.Fprintf(&b, `<text x="4" y="%d" font-size="11" fill="#999">llm-prof — hover a frame for the full stack path</text>`+"\n", viewH-6)
+	b.WriteString(`</svg>` + "\n")
+
 	// security review fix: O_NOFOLLOW to avoid symlink overwrite (agent runs as
 	// root) and 0600 to avoid leaking source paths/lines in shared dirs.
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|syscall.O_NOFOLLOW, 0o600)
