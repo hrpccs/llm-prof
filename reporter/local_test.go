@@ -17,7 +17,7 @@ import (
 
 // frame builds a single-frame trace with the given label.
 func frameTrace(label string) *libpf.Trace {
-	f := libpf.Frame{FunctionName: libpf.Intern(label)}
+	f := libpf.Frame{FunctionName: libpf.Intern(label), Type: libpf.PythonFrame}
 	var frames libpf.Frames
 	frames.Append(&f)
 	return &libpf.Trace{Frames: frames}
@@ -63,7 +63,8 @@ func TestReportTraceEventOffCPUProbabilityCompensation(t *testing.T) {
 func deepFrameTrace(n int) *libpf.Trace {
 	var frames libpf.Frames
 	for i := 0; i < n; i++ {
-		f := libpf.Frame{FunctionName: libpf.Intern(fmt.Sprintf("frame%d (bench.py:%d)", i, i+1))}
+		f := libpf.Frame{FunctionName: libpf.Intern(fmt.Sprintf("frame%d (bench.py:%d)", i, i+1)),
+			Type: libpf.PythonFrame}
 		frames.Append(&f)
 	}
 	return &libpf.Trace{Frames: frames}

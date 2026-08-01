@@ -29,7 +29,7 @@ const (
 	defaultClockSyncInterval      = 3 * time.Minute
 	defaultProbabilisticThreshold = tracer.ProbabilisticThresholdMax
 	defaultProbabilisticInterval  = 1 * time.Minute
-	defaultArgSendErrorFrames     = false
+	defaultArgSendErrorFrames     = true
 	defaultOffCPUThreshold        = 0
 	defaultEnvVarsValue           = ""
 	defaultArgFrameCacheSize      = pm.DefaultFrameCacheSize
@@ -64,7 +64,10 @@ var (
 	probabilisticIntervalHelp = "Time interval for which probabilistic profiling will be " +
 		"enabled or disabled."
 	pprofHelp            = "Listening address (e.g. localhost:6060) to serve pprof information."
-	samplesPerSecondHelp = "Set the frequency (in Hz) of stack trace sampling."
+	samplesPerSecondHelp = "Set the frequency (in Hz) of stack trace sampling (per CPU; " +
+		"a single process is only sampled while its threads run, so effective " +
+		"per-process rate ~= rate * CPU occupancy; e.g. ~35% of nominal for a single " +
+		"CPU-bound thread at 100Hz)."
 	reporterIntervalHelp = "Set the reporter's interval in seconds."
 	reporterJitterHelp   = fmt.Sprintf("Set the jitter applied to the reporter's interval as a fraction. "+
 		"Valid values are in the range [0..1]. "+

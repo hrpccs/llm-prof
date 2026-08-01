@@ -149,6 +149,10 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.pb.gz
 #   -samples-per-second N 采样率（每 CPU，默认 20）
 #   -off-cpu-threshold P  off-cpu 采样概率 [0..1]，0 禁用（默认），1.0 全采
 #   -topn N               文本输出栈数（0 = 全部）
+#   -python-only          只保留 Python 帧（按 unwinder 报告的帧类型过滤，
+#                         不会误保留 "memcpy (libc.so.6:123)" 这类 native 帧）
+#   -send-error-frames    输出 unwind 失败的样本（默认 true，渲染为
+#                         [unwind-error] 帧，避免"瓶颈百分比异常"却看不到原因）
 #   -o <path>             输出路径，按扩展名选择格式：
 #                            .svg   火焰图（默认）+ 同路径 .txt（top-N）
 #                            .pprof / .pb / .pb.gz   Google pprof protobuf（.gz 压缩）

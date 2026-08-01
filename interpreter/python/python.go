@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"path"
 	"reflect"
 	"regexp"
@@ -836,7 +837,17 @@ func loader(ebpf interpreter.EbpfHandler, info *interpreter.LoaderInfo) (interpr
 		var err error
 		staticTLSOffset, err = getTLSOffsetFromAssembly(ef)
 		if err != nil {
-			log.Warnf("Failed to extract TLS offset: %v", err)
+			// Failing here means the direct TLS variable could not be
+			// resolved and the unwinder falls back to pthread_getspecific.
+			// Empirically that fallback still works on some 3.13 builds
+			// (thread state reachable via the GILState key), but frames may
+			// be incomplete on others - surface this loudly instead of
+			// silently producing empty Python stacks.
+			log.Errorf("Python %d.%d TLS offset extraction failed, falling back to "+
+				"pthread_getspecific (Python frames may be incomplete): %v", major, minor, err)
+		} else if staticTLSOffset > math.MaxInt16 || staticTLSOffset < math.MinInt16 {
+			return nil, fmt.Errorf("Python %d.%d TLS offset %d out of int16 range", major, minor,
+				staticTLSOffset)
 		}
 	}
 

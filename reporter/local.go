@@ -50,21 +50,12 @@ func NewLocalReporter(outputPath string, topN int, samplesPerSecond int,
 	}
 }
 
-// frameLabel renders one frame as "name (file:line)" or "0xADDR" for
-// non-symbolized native frames.
-// isPythonFrameLabel reports whether a frame label looks like a Python frame
-// (symbolized name with a (file:line) suffix), as opposed to a native 0xADDR frame.
-func isPythonFrameLabel(label string) bool {
-	if len(label) < 3 {
-		return false
-	}
-	if label[0] == '0' && label[1] == 'x' {
-		return false
-	}
-	return label[len(label)-1] == ')'
-}
-
+// frameLabel renders one frame as "name (file:line)", "[unwind-error]" for
+// error frames, or "0xADDR" for non-symbolized native frames.
 func frameLabel(f libpf.Frame) string {
+	if f.Type.IsError() {
+		return "[unwind-error]"
+	}
 	name := f.FunctionName.String()
 	if name == "" {
 		name = fmt.Sprintf("0x%x", uint64(f.AddressOrLineno))
@@ -90,11 +81,14 @@ func (l *LocalReporter) ReportTraceEvent(trace *libpf.Trace, meta *samples.Trace
 	}
 	parts := make([]string, 0, len(frames))
 	for i := len(frames) - 1; i >= 0; i-- {
-		label := frameLabel(frames[i].Value())
-		if l.pythonOnly && !isPythonFrameLabel(label) {
+		f := frames[i].Value()
+		// python-only filters by the frame type reported by the unwinder,
+		// not by string shape: native frames such as "memcpy (libc.so.6:123)"
+		// must not be mistaken for Python frames (review fix).
+		if l.pythonOnly && f.Type != libpf.PythonFrame {
 			continue
 		}
-		parts = append(parts, label)
+		parts = append(parts, frameLabel(f))
 	}
 	if len(parts) == 0 {
 		return nil
@@ -319,7 +313,14 @@ func (l *LocalReporter) WriteOutput() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if l.totalSamples() == 0 {
-		return fmt.Errorf("no samples collected")
+		// Diagnose the common failure modes instead of returning a bare
+		// error: -d counts from agent start (eBPF load takes ~2.5s), and PID
+		// reporting polls every 5s, so a sampling window shorter than that
+		// never yields samples; the target may also have exited or -pid may
+		// not match (review fix).
+		return fmt.Errorf("no samples collected: check that -d leaves at least ~5s after " +
+			"attach (PID reporting polls every 5s; -d counts from agent start), the target " +
+			"process is still alive, and -pid matches it")
 	}
 	if _, err := l.writeOutput(); err != nil {
 		return err

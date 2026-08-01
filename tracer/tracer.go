@@ -1276,8 +1276,16 @@ func (t *Tracer) StartOffCPUProfiling() error {
 	}
 
 	attached := false
-	// Attach to all symbols with the prefix finish_task_switch.
+	// Attach to all symbols with the prefix finish_task_switch, deduplicated by
+	// address: kallsyms often lists finish_task_switch and finish_task_switch.isra.0
+	// at the same address, and attaching twice would double-count every context
+	// switch (review fix).
+	seen := make(map[libpf.SymbolValue]struct{}, len(kprobeSymbs))
 	for _, symb := range kprobeSymbs {
+		if _, dup := seen[symb.Address]; dup {
+			continue
+		}
+		seen[symb.Address] = struct{}{}
 		kprobeLink, linkErr := link.Kprobe(string(symb.Name), kprobeProg, nil)
 		if linkErr != nil {
 			log.Warnf("Failed to attach to %s: %v", symb.Name, linkErr)
