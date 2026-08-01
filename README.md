@@ -68,6 +68,27 @@ llm-prof 的 off-cpu 时长加权正确揭示"瓶颈在 IO 等待"；py-spy 的�
 |---|---|
 | ![py-spy](docs/flame_demo_pyspy.svg) | ![llm-prof](docs/flame_demo_llmprof.svg) |
 
+### asyncio 推理服务 demo（vLLM/TGI 同架构：事件循环 + 并发请求）
+
+`infer_asyncio.py`：8 并发请求、调度器 batch 组装、逐 token 解码（前向 +
+2ms 间隙等待）、周期 metrics 事件。100Hz 双工具采样（各 16s）：
+
+| 栈顶帧 | py-spy | llm-prof（off-cpu 时长加权） |
+|---|---|---|
+| `fake_forward`（前向计算） | 73.2% | 17.8% |
+| `EpollSelector.select`（事件循环等待） | 未采到 | **76.4%** |
+| 样本量 | 463 | **4614（10 倍）** |
+
+**关键**：asyncio 事件循环大部分时间在 `epoll_wait`（内核睡眠）。py-spy
+的 ptrace 机制停不住内核睡眠中的线程——**等待时间几乎完全丢失**，火焰图
+73% 显示为"计算"（实际只占真实时间约 18%）。llm-prof 的 off-cpu 时长加权
+正确显示 **76.4% 的等待**——对 vLLM 这类 asyncio 架构，py-spy 会系统性
+误导"瓶颈在计算"，而真实瓶颈往往是 batch 间隙 / IO 等待。
+
+| py-spy | llm-prof |
+|---|---|
+| ![py-spy](docs/flame_async_pyspy.svg) | ![llm-prof](docs/flame_async_llmprof.svg) |
+
 ### 1000Hz 的观测者效应（重要发现）
 
 1000Hz 下 **py-spy 的 GIL 等待样本从 1.1% 虚高到 16.7%**——每毫秒暂停冻结全部线程本身就在加剧 GIL 争用，火焰图里多出的"等待"很大部分是采样器自己造成的；llm-prof（无暂停）保持 0.8%，更接近真实。
