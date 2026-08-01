@@ -93,6 +93,38 @@ llm-prof 的 off-cpu 时长加权正确揭示"瓶颈在 IO 等待"；py-spy 的�
 
 1000Hz 下 **py-spy 的 GIL 等待样本从 1.1% 虚高到 16.7%**——每毫秒暂停冻结全部线程本身就在加剧 GIL 争用，火焰图里多出的"等待"很大部分是采样器自己造成的；llm-prof（无暂停）保持 0.8%，更接近真实。
 
+### 问题定位能力矩阵（4 个构造 case）
+
+构造 4 个带明确"问题"的负载（`demo-cases/`，各 ~30s 固定工作量），两工具同段 attach 采样 12s，
+对比**问题定位能力**（栈顶帧是否命中真实瓶颈）与**开销**（固定工作量运行时长增长 %，±5% 内视为无开销）：
+
+| case | 真实问题 | py-spy 100Hz | py-spy 1000Hz | llm-prof off-cpu=1.0 |
+|---|---|---|---|---|
+| `case_hotspot.py` 单线程热点（`bottleneck` 占 90%） | 定位 `bottleneck` | 命中 91%，开销 +3.9% | 命中 91%，开销 **+32.1%** | 命中 90%，开销 +0.7% |
+| `case_gil.py` 4 线程 GIL 争用（~90% 时间等 GIL） | 识别"等锁"而非计算 | **0% 等待**（全显示计算），开销 +0.8% | **0% 等待**，开销 +25.8%（观测者效应 `join` 虚高 15%） | **等待可见 89%**，开销 +2.7% |
+| `case_io.py` sleep 等待 79% / 计算 21% | 定位等待点 | 样本有效率仅 **25%**，等待可见 5%（误导为 `calc` 84%） | 等待可见 21%，开销 +12.5% | **等待可见 73%**（真实 79%），开销 -0.3% |
+| `case_misleading.py` 高频短调用 `noisy` vs 低频长调用 `real_bottleneck` | 不被调用频率误导 | 命中 89%，开销 +5.3% | 命中 90%，开销 **+32.3%** | 命中 92%，开销 ~0% |
+
+**关键结论**：纯 CPU 热点两工具定位能力相当（89-92%），差距在开销（py-spy 1000Hz 拖慢 26-32%，
+llm-prof 全配置 <1%）；**负载含任何等待（锁/IO/sleep）时 py-spy 结构性丢失**——GIL 等待 0%、
+sleep 只看到 5-21%，且把等待负载误显示为"计算占 84%"；llm-prof 开 `-off-cpu-threshold 1.0`
+后等待可见性 73-89% 与真实时间分配吻合，1000Hz 下开销仍接近零。
+
+火焰图对比（GIL 争用 case，左侧 py-spy 全显示计算、右侧 llm-prof off-cpu 揭示 89% 等锁）：
+
+| py-spy | llm-prof |
+|---|---|
+| ![py-spy](docs/case_gil_pyspy.svg) | ![llm-prof](docs/case_gil_llmprof.svg) |
+
+IO 等待 case（左侧 py-spy 采不到睡眠线程、右侧 llm-prof off-cpu 显示 73% 等待）：
+
+| py-spy | llm-prof |
+|---|---|
+| ![py-spy](docs/case_io_pyspy.svg) | ![llm-prof](docs/case_io_llmprof.svg) |
+
+复现：`demo-cases/run_case_matrix.sh`（llm-prof 全矩阵）、`demo-cases/run_pyspy_matrix.sh`（py-spy 补跑），
+结果用 `demo-cases/analyze_matrix.py` 汇总（原始数据见 `demo-cases/mx_results.txt`）。
+
 ### 已知差异（实事求是）
 
 1. **行号分布口径**：llm-prof 的 off-cpu 用**时长加权**、py-spy 用**采样点快照**——多线程下行号分布有约 9pp 系统差异（时长加权更接近真实时间占比，但两工具数字不可直接混用）；

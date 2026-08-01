@@ -1,0 +1,39 @@
+########## case=hotspot ##########
+hotspot baseline1 29.998993
+hotspot baseline2 29.839949
+hotspot lp100off0 29.822507
+hotspot lp100off1.0 30.128048
+hotspot lp1000off0 29.819512
+hotspot lp1000off1.0 29.812410
+########## case=gil ##########
+gil baseline1 30.747334
+gil baseline2 33.335373
+gil lp100off0 33.718929
+gil lp100off1.0 32.898610
+gil lp1000off0 31.563472
+gil lp1000off1.0 31.587724
+########## case=io ##########
+io baseline1 32.935998
+io baseline2 32.907246
+io lp100off0 32.726626
+io lp100off1.0 32.832024
+io lp1000off0 32.949977
+io lp1000off1.0 32.874335
+########## case=misleading ##########
+misleading baseline1 29.678082
+misleading baseline2 29.583314
+misleading lp100off0 30.242204
+misleading lp100off1.0 29.635885
+misleading lp1000off0 29.885207
+misleading lp1000off1.0 29.860403
+DONE
+DONE
+hotspot pyspy100 31.100982
+hotspot pyspy1000 39.517751
+gil pyspy100 32.296339
+gil pyspy1000 40.305620
+io pyspy100 33.284085
+io pyspy1000 37.036903
+misleading pyspy100 31.209830
+misleading pyspy1000 39.210416
+DONE
