@@ -28,7 +28,7 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 | 负载 | py-spy @100Hz | llm-prof @100Hz | py-spy @1000Hz | llm-prof @1000Hz |
 |---|---|---|---|---|
 | 单线程 CPU | +3.2% | **≈0** | +23.5% | **≈0** |
-| 4 线程 GIL 争用 | +12.2% | **≈0**（off-cpu 开 +0.4%） | **+111.5%** | **+9.8%**（off-cpu 开 +15.1%） |
+| 4 线程 GIL 争用 | +12.2% | **≈0**（off-cpu 开 ≈0） | **+111.5%** | **+9.8%**（off-cpu 开 +15.1%） |
 | IO/sleep 型 | +0.8% | ≈0（off-cpu 开 +1.9%） | +6.4% | +0~2.7% |
 
 ### 采集能力（100Hz，off-cpu 开）
