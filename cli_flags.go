@@ -220,6 +220,11 @@ func parseArgs() (*controller.Config, error) {
 		return nil, fmt.Errorf("-pid %d exceeds the maximum process ID range", args.TargetPID)
 	}
 
+	// security review fix: -off-cpu-threshold must be a valid probability.
+	if math.IsNaN(args.OffCPUThreshold) || args.OffCPUThreshold < 0 || args.OffCPUThreshold > 1 {
+		return nil, fmt.Errorf("-off-cpu-threshold must be in [0, 1], got %v", args.OffCPUThreshold)
+	}
+
 	return &args, nil
 }
 
