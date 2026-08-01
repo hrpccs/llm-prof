@@ -35,9 +35,9 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 
 | 指标 | py-spy | llm-prof |
 |---|---|---|
-| 单线程行号分布（cpu_work line16） | 88.8% | **90.9%**（偏差 <1.1pp） |
+| 单线程行号分布（cpu_work line16） | 89.7% | **90.9%**（偏差 1.2pp） |
 | 多线程 GIL 等待栈 `_wait_for_tstate_lock` | 1.1% | **1.1%（off-cpu 补齐）** |
-| IO 等待点 `main:42` | 93% | **98%** |
+| IO 等待点 `main:42` | 96.6% | **98%** |
 | 等待型负载样本量 | 71 | **5021（约 70 倍）** |
 
 ### 1000Hz 的观测者效应（重要发现）
@@ -49,7 +49,7 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 1. **行号分布口径**：llm-prof 的 off-cpu 用**时长加权**、py-spy 用**采样点快照**——多线程下行号分布有约 9pp 系统差异（时长加权更接近真实时间占比，但两工具数字不可直接混用）；
 2. **启动期杂项**：py-spy 能采到进程启动/退出期的 import 等杂项栈，llm-prof 只采 on/off CPU 执行点（差异 <1%）；
 3. **部署门槛**：llm-prof 需要 root + `CAP_BPF`（仅 Linux）；py-spy 普通用户即可、跨平台；
-4. **采样率语义**：`-samples-per-second` 为每 CPU 周期，单进程实际样本率约为配置值的 12-25%（100Hz 下），对比前先校准样本量级。
+4. **采样率语义**：`-samples-per-second` 为每 CPU 周期，单进程实际样本率视负载而定（实测 100Hz 下单线程约 35%、IO 型约 21%），对比前先校准样本量级。
 
 **结论**：在有 root 权限的 Linux 环境，llm-prof 可平替 py-spy——性能更优（多线程 100Hz -12pp、1000Hz -96pp）、等待覆盖对齐、样本量反超；1000Hz 高频场景 py-spy 因开销与观测者效应基本不可用，llm-prof 是唯一合理选择。
 
