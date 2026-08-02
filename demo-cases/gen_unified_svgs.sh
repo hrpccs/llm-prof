@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# 统一 SVG 生成：所有 demo 先输出 pprof，再用 go tool pprof -svg 统一渲染，
-# 替换 docs/ 下的对比图（py-spy 与 llm-prof 渲染风格完全一致）。
+# 统一火焰图生成：所有 demo 先输出 pprof，再经 pprof2folded.py + flamegraph.pl
+# 统一渲染成 SVG 火焰图（py-spy 与 llm-prof 渲染风格完全一致）。
+# 需要：flamegraph.pl（https://github.com/brendangregg/FlameGraph）在 PATH 或 /tmp。
 # 用法: sudo bash demo-cases/gen_unified_svgs.sh
 set -u
 # sudo bash 环境下 PATH 不含 go/py-spy，显式补齐
@@ -13,6 +14,7 @@ LLM=./llm-prof/llm-prof
 P2P=/tmp/pyraw2pprof
 DOCS=llm-prof/docs
 IGNORE='asm_sysvec|sysvec_|irqentry|entry_SYSCALL|do_syscall_64|x64_sys_call|finish_task_switch|schedule|__schedule'
+FLAMEGRAPH=${FLAMEGRAPH:-/tmp/flamegraph.pl}
 
 wait_pid() { # $1=pgrep pattern
   local p="" i=0
@@ -37,7 +39,7 @@ run_one() { # $1=name  $2=args... （输出 docs/${1}_{tool}.svg）
     sudo "$LLM" -pid "$T" -d 15s -samples-per-second 100 -off-cpu-threshold 1.0 \
       -o /tmp/uni_${name}_lp.pb.gz > /tmp/uni_${name}_lp.log 2>&1
     if grep -q "Wrote" /tmp/uni_${name}_lp.log; then
-      go tool pprof -ignore="$IGNORE" -svg /tmp/uni_${name}_lp.pb.gz > "$DOCS/${name}_llmprof.svg" 2>/dev/null
+      go tool pprof -raw /tmp/uni_${name}_lp.pb.gz 2>/dev/null | python3 demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (llm-prof)" > "$DOCS/${name}_llmprof.svg" 2>/dev/null
       echo "  llm-prof: ok ($(wc -c < $DOCS/${name}_llmprof.svg) B)"
     else
       echo "  llm-prof: FAIL $(grep ERROR /tmp/uni_${name}_lp.log | head -1)"
@@ -55,7 +57,7 @@ run_one() { # $1=name  $2=args... （输出 docs/${1}_{tool}.svg）
       --pid "$T" -d 12 > /tmp/uni_${name}_ps.log 2>&1
     if [ -s /tmp/uni_${name}_ps.txt ]; then
       "$P2P" /tmp/uni_${name}_ps.txt /tmp/uni_${name}_ps.pb.gz > /dev/null
-      go tool pprof -ignore="$IGNORE" -svg /tmp/uni_${name}_ps.pb.gz > "$DOCS/${name}_pyspy.svg" 2>/dev/null
+      go tool pprof -raw /tmp/uni_${name}_ps.pb.gz 2>/dev/null | python3 demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (py-spy)" > "$DOCS/${name}_pyspy.svg" 2>/dev/null
       echo "  py-spy:   ok ($(wc -c < $DOCS/${name}_pyspy.svg) B)"
     else
       echo "  py-spy:   FAIL"
