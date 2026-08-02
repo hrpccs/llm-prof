@@ -11,6 +11,12 @@ import (
 	"debug/elf"
 	"fmt"
 	"sort"
+	"strings"
+	"sync"
+
+	"github.com/ianlancetaylor/demangle"
+
+	"go.opentelemetry.io/ebpf-profiler/host"
 
 	"go.opentelemetry.io/ebpf-profiler/interpreter"
 	"go.opentelemetry.io/ebpf-profiler/libpf"
@@ -18,15 +24,41 @@ import (
 	"go.opentelemetry.io/ebpf-profiler/remotememory"
 )
 
-// symbol is one ELF symbol (file-offset -> name).
+// demangleCache memoizes C++ demangling results (mangled -> demangled).
+// Only symbols actually hit during symbolization are demangled, so large
+// libraries (e.g. libtorch) pay the cost lazily.
+var demangleCache sync.Map // map[string]string
+
+// demangleName converts an Itanium-mangled C++ symbol to a readable form;
+// non-mangled names and mangled names that fail to parse pass through.
+func demangleName(name libpf.SymbolName) libpf.SymbolName {
+	s := string(name)
+	if !strings.HasPrefix(s, "_Z") {
+		return name
+	}
+	if v, ok := demangleCache.Load(s); ok {
+		return libpf.SymbolName(v.(string))
+	}
+	out := s
+	if d, err := demangle.ToString(s); err == nil {
+		out = d
+	}
+	demangleCache.Store(s, out)
+	return libpf.SymbolName(out)
+}
+
+// symbol is one ELF symbol (virtual address -> name), with size for
+// coverage checks.
 type symbol struct {
 	addr libpf.Address
+	size libpf.Address
 	name libpf.SymbolName
 }
 
 // nativeData implements interpreter.Data: it matches any ELF with symbols and
 // holds the loaded symbol table shared by all per-PID instances.
 type nativeData struct {
+	fileID host.FileID
 	syms   []symbol // sorted by addr (virtual addresses, st_value semantics)
 	mapper pfelf.AddressMapper
 }
@@ -34,6 +66,7 @@ type nativeData struct {
 // nativeInstance symbolizes native frames against one ELF's symbol table.
 type nativeInstance struct {
 	interpreter.InstanceStubs
+	fileID host.FileID
 	syms   []symbol // shared with the Data, read-only
 	mapper pfelf.AddressMapper
 }
@@ -55,7 +88,7 @@ func loader(ebpf interpreter.EbpfHandler, info *interpreter.LoaderInfo) (interpr
 	if err != nil {
 		return nil, err
 	}
-	return &nativeData{syms: syms, mapper: ef.GetAddressMapper()}, nil
+	return &nativeData{fileID: info.FileID(), syms: syms, mapper: ef.GetAddressMapper()}, nil
 }
 
 // loadSymbols reads .symtab (falling back to .dynsym) via debug/elf and
@@ -82,7 +115,8 @@ func loadSymbols(path string) ([]symbol, error) {
 		}
 		switch elf.ST_TYPE(s.Info) {
 		case elf.STT_FUNC, elf.STT_GNU_IFUNC, elf.STT_NOTYPE:
-			out = append(out, symbol{addr: libpf.Address(s.Value), name: libpf.SymbolName(s.Name)})
+			out = append(out, symbol{addr: libpf.Address(s.Value),
+				size: libpf.Address(s.Size), name: libpf.SymbolName(s.Name)})
 		}
 	}
 	if len(out) == 0 {
@@ -96,7 +130,7 @@ func loadSymbols(path string) ([]symbol, error) {
 func (d *nativeData) Attach(_ interpreter.EbpfHandler, _ libpf.PID, _ libpf.Address,
 	_ remotememory.RemoteMemory,
 ) (interpreter.Instance, error) {
-	return &nativeInstance{syms: d.syms, mapper: d.mapper}, nil
+	return &nativeInstance{fileID: d.fileID, syms: d.syms, mapper: d.mapper}, nil
 }
 
 // Unload is a no-op: native symbolization keeps no eBPF state.
@@ -118,6 +152,12 @@ func (p *nativeInstance) Symbolize(ef libpf.EbpfFrame, frames *libpf.Frames,
 	if !mapping.Valid() || len(p.syms) == 0 {
 		return interpreter.ErrMismatchInterpreterType
 	}
+	// This instance's symbol table belongs to one specific file: only
+	// symbolize frames whose mapping matches, otherwise the address would
+	// be resolved against the wrong ELF (cross-file mis-symbolization).
+	if md := mapping.Value(); host.FileIDFromLibpf(md.File.Value().FileID) != p.fileID {
+		return interpreter.ErrMismatchInterpreterType
+	}
 	address := libpf.Address(ef.Data())
 	md := mapping.Value()
 	fileOffset := uint64(address - md.Start + libpf.Address(md.FileOffset))
@@ -133,9 +173,17 @@ func (p *nativeInstance) Symbolize(ef libpf.EbpfFrame, frames *libpf.Frames,
 	if i == 0 {
 		return interpreter.ErrMismatchInterpreterType
 	}
+	sym := p.syms[i-1]
+	// Coverage check: when the symbol has a size, the address must fall
+	// inside [addr, addr+size). Sparse tables (stripped binaries with only
+	// .dynsym) otherwise resolve to the nearest preceding *exported* symbol,
+	// producing plausible-looking but wrong function names.
+	if sym.size > 0 && libpf.Address(vaddr) >= sym.addr+sym.size {
+		return interpreter.ErrMismatchInterpreterType
+	}
 	frames.Append(&libpf.Frame{
 		Type:            libpf.NativeFrame,
-		FunctionName:    libpf.Intern(string(p.syms[i-1].name)),
+		FunctionName:    libpf.Intern(string(demangleName(sym.name))),
 		AddressOrLineno: libpf.AddressOrLineno(vaddr),
 	})
 	return nil
