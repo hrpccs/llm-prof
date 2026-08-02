@@ -10,7 +10,7 @@
 #define STACK_DELTA_STOP    (STACK_DELTA_COMMAND_FLAG | UNWIND_COMMAND_STOP)
 
 // The number of native frames to unwind per frame-unwinding eBPF program.
-#define NATIVE_FRAMES_PER_PROGRAM 5
+#define NATIVE_FRAMES_PER_PROGRAM 10
 
 // Record a native frame
 static EBPF_INLINE ErrorCode
