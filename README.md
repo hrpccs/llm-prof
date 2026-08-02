@@ -135,7 +135,7 @@ llm-prof 的 off-cpu 时长加权正确揭示"瓶颈在 IO 等待"；py-spy 的�
 
 **结论**：中断+pid 过滤成本与栈深无关（平坦 ~1.5-2.6%，即每次采样的固定开销）；**unwind 成本随帧深近似线性增长**（16 帧 → 95 帧时从 +0.7% 涨到 +5.9%，反推每帧 ~0.2µs）。
 浅栈应用（如纯 Python 胶水）@10000Hz 总开销 ~3%，深栈应用（深递归/C++ 调用链 100+ 帧）~7%——开销主要由应用自身的栈特征决定。
-另注意到深栈（depth=200）采样出现 `[unwind-error]` 帧，深栈 unwind 失败率值得单独跟进。
+后续调查澄清：之前观察到的深栈 `[unwind-error]` 帧与栈深无关，而是 **attach 后 ~100ms 的同步窗口**现象（进程管理器已插入 per-PID 标记、真实页映射尚未填充时，低采样率下的样本报 `ERR_NATIVE_NO_PID_PAGE_MAPPING`）。该错误已在 unwind_stop 中静默丢弃（可恢复，非真实 unwind 失败），深栈样本现在正常输出（成功解出的最大深度受 128 帧记录上限约束，与 py-spy 的深度上限同类）。
 
 ### 问题定位能力矩阵（4 个构造 case）
 
@@ -256,6 +256,11 @@ go build -tags osusergo,netgo -o llm-prof .
 ```
 
 依赖：Linux 内核 ≥5.13（BTF）、clang、Go ≥1.25、Rust ≥1.88。
+
+> **改 eBPF 后必须 `go build -a`**（或 `go clean -cache`）：`go:embed` 的
+> `tracer.ebpf.*` 字节码变更时，普通 `go build` 可能命中构建缓存、嵌入**旧** eBPF，
+> 导致行为与源码不符（实测遇到过 verifier 拒绝/指标不生效等诡异现象）。
+> 排查技巧：`strings llm-prof | grep <新代码特征字符串>` 验证嵌入内容。
 
 ## Credits
 

@@ -280,6 +280,15 @@ static EBPF_INLINE int unwind_stop(struct pt_regs *ctx)
     if (filter_error_frames) {
       return 0;
     }
+    // ERR_NATIVE_NO_PID_PAGE_MAPPING (4012) is a recoverable condition: it
+    // fires during the attach-time sync window (process manager inserted the
+    // per-PID marker but the real page mappings are not populated yet) and
+    // after a re-sync request. Such samples cannot be unwound and would only
+    // pollute the output with [unwind-error] noise, so drop them silently;
+    // other error codes stay visible when -send-error-frames is enabled.
+    if (state->unwind_error == ERR_NATIVE_NO_PID_PAGE_MAPPING) {
+      return 0;
+    }
   }
   // TEMPORARY HACK END
 
