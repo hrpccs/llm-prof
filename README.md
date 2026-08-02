@@ -180,6 +180,26 @@ go tool pprof -top lp.pb.gz
 go tool pprof -diff_base=py.pb.gz lp.pb.gz   # 或直接并排对比
 ```
 
+### 火焰图可视化：pprof → Pyroscope / Grafana / Parca
+
+pprof 是持续 profiling 生态的标准格式，llm-prof 的 `.pb.gz` 可直接喂给主流的火焰图可视化后端（均已实测）：
+
+**Pyroscope（Grafana 的 profiling 后端，最轻量）**——单容器自带 Web UI 火焰图：
+
+```bash
+docker run -d --name pyroscope -p 4040:4040 grafana/pyroscope:latest
+# llm-prof / pyraw2pprof 转换出的 pprof 直接上传（重新采样以保证时间戳新鲜）：
+demo-cases/push_to_pyroscope.sh lp.pb.gz llm-prof
+demo-cases/push_to_pyroscope.sh py.pb.gz py-spy
+# 浏览器打开 http://localhost:4040 查看火焰图（Pyroscope 默认摄取窗口约 1 小时）
+```
+
+**Grafana**——内置 Pyroscope 数据源（`grafana-pyroscope-datasource`），数据源指向 Pyroscope 后即可在
+Flame Graph 面板查看；也可用内置 **Parca 数据源**对接 Parca。
+
+**Parca**——原生接受 pprof（`POST /profiles/writeraw`，body 为 protobuf JSON，
+`raw_profile` 字段放 pprof 文件 base64），自带 :7070 火焰图 UI。
+
 注意：llm-prof 开 off-cpu 时样本按**阻塞时长加权**，且 off-cpu 样本的栈顶是调度器帧
 （`finish_task_switch`）——用 `-cum` 视图或过滤内核帧可看到真实等待点（如 GIL 的
 `futex_wait` / `do_futex`）；py-spy 只有 on-CPU 采样点快照，看不到睡眠中的等待。
