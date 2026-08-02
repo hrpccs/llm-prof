@@ -33,6 +33,12 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
 
 ¹ 短负载（~25s）实测 +111.5%，长负载（~32s）实测 +25.8%——量级随负载时长变化，区间更准确。
 
+**采样率口径（公平性说明）**：llm-prof 的 `-samples-per-second` 是**每 CPU** 采样率（多线程负载下实际中断率
+= 名义值 × 忙碌 CPU 数），py-spy 的 `-r` 是**每进程**采样率。上表两列均为 100/1000Hz 名义值实测
+（llm-prof 为 `-samples-per-second 100/1000`，脚本 `run_replace_compare.sh` / `run_replace_1k.sh` 可复现）——
+即 GIL 争用场景 llm-prof 的实际采样中断率（~4×名义值）**高于** py-spy，开销仍然更低，结论方向不受影响。
+注意 llm-prof 对单进程的**有效**样本率 ≈ 名义值 × CPU 占用率（单线程 100Hz 实际约 35%），与开销无关。
+
 ### 采集能力（100Hz，off-cpu 开）
 
 | 指标 | py-spy | llm-prof |
