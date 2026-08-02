@@ -15,6 +15,7 @@ import (
 	"go.opentelemetry.io/ebpf-profiler/host"
 	"go.opentelemetry.io/ebpf-profiler/interpreter"
 	"go.opentelemetry.io/ebpf-profiler/interpreter/interpreterconfig"
+	"go.opentelemetry.io/ebpf-profiler/interpreter/native"
 	"go.opentelemetry.io/ebpf-profiler/interpreter/python"
 	"go.opentelemetry.io/ebpf-profiler/libc"
 	"go.opentelemetry.io/ebpf-profiler/libpf"
@@ -90,6 +91,8 @@ func NewExecutableInfoManager(
 	if !interpretersConfig.Python.IsDisabled() {
 		loaders = append(loaders, python.GetLoader(interpretersConfig.Python))
 	}
+	// Native ELF symbolization for C/C++ frames (CPython internals, libc, ...).
+	loaders = append(loaders, native.GetLoader())
 
 	deferredFileIDs, err := lru.NewSynced[host.FileID, libpf.Void](deferredFileIDSize,
 		func(id host.FileID) uint32 { return uint32(id) })
