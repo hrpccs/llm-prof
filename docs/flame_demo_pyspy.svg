@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="198.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >flame_demo_ps</text>
+<text id="title" x="600.00" y="24" >flame_demo (py-spy)</text>
 <text id="details" x="10.00" y="181" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,88 +431,84 @@
 <text id="matched" x="1090.00" y="181" > </text>
 <g id="frames">
 <g >
-<title>train_step (724 samples, 99.86%)</title><rect x="11.6" y="101" width="1178.4" height="15.0" fill="rgb(230,116,27)" rx="2" ry="2" />
-<text  x="14.63" y="111.5" >train_step</text>
-</g>
-<g >
-<title>forward (64 samples, 8.83%)</title><rect x="765.2" y="85" width="104.2" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
-<text  x="768.20" y="95.5" >forward</text>
-</g>
-<g >
-<title>_mean (19 samples, 2.62%)</title><rect x="1157.4" y="53" width="31.0" height="15.0" fill="rgb(206,4,1)" rx="2" ry="2" />
-<text  x="1160.45" y="63.5" >_m..</text>
-</g>
-<g >
-<title>iterencode (4 samples, 0.55%)</title><rect x="758.7" y="37" width="6.5" height="15.0" fill="rgb(228,110,26)" rx="2" ry="2" />
-<text  x="761.69" y="47.5" ></text>
-</g>
-<g >
-<title>zeros_like (15 samples, 2.07%)</title><rect x="719.6" y="69" width="24.4" height="15.0" fill="rgb(243,176,42)" rx="2" ry="2" />
-<text  x="722.63" y="79.5" >z..</text>
-</g>
-<g >
-<title>loss_fn (34 samples, 4.69%)</title><rect x="1133.0" y="85" width="55.4" height="15.0" fill="rgb(229,114,27)" rx="2" ry="2" />
-<text  x="1136.03" y="95.5" >loss_fn</text>
-</g>
-<g >
-<title>&lt;module&gt; (725 samples, 100.00%)</title><rect x="10.0" y="133" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="13.00" y="143.5" >&lt;module&gt;</text>
-</g>
-<g >
-<title>checkpoint (13 samples, 1.79%)</title><rect x="744.0" y="85" width="21.2" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
-<text  x="747.04" y="95.5" ></text>
-</g>
-<g >
-<title>plugin_reload (1 samples, 0.14%)</title><rect x="1188.4" y="85" width="1.6" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
-<text  x="1191.37" y="95.5" ></text>
-</g>
-<g >
-<title>clip (2 samples, 0.28%)</title><rect x="1129.8" y="69" width="3.2" height="15.0" fill="rgb(224,89,21)" rx="2" ry="2" />
-<text  x="1132.78" y="79.5" ></text>
-</g>
-<g >
-<title>backward_numeric (373 samples, 51.45%)</title><rect x="137.0" y="85" width="607.0" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
-<text  x="139.95" y="95.5" >backward_numeric</text>
-</g>
-<g >
-<title>reload (1 samples, 0.14%)</title><rect x="1188.4" y="69" width="1.6" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
-<text  x="1191.37" y="79.5" ></text>
-</g>
-<g >
-<title>_clip (1 samples, 0.14%)</title><rect x="1131.4" y="37" width="1.6" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="1134.41" y="47.5" ></text>
-</g>
-<g >
-<title>all (725 samples, 100%)</title><rect x="10.0" y="149" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
-<text  x="13.00" y="159.5" ></text>
-</g>
-<g >
-<title>mean (19 samples, 2.62%)</title><rect x="1157.4" y="69" width="31.0" height="15.0" fill="rgb(219,67,16)" rx="2" ry="2" />
-<text  x="1160.45" y="79.5" >mean</text>
-</g>
-<g >
-<title>_count_reduce_items (5 samples, 0.69%)</title><rect x="1180.2" y="37" width="8.2" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
-<text  x="1183.23" y="47.5" ></text>
-</g>
-<g >
-<title>_wrapfunc (2 samples, 0.28%)</title><rect x="1129.8" y="53" width="3.2" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
-<text  x="1132.78" y="63.5" ></text>
-</g>
-<g >
-<title>main (725 samples, 100.00%)</title><rect x="10.0" y="117" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<title>main (741 samples, 100.00%)</title><rect x="10.0" y="117" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
 <text  x="13.00" y="127.5" >main</text>
 </g>
 <g >
-<title>load_batch (162 samples, 22.34%)</title><rect x="869.4" y="85" width="263.6" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
-<text  x="872.37" y="95.5" >load_batch</text>
+<title>loss_fn (52 samples, 7.02%)</title><rect x="1105.6" y="85" width="82.8" height="15.0" fill="rgb(229,114,27)" rx="2" ry="2" />
+<text  x="1108.60" y="95.5" >loss_fn</text>
 </g>
 <g >
-<title>dumps (4 samples, 0.55%)</title><rect x="758.7" y="69" width="6.5" height="15.0" fill="rgb(241,166,39)" rx="2" ry="2" />
-<text  x="761.69" y="79.5" ></text>
+<title>mean (33 samples, 4.45%)</title><rect x="1135.9" y="69" width="52.5" height="15.0" fill="rgb(219,67,16)" rx="2" ry="2" />
+<text  x="1138.86" y="79.5" >mean</text>
 </g>
 <g >
-<title>encode (4 samples, 0.55%)</title><rect x="758.7" y="53" width="6.5" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
-<text  x="761.69" y="63.5" ></text>
+<title>train_step (741 samples, 100.00%)</title><rect x="10.0" y="101" width="1180.0" height="15.0" fill="rgb(230,116,27)" rx="2" ry="2" />
+<text  x="13.00" y="111.5" >train_step</text>
+</g>
+<g >
+<title>encode (3 samples, 0.40%)</title><rect x="737.7" y="53" width="4.8" height="15.0" fill="rgb(245,186,44)" rx="2" ry="2" />
+<text  x="740.75" y="63.5" ></text>
+</g>
+<g >
+<title>plugin_reload (1 samples, 0.13%)</title><rect x="1188.4" y="85" width="1.6" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
+<text  x="1191.41" y="95.5" ></text>
+</g>
+<g >
+<title>iterencode (3 samples, 0.40%)</title><rect x="737.7" y="37" width="4.8" height="15.0" fill="rgb(228,110,26)" rx="2" ry="2" />
+<text  x="740.75" y="47.5" ></text>
+</g>
+<g >
+<title>_mean_dispatcher (1 samples, 0.13%)</title><rect x="1134.3" y="69" width="1.6" height="15.0" fill="rgb(225,94,22)" rx="2" ry="2" />
+<text  x="1137.26" y="79.5" ></text>
+</g>
+<g >
+<title>copyto (1 samples, 0.13%)</title><rect x="725.0" y="53" width="1.6" height="15.0" fill="rgb(235,139,33)" rx="2" ry="2" />
+<text  x="728.01" y="63.5" ></text>
+</g>
+<g >
+<title>backward_numeric (387 samples, 52.23%)</title><rect x="110.3" y="85" width="616.3" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
+<text  x="113.32" y="95.5" >backward_numeric</text>
+</g>
+<g >
+<title>all (741 samples, 100%)</title><rect x="10.0" y="149" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<text  x="13.00" y="159.5" ></text>
+</g>
+<g >
+<title>&lt;module&gt; (741 samples, 100.00%)</title><rect x="10.0" y="133" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<text  x="13.00" y="143.5" >&lt;module&gt;</text>
+</g>
+<g >
+<title>_count_reduce_items (14 samples, 1.89%)</title><rect x="1166.1" y="37" width="22.3" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="1169.11" y="47.5" >_..</text>
+</g>
+<g >
+<title>dumps (3 samples, 0.40%)</title><rect x="737.7" y="69" width="4.8" height="15.0" fill="rgb(241,166,39)" rx="2" ry="2" />
+<text  x="740.75" y="79.5" ></text>
+</g>
+<g >
+<title>zeros_like (19 samples, 2.56%)</title><rect x="696.3" y="69" width="30.3" height="15.0" fill="rgb(243,176,42)" rx="2" ry="2" />
+<text  x="699.34" y="79.5" >ze..</text>
+</g>
+<g >
+<title>reload (1 samples, 0.13%)</title><rect x="1188.4" y="69" width="1.6" height="15.0" fill="rgb(237,148,35)" rx="2" ry="2" />
+<text  x="1191.41" y="79.5" ></text>
+</g>
+<g >
+<title>checkpoint (10 samples, 1.35%)</title><rect x="726.6" y="85" width="15.9" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="729.60" y="95.5" ></text>
+</g>
+<g >
+<title>load_batch (182 samples, 24.56%)</title><rect x="815.8" y="85" width="289.8" height="15.0" fill="rgb(242,170,40)" rx="2" ry="2" />
+<text  x="818.78" y="95.5" >load_batch</text>
+</g>
+<g >
+<title>_mean (30 samples, 4.05%)</title><rect x="1140.6" y="53" width="47.8" height="15.0" fill="rgb(206,4,1)" rx="2" ry="2" />
+<text  x="1143.63" y="63.5" >_mean</text>
+</g>
+<g >
+<title>forward (46 samples, 6.21%)</title><rect x="742.5" y="85" width="73.3" height="15.0" fill="rgb(223,84,20)" rx="2" ry="2" />
+<text  x="745.52" y="95.5" >forward</text>
 </g>
 </g>
 </svg>

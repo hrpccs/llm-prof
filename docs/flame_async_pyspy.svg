@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="310.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >flame_async_ps</text>
+<text id="title" x="600.00" y="24" >flame_async (py-spy)</text>
 <text id="details" x="10.00" y="293" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,128 +431,116 @@
 <text id="matched" x="1090.00" y="293" > </text>
 <g id="frames">
 <g >
-<title>cancel (1 samples, 0.50%)</title><rect x="1155.0" y="85" width="5.8" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
-<text  x="1157.95" y="95.5" ></text>
-</g>
-<g >
-<title>time (2 samples, 0.99%)</title><rect x="1143.3" y="69" width="11.7" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
-<text  x="1146.27" y="79.5" ></text>
-</g>
-<g >
-<title>_mean (45 samples, 22.28%)</title><rect x="816.1" y="85" width="262.9" height="15.0" fill="rgb(206,4,1)" rx="2" ry="2" />
-<text  x="819.14" y="95.5" >_mean</text>
-</g>
-<g >
-<title>call_later (1 samples, 0.50%)</title><rect x="1184.2" y="101" width="5.8" height="15.0" fill="rgb(225,96,22)" rx="2" ry="2" />
-<text  x="1187.16" y="111.5" ></text>
-</g>
-<g >
-<title>_run_once (201 samples, 99.50%)</title><rect x="15.8" y="165" width="1174.2" height="15.0" fill="rgb(213,40,9)" rx="2" ry="2" />
-<text  x="18.84" y="175.5" >_run_once</text>
-</g>
-<g >
-<title>run (202 samples, 100.00%)</title><rect x="10.0" y="213" width="1180.0" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="13.00" y="223.5" >run</text>
-</g>
-<g >
-<title>sleep (1 samples, 0.50%)</title><rect x="1166.6" y="117" width="5.9" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
-<text  x="1169.63" y="127.5" ></text>
-</g>
-<g >
-<title>&lt;module&gt; (202 samples, 100.00%)</title><rect x="10.0" y="245" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="13.00" y="255.5" >&lt;module&gt;</text>
-</g>
-<g >
-<title>_set_result_unless_cancelled (3 samples, 1.49%)</title><rect x="56.7" y="133" width="17.6" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
-<text  x="59.73" y="143.5" ></text>
-</g>
-<g >
-<title>_count_reduce_items (9 samples, 4.46%)</title><rect x="1026.4" y="69" width="52.6" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
-<text  x="1029.44" y="79.5" >_coun..</text>
-</g>
-<g >
-<title>__init__ (1 samples, 0.50%)</title><rect x="1131.6" y="37" width="5.8" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
-<text  x="1134.58" y="47.5" ></text>
-</g>
-<g >
-<title>create_future (1 samples, 0.50%)</title><rect x="1160.8" y="85" width="5.8" height="15.0" fill="rgb(234,134,32)" rx="2" ry="2" />
-<text  x="1163.79" y="95.5" ></text>
-</g>
-<g >
-<title>run_until_complete (202 samples, 100.00%)</title><rect x="10.0" y="197" width="1180.0" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
+<title>run_until_complete (231 samples, 100.00%)</title><rect x="10.0" y="197" width="1180.0" height="15.0" fill="rgb(205,2,0)" rx="2" ry="2" />
 <text  x="13.00" y="207.5" >run_until_complete</text>
 </g>
 <g >
-<title>all (202 samples, 100%)</title><rect x="10.0" y="261" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>_mean (57 samples, 24.68%)</title><rect x="801.8" y="85" width="291.1" height="15.0" fill="rgb(206,4,1)" rx="2" ry="2" />
+<text  x="804.77" y="95.5" >_mean</text>
+</g>
+<g >
+<title>run_forever (231 samples, 100.00%)</title><rect x="10.0" y="181" width="1180.0" height="15.0" fill="rgb(231,119,28)" rx="2" ry="2" />
+<text  x="13.00" y="191.5" >run_forever</text>
+</g>
+<g >
+<title>_run_once (229 samples, 99.13%)</title><rect x="20.2" y="165" width="1169.8" height="15.0" fill="rgb(213,40,9)" rx="2" ry="2" />
+<text  x="23.22" y="175.5" >_run_once</text>
+</g>
+<g >
+<title>_run (224 samples, 96.97%)</title><rect x="45.8" y="149" width="1144.2" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
+<text  x="48.76" y="159.5" >_run</text>
+</g>
+<g >
+<title>metrics_loop (5 samples, 2.16%)</title><rect x="1164.5" y="133" width="25.5" height="15.0" fill="rgb(241,168,40)" rx="2" ry="2" />
+<text  x="1167.46" y="143.5" >m..</text>
+</g>
+<g >
+<title>cancel (1 samples, 0.43%)</title><rect x="1179.8" y="85" width="5.1" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
+<text  x="1182.78" y="95.5" ></text>
+</g>
+<g >
+<title>sleep (14 samples, 6.06%)</title><rect x="1092.9" y="101" width="71.6" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
+<text  x="1095.94" y="111.5" >sleep</text>
+</g>
+<g >
+<title>_set_result_unless_cancelled (1 samples, 0.43%)</title><rect x="56.0" y="133" width="5.1" height="15.0" fill="rgb(214,44,10)" rx="2" ry="2" />
+<text  x="58.97" y="143.5" ></text>
+</g>
+<g >
+<title>sleep (5 samples, 2.16%)</title><rect x="1164.5" y="117" width="25.5" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
+<text  x="1167.46" y="127.5" >s..</text>
+</g>
+<g >
+<title>__init__ (4 samples, 1.73%)</title><rect x="1133.8" y="53" width="20.4" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
+<text  x="1136.81" y="63.5" ></text>
+</g>
+<g >
+<title>&lt;module&gt; (231 samples, 100.00%)</title><rect x="10.0" y="245" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<text  x="13.00" y="255.5" >&lt;module&gt;</text>
+</g>
+<g >
+<title>time (2 samples, 0.87%)</title><rect x="1154.2" y="69" width="10.3" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="1157.24" y="79.5" ></text>
+</g>
+<g >
+<title>_call_soon (1 samples, 0.43%)</title><rect x="56.0" y="101" width="5.1" height="15.0" fill="rgb(237,147,35)" rx="2" ry="2" />
+<text  x="58.97" y="111.5" ></text>
+</g>
+<g >
+<title>call_soon (1 samples, 0.43%)</title><rect x="56.0" y="117" width="5.1" height="15.0" fill="rgb(250,210,50)" rx="2" ry="2" />
+<text  x="58.97" y="127.5" ></text>
+</g>
+<g >
+<title>main (216 samples, 93.51%)</title><rect x="61.1" y="133" width="1103.4" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="64.08" y="143.5" >main</text>
+</g>
+<g >
+<title>all (231 samples, 100%)</title><rect x="10.0" y="261" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
 <text  x="13.00" y="271.5" ></text>
 </g>
 <g >
-<title>__init__ (1 samples, 0.50%)</title><rect x="1184.2" y="69" width="5.8" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
-<text  x="1187.16" y="79.5" ></text>
+<title>run (231 samples, 100.00%)</title><rect x="10.0" y="213" width="1180.0" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="13.00" y="223.5" >run</text>
 </g>
 <g >
-<title>_check_closed (1 samples, 0.50%)</title><rect x="1137.4" y="53" width="5.9" height="15.0" fill="rgb(246,188,45)" rx="2" ry="2" />
-<text  x="1140.43" y="63.5" ></text>
+<title>decode_loop (215 samples, 93.07%)</title><rect x="66.2" y="117" width="1098.3" height="15.0" fill="rgb(241,166,39)" rx="2" ry="2" />
+<text  x="69.19" y="127.5" >decode_loop</text>
 </g>
 <g >
-<title>__init__ (1 samples, 0.50%)</title><rect x="1184.2" y="53" width="5.8" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
-<text  x="1187.16" y="63.5" ></text>
+<title>call_later (1 samples, 0.43%)</title><rect x="1169.6" y="101" width="5.1" height="15.0" fill="rgb(225,96,22)" rx="2" ry="2" />
+<text  x="1172.57" y="111.5" ></text>
 </g>
 <g >
-<title>metrics_loop (3 samples, 1.49%)</title><rect x="1172.5" y="133" width="17.5" height="15.0" fill="rgb(241,168,40)" rx="2" ry="2" />
-<text  x="1175.48" y="143.5" ></text>
+<title>call_at (5 samples, 2.16%)</title><rect x="1128.7" y="69" width="25.5" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
+<text  x="1131.70" y="79.5" >c..</text>
 </g>
 <g >
-<title>main (188 samples, 93.07%)</title><rect x="74.3" y="133" width="1098.2" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="77.26" y="143.5" >main</text>
+<title>__init__ (3 samples, 1.30%)</title><rect x="1138.9" y="37" width="15.3" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
+<text  x="1141.92" y="47.5" ></text>
 </g>
 <g >
-<title>sleep (15 samples, 7.43%)</title><rect x="1079.0" y="101" width="87.6" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
-<text  x="1082.01" y="111.5" >sleep</text>
+<title>cancel (2 samples, 0.87%)</title><rect x="1174.7" y="101" width="10.2" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
+<text  x="1177.68" y="111.5" ></text>
 </g>
 <g >
-<title>__init__ (2 samples, 0.99%)</title><rect x="1125.7" y="53" width="11.7" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
-<text  x="1128.74" y="63.5" ></text>
+<title>create_future (1 samples, 0.43%)</title><rect x="1184.9" y="101" width="5.1" height="15.0" fill="rgb(234,134,32)" rx="2" ry="2" />
+<text  x="1187.89" y="111.5" ></text>
 </g>
 <g >
-<title>call_at (1 samples, 0.50%)</title><rect x="1184.2" y="85" width="5.8" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
-<text  x="1187.16" y="95.5" ></text>
+<title>fake_forward (200 samples, 86.58%)</title><rect x="71.3" y="101" width="1021.6" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
+<text  x="74.30" y="111.5" >fake_forward</text>
 </g>
 <g >
-<title>fake_forward (171 samples, 84.65%)</title><rect x="80.1" y="101" width="998.9" height="15.0" fill="rgb(230,117,28)" rx="2" ry="2" />
-<text  x="83.10" y="111.5" >fake_forward</text>
+<title>call_later (11 samples, 4.76%)</title><rect x="1108.3" y="85" width="56.2" height="15.0" fill="rgb(225,96,22)" rx="2" ry="2" />
+<text  x="1111.27" y="95.5" >call_..</text>
 </g>
 <g >
-<title>_run (198 samples, 98.02%)</title><rect x="33.4" y="149" width="1156.6" height="15.0" fill="rgb(247,193,46)" rx="2" ry="2" />
-<text  x="36.37" y="159.5" >_run</text>
+<title>_count_reduce_items (11 samples, 4.76%)</title><rect x="1036.8" y="69" width="56.1" height="15.0" fill="rgb(240,162,38)" rx="2" ry="2" />
+<text  x="1039.75" y="79.5" >_coun..</text>
 </g>
 <g >
-<title>call_soon (1 samples, 0.50%)</title><rect x="68.4" y="117" width="5.9" height="15.0" fill="rgb(250,210,50)" rx="2" ry="2" />
-<text  x="71.42" y="127.5" ></text>
-</g>
-<g >
-<title>call_at (5 samples, 2.48%)</title><rect x="1114.1" y="69" width="29.2" height="15.0" fill="rgb(212,34,8)" rx="2" ry="2" />
-<text  x="1117.06" y="79.5" >ca..</text>
-</g>
-<g >
-<title>call_later (10 samples, 4.95%)</title><rect x="1096.5" y="85" width="58.5" height="15.0" fill="rgb(225,96,22)" rx="2" ry="2" />
-<text  x="1099.53" y="95.5" >call_l..</text>
-</g>
-<g >
-<title>decode_loop (187 samples, 92.57%)</title><rect x="74.3" y="117" width="1092.3" height="15.0" fill="rgb(241,166,39)" rx="2" ry="2" />
-<text  x="77.26" y="127.5" >decode_loop</text>
-</g>
-<g >
-<title>sleep (2 samples, 0.99%)</title><rect x="1178.3" y="117" width="11.7" height="15.0" fill="rgb(244,182,43)" rx="2" ry="2" />
-<text  x="1181.32" y="127.5" ></text>
-</g>
-<g >
-<title>run (202 samples, 100.00%)</title><rect x="10.0" y="229" width="1180.0" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<title>run (231 samples, 100.00%)</title><rect x="10.0" y="229" width="1180.0" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
 <text  x="13.00" y="239.5" >run</text>
-</g>
-<g >
-<title>run_forever (202 samples, 100.00%)</title><rect x="10.0" y="181" width="1180.0" height="15.0" fill="rgb(231,119,28)" rx="2" ry="2" />
-<text  x="13.00" y="191.5" >run_forever</text>
 </g>
 </g>
 </svg>

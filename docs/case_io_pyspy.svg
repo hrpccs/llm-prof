@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="134.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >case_io_ps</text>
+<text id="title" x="600.00" y="24" >case_io (py-spy)</text>
 <text id="details" x="10.00" y="117" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,20 +431,20 @@
 <text id="matched" x="1090.00" y="117" > </text>
 <g id="frames">
 <g >
-<title>main (246 samples, 100.00%)</title><rect x="10.0" y="53" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<title>main (268 samples, 100.00%)</title><rect x="10.0" y="53" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
 <text  x="13.00" y="63.5" >main</text>
 </g>
 <g >
-<title>&lt;module&gt; (246 samples, 100.00%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="13.00" y="79.5" >&lt;module&gt;</text>
+<title>calc (246 samples, 91.79%)</title><rect x="106.9" y="37" width="1083.1" height="15.0" fill="rgb(210,23,5)" rx="2" ry="2" />
+<text  x="109.87" y="47.5" >calc</text>
 </g>
 <g >
-<title>all (246 samples, 100%)</title><rect x="10.0" y="85" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>all (268 samples, 100%)</title><rect x="10.0" y="85" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
 <text  x="13.00" y="95.5" ></text>
 </g>
 <g >
-<title>calc (234 samples, 95.12%)</title><rect x="67.6" y="37" width="1122.4" height="15.0" fill="rgb(210,23,5)" rx="2" ry="2" />
-<text  x="70.56" y="47.5" >calc</text>
+<title>&lt;module&gt; (268 samples, 100.00%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<text  x="13.00" y="79.5" >&lt;module&gt;</text>
 </g>
 </g>
 </svg>

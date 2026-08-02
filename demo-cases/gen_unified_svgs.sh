@@ -39,7 +39,7 @@ run_one() { # $1=name  $2=args... （输出 docs/${1}_{tool}.svg）
     sudo "$LLM" -pid "$T" -d 15s -samples-per-second 100 -off-cpu-threshold 1.0 \
       -o /tmp/uni_${name}_lp.pb.gz > /tmp/uni_${name}_lp.log 2>&1
     if grep -q "Wrote" /tmp/uni_${name}_lp.log; then
-      go tool pprof -raw /tmp/uni_${name}_lp.pb.gz 2>/dev/null | python3 demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (llm-prof)" > "$DOCS/${name}_llmprof.svg" 2>/dev/null
+      go tool pprof -raw /tmp/uni_${name}_lp.pb.gz 2>/dev/null | python3 llm-prof/demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (llm-prof)" > "$DOCS/${name}_llmprof.svg" 2>/dev/null
       echo "  llm-prof: ok ($(wc -c < $DOCS/${name}_llmprof.svg) B)"
     else
       echo "  llm-prof: FAIL $(grep ERROR /tmp/uni_${name}_lp.log | head -1)"
@@ -57,7 +57,7 @@ run_one() { # $1=name  $2=args... （输出 docs/${1}_{tool}.svg）
       --pid "$T" -d 12 > /tmp/uni_${name}_ps.log 2>&1
     if [ -s /tmp/uni_${name}_ps.txt ]; then
       "$P2P" /tmp/uni_${name}_ps.txt /tmp/uni_${name}_ps.pb.gz > /dev/null
-      go tool pprof -raw /tmp/uni_${name}_ps.pb.gz 2>/dev/null | python3 demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (py-spy)" > "$DOCS/${name}_pyspy.svg" 2>/dev/null
+      go tool pprof -raw /tmp/uni_${name}_ps.pb.gz 2>/dev/null | python3 llm-prof/demo-cases/pprof2folded.py /dev/stdin 2>/dev/null | "$FLAMEGRAPH" --title="${name} (py-spy)" > "$DOCS/${name}_pyspy.svg" 2>/dev/null
       echo "  py-spy:   ok ($(wc -c < $DOCS/${name}_pyspy.svg) B)"
     else
       echo "  py-spy:   FAIL"

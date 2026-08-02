@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" width="1200" height="390" onload="init(evt)" viewBox="0 0 1200 390" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" width="1200" height="406" onload="init(evt)" viewBox="0 0 1200 406" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
 <!-- NOTES:  -->
 <defs>
@@ -422,129 +422,121 @@
 	}
 ]]>
 </script>
-<rect x="0.0" y="0" width="1200.0" height="390.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >flame_io_lp</text>
-<text id="details" x="10.00" y="373" > </text>
+<rect x="0.0" y="0" width="1200.0" height="406.0" fill="url(#background)"  />
+<text id="title" x="600.00" y="24" >flame_io (llm-prof)</text>
+<text id="details" x="10.00" y="389" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
 <text id="ignorecase" x="1174.00" y="24" >ic</text>
-<text id="matched" x="1090.00" y="373" > </text>
+<text id="matched" x="1090.00" y="389" > </text>
 <g id="frames">
 <g >
-<title>__x64_sys_clock_nanosleep (112 samples, 0.90%)</title><rect x="1179.4" y="309" width="10.6" height="15.0" fill="rgb(248,202,48)" rx="2" ry="2" />
-<text  x="1182.39" y="319.5" ></text>
+<title>0x2a1c9 (11,846 samples, 98.72%)</title><rect x="25.0" y="309" width="1165.0" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
+<text  x="28.05" y="319.5" >0x2a1c9</text>
 </g>
 <g >
-<title>0x721d73 (12,339 samples, 99.05%)</title><rect x="10.2" y="117" width="1168.8" height="15.0" fill="rgb(252,219,52)" rx="2" ry="2" />
-<text  x="13.19" y="127.5" >0x721d73</text>
+<title>Py_RunMain (11,846 samples, 98.72%)</title><rect x="25.0" y="277" width="1165.0" height="15.0" fill="rgb(242,172,41)" rx="2" ry="2" />
+<text  x="28.05" y="287.5" >Py_RunMain</text>
 </g>
 <g >
-<title>hrtimer_nanosleep (12,334 samples, 99.01%)</title><rect x="10.2" y="53" width="1168.3" height="15.0" fill="rgb(237,147,35)" rx="2" ry="2" />
-<text  x="13.19" y="63.5" >hrtimer_nanosleep</text>
+<title>PyLong_FromLong.localalias (3 samples, 0.03%)</title><rect x="25.1" y="133" width="0.3" height="15.0" fill="rgb(225,96,23)" rx="2" ry="2" />
+<text  x="28.14" y="143.5" ></text>
 </g>
 <g >
-<title>0x68e4d7 (12,345 samples, 99.10%)</title><rect x="10.0" y="181" width="1169.4" height="15.0" fill="rgb(228,106,25)" rx="2" ry="2" />
-<text  x="13.00" y="191.5" >0x68e4d7</text>
+<title>hrtimer_nanosleep (153 samples, 1.28%)</title><rect x="10.0" y="293" width="15.0" height="15.0" fill="rgb(237,147,35)" rx="2" ry="2" />
+<text  x="13.00" y="303.5" ></text>
 </g>
 <g >
-<title>&lt;module&gt; (2 samples, 0.02%)</title><rect x="1179.2" y="149" width="0.2" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="1182.20" y="159.5" ></text>
+<title>PyEval_EvalCode (11,846 samples, 98.72%)</title><rect x="25.0" y="197" width="1165.0" height="15.0" fill="rgb(238,154,36)" rx="2" ry="2" />
+<text  x="28.05" y="207.5" >PyEval_EvalCode</text>
 </g>
 <g >
-<title>0xecb79 (12,336 samples, 99.03%)</title><rect x="10.2" y="101" width="1168.5" height="15.0" fill="rgb(229,113,27)" rx="2" ry="2" />
-<text  x="13.19" y="111.5" >0xecb79</text>
+<title>all (11,999 samples, 100%)</title><rect x="10.0" y="357" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<text  x="13.00" y="367.5" ></text>
 </g>
 <g >
-<title>0x6c332a (12,345 samples, 99.10%)</title><rect x="10.0" y="229" width="1169.4" height="15.0" fill="rgb(231,121,29)" rx="2" ry="2" />
-<text  x="13.00" y="239.5" >0x6c332a</text>
+<title>main (11,846 samples, 98.72%)</title><rect x="25.0" y="149" width="1165.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="28.05" y="159.5" >main</text>
 </g>
 <g >
-<title>main (2 samples, 0.02%)</title><rect x="1179.2" y="133" width="0.2" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="1182.20" y="143.5" ></text>
+<title>clock_nanosleep (11,841 samples, 98.68%)</title><rect x="25.5" y="117" width="1164.5" height="15.0" fill="rgb(231,119,28)" rx="2" ry="2" />
+<text  x="28.54" y="127.5" >clock_nanosleep</text>
 </g>
 <g >
-<title>0x6c366f (12,345 samples, 99.10%)</title><rect x="10.0" y="213" width="1169.4" height="15.0" fill="rgb(253,224,53)" rx="2" ry="2" />
-<text  x="13.00" y="223.5" >0x6c366f</text>
+<title>hrtimer_nanosleep (11,838 samples, 98.66%)</title><rect x="25.8" y="69" width="1164.2" height="15.0" fill="rgb(237,147,35)" rx="2" ry="2" />
+<text  x="28.83" y="79.5" >hrtimer_nanosleep</text>
 </g>
 <g >
-<title>all (12,457 samples, 100%)</title><rect x="10.0" y="341" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>_PyRun_SimpleFileObject (11,846 samples, 98.72%)</title><rect x="25.0" y="245" width="1165.0" height="15.0" fill="rgb(249,203,48)" rx="2" ry="2" />
+<text  x="28.05" y="255.5" >_PyRun_SimpleFileObject</text>
+</g>
+<g >
+<title>pyrun_file (11,846 samples, 98.72%)</title><rect x="25.0" y="229" width="1165.0" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="28.05" y="239.5" >pyrun_file</text>
+</g>
+<g >
+<title>__x64_sys_clock_nanosleep (153 samples, 1.28%)</title><rect x="10.0" y="325" width="15.0" height="15.0" fill="rgb(248,202,48)" rx="2" ry="2" />
+<text  x="13.00" y="335.5" ></text>
+</g>
+<g >
+<title>Py_BytesMain (11,846 samples, 98.72%)</title><rect x="25.0" y="293" width="1165.0" height="15.0" fill="rgb(235,141,33)" rx="2" ry="2" />
+<text  x="28.05" y="303.5" >Py_BytesMain</text>
+</g>
+<g >
+<title>time_sleep (11,841 samples, 98.68%)</title><rect x="25.5" y="133" width="1164.5" height="15.0" fill="rgb(246,191,45)" rx="2" ry="2" />
+<text  x="28.54" y="143.5" >time_sleep</text>
+</g>
+<g >
+<title>do_nanosleep (11,837 samples, 98.65%)</title><rect x="25.9" y="53" width="1164.1" height="15.0" fill="rgb(253,220,52)" rx="2" ry="2" />
+<text  x="28.93" y="63.5" >do_nanosleep</text>
+</g>
+<g >
+<title>run_mod (11,846 samples, 98.72%)</title><rect x="25.0" y="213" width="1165.0" height="15.0" fill="rgb(229,114,27)" rx="2" ry="2" />
+<text  x="28.05" y="223.5" >run_mod</text>
+</g>
+<g >
+<title>__libc_start_main (11,846 samples, 98.72%)</title><rect x="25.0" y="325" width="1165.0" height="15.0" fill="rgb(236,142,34)" rx="2" ry="2" />
+<text  x="28.05" y="335.5" >__libc_start_main</text>
+</g>
+<g >
+<title>&lt;module&gt; (11,846 samples, 98.72%)</title><rect x="25.0" y="165" width="1165.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<text  x="28.05" y="175.5" >&lt;module&gt;</text>
+</g>
+<g >
+<title>do_nanosleep (153 samples, 1.28%)</title><rect x="10.0" y="277" width="15.0" height="15.0" fill="rgb(253,220,52)" rx="2" ry="2" />
+<text  x="13.00" y="287.5" ></text>
+</g>
+<g >
+<title>common_nsleep_timens (153 samples, 1.28%)</title><rect x="10.0" y="309" width="15.0" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
+<text  x="13.00" y="319.5" ></text>
+</g>
+<g >
+<title>_PyRun_AnyFileObject (11,846 samples, 98.72%)</title><rect x="25.0" y="261" width="1165.0" height="15.0" fill="rgb(229,112,26)" rx="2" ry="2" />
+<text  x="28.05" y="271.5" >_PyRun_AnyFileObject</text>
+</g>
+<g >
+<title>__x64_sys_clock_nanosleep (11,838 samples, 98.66%)</title><rect x="25.8" y="101" width="1164.2" height="15.0" fill="rgb(248,202,48)" rx="2" ry="2" />
+<text  x="28.83" y="111.5" >__x64_sys_clock_nanosleep</text>
+</g>
+<g >
+<title>[unwind-error] (153 samples, 1.28%)</title><rect x="10.0" y="341" width="15.0" height="15.0" fill="rgb(235,140,33)" rx="2" ry="2" />
 <text  x="13.00" y="351.5" ></text>
 </g>
 <g >
-<title>0x2a28a (12,345 samples, 99.10%)</title><rect x="10.0" y="309" width="1169.4" height="15.0" fill="rgb(217,56,13)" rx="2" ry="2" />
-<text  x="13.00" y="319.5" >0x2a28a</text>
+<title>common_nsleep_timens (11,838 samples, 98.66%)</title><rect x="25.8" y="85" width="1164.2" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
+<text  x="28.83" y="95.5" >common_nsleep_timens</text>
 </g>
 <g >
-<title>0x579953 (2 samples, 0.02%)</title><rect x="1179.2" y="165" width="0.2" height="15.0" fill="rgb(222,79,19)" rx="2" ry="2" />
-<text  x="1182.20" y="175.5" ></text>
+<title>hrtimer_start_range_ns (4 samples, 0.03%)</title><rect x="1189.6" y="37" width="0.4" height="15.0" fill="rgb(244,179,42)" rx="2" ry="2" />
+<text  x="1192.61" y="47.5" ></text>
 </g>
 <g >
-<title>&lt;module&gt; (12,341 samples, 99.07%)</title><rect x="10.1" y="149" width="1169.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="13.09" y="159.5" >&lt;module&gt;</text>
+<title>_PyEval_EvalFrameDefault (11,846 samples, 98.72%)</title><rect x="25.0" y="181" width="1165.0" height="15.0" fill="rgb(221,75,17)" rx="2" ry="2" />
+<text  x="28.05" y="191.5" >_PyEval_EvalFrameDefault</text>
 </g>
 <g >
-<title>do_nanosleep (12,334 samples, 99.01%)</title><rect x="10.2" y="37" width="1168.3" height="15.0" fill="rgb(253,220,52)" rx="2" ry="2" />
-<text  x="13.19" y="47.5" >do_nanosleep</text>
-</g>
-<g >
-<title>0x6c315a (12,345 samples, 99.10%)</title><rect x="10.0" y="245" width="1169.4" height="15.0" fill="rgb(224,91,21)" rx="2" ry="2" />
-<text  x="13.00" y="255.5" >0x6c315a</text>
-</g>
-<g >
-<title>0x6c1766 (12,345 samples, 99.10%)</title><rect x="10.0" y="261" width="1169.4" height="15.0" fill="rgb(220,70,16)" rx="2" ry="2" />
-<text  x="13.00" y="271.5" >0x6c1766</text>
-</g>
-<g >
-<title>0x2a1c9 (12,345 samples, 99.10%)</title><rect x="10.0" y="293" width="1169.4" height="15.0" fill="rgb(254,227,54)" rx="2" ry="2" />
-<text  x="13.00" y="303.5" >0x2a1c9</text>
-</g>
-<g >
-<title>[unwind-error] (112 samples, 0.90%)</title><rect x="1179.4" y="325" width="10.6" height="15.0" fill="rgb(235,140,33)" rx="2" ry="2" />
-<text  x="1182.39" y="335.5" ></text>
-</g>
-<g >
-<title>main (12,341 samples, 99.07%)</title><rect x="10.1" y="133" width="1169.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="13.09" y="143.5" >main</text>
-</g>
-<g >
-<title>0xecb7a (3 samples, 0.02%)</title><rect x="1178.7" y="101" width="0.3" height="15.0" fill="rgb(221,75,17)" rx="2" ry="2" />
-<text  x="1181.73" y="111.5" ></text>
-</g>
-<g >
-<title>common_nsleep_timens (12,334 samples, 99.01%)</title><rect x="10.2" y="69" width="1168.3" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
-<text  x="13.19" y="79.5" >common_nsleep_timens</text>
-</g>
-<g >
-<title>do_nanosleep (112 samples, 0.90%)</title><rect x="1179.4" y="261" width="10.6" height="15.0" fill="rgb(253,220,52)" rx="2" ry="2" />
-<text  x="1182.39" y="271.5" ></text>
-</g>
-<g >
-<title>0x57219c (12,341 samples, 99.07%)</title><rect x="10.1" y="165" width="1169.0" height="15.0" fill="rgb(233,130,31)" rx="2" ry="2" />
-<text  x="13.09" y="175.5" >0x57219c</text>
-</g>
-<g >
-<title>hrtimer_nanosleep (112 samples, 0.90%)</title><rect x="1179.4" y="277" width="10.6" height="15.0" fill="rgb(237,147,35)" rx="2" ry="2" />
-<text  x="1182.39" y="287.5" ></text>
-</g>
-<g >
-<title>0x680fbd (12,345 samples, 99.10%)</title><rect x="10.0" y="325" width="1169.4" height="15.0" fill="rgb(219,67,16)" rx="2" ry="2" />
-<text  x="13.00" y="335.5" >0x680fbd</text>
-</g>
-<g >
-<title>__x64_sys_clock_nanosleep (12,334 samples, 99.01%)</title><rect x="10.2" y="85" width="1168.3" height="15.0" fill="rgb(248,202,48)" rx="2" ry="2" />
-<text  x="13.19" y="95.5" >__x64_sys_clock_nanosleep</text>
-</g>
-<g >
-<title>0x681d78 (12,345 samples, 99.10%)</title><rect x="10.0" y="277" width="1169.4" height="15.0" fill="rgb(238,152,36)" rx="2" ry="2" />
-<text  x="13.00" y="287.5" >0x681d78</text>
-</g>
-<g >
-<title>0x6281f7 (12,345 samples, 99.10%)</title><rect x="10.0" y="197" width="1169.4" height="15.0" fill="rgb(213,41,9)" rx="2" ry="2" />
-<text  x="13.00" y="207.5" >0x6281f7</text>
-</g>
-<g >
-<title>common_nsleep_timens (112 samples, 0.90%)</title><rect x="1179.4" y="293" width="10.6" height="15.0" fill="rgb(226,98,23)" rx="2" ry="2" />
-<text  x="1182.39" y="303.5" ></text>
+<title>_start (11,846 samples, 98.72%)</title><rect x="25.0" y="341" width="1165.0" height="15.0" fill="rgb(245,185,44)" rx="2" ry="2" />
+<text  x="28.05" y="351.5" >_start</text>
 </g>
 </g>
 </svg>

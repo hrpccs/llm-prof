@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="150.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >case_gil_ps</text>
+<text id="title" x="600.00" y="24" >case_gil (py-spy)</text>
 <text id="details" x="10.00" y="133" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,35 +431,35 @@
 <text id="matched" x="1090.00" y="133" > </text>
 <g id="frames">
 <g >
-<title>_bootstrap (1,254 samples, 99.21%)</title><rect x="19.3" y="85" width="1170.7" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
-<text  x="22.34" y="95.5" >_bootstrap</text>
-</g>
-<g >
-<title>cpu_work (1,254 samples, 99.21%)</title><rect x="19.3" y="37" width="1170.7" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
-<text  x="22.34" y="47.5" >cpu_work</text>
-</g>
-<g >
-<title>main (10 samples, 0.79%)</title><rect x="10.0" y="69" width="9.3" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="13.00" y="79.5" ></text>
-</g>
-<g >
-<title>run (1,254 samples, 99.21%)</title><rect x="19.3" y="53" width="1170.7" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
-<text  x="22.34" y="63.5" >run</text>
-</g>
-<g >
-<title>join (10 samples, 0.79%)</title><rect x="10.0" y="53" width="9.3" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
+<title>join (18 samples, 1.39%)</title><rect x="10.0" y="53" width="16.4" height="15.0" fill="rgb(222,82,19)" rx="2" ry="2" />
 <text  x="13.00" y="63.5" ></text>
 </g>
 <g >
-<title>&lt;module&gt; (10 samples, 0.79%)</title><rect x="10.0" y="85" width="9.3" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<title>&lt;module&gt; (18 samples, 1.39%)</title><rect x="10.0" y="85" width="16.4" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
 <text  x="13.00" y="95.5" ></text>
 </g>
 <g >
-<title>_bootstrap_inner (1,254 samples, 99.21%)</title><rect x="19.3" y="69" width="1170.7" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
-<text  x="22.34" y="79.5" >_bootstrap_inner</text>
+<title>_bootstrap (1,277 samples, 98.61%)</title><rect x="26.4" y="85" width="1163.6" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="29.40" y="95.5" >_bootstrap</text>
 </g>
 <g >
-<title>all (1,264 samples, 100%)</title><rect x="10.0" y="101" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>run (1,277 samples, 98.61%)</title><rect x="26.4" y="53" width="1163.6" height="15.0" fill="rgb(210,26,6)" rx="2" ry="2" />
+<text  x="29.40" y="63.5" >run</text>
+</g>
+<g >
+<title>cpu_work (1,277 samples, 98.61%)</title><rect x="26.4" y="37" width="1163.6" height="15.0" fill="rgb(217,57,13)" rx="2" ry="2" />
+<text  x="29.40" y="47.5" >cpu_work</text>
+</g>
+<g >
+<title>_bootstrap_inner (1,277 samples, 98.61%)</title><rect x="26.4" y="69" width="1163.6" height="15.0" fill="rgb(252,218,52)" rx="2" ry="2" />
+<text  x="29.40" y="79.5" >_bootstrap_inner</text>
+</g>
+<g >
+<title>main (18 samples, 1.39%)</title><rect x="10.0" y="69" width="16.4" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="13.00" y="79.5" ></text>
+</g>
+<g >
+<title>all (1,295 samples, 100%)</title><rect x="10.0" y="101" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
 <text  x="13.00" y="111.5" ></text>
 </g>
 </g>

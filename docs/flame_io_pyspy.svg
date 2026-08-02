@@ -423,7 +423,7 @@
 ]]>
 </script>
 <rect x="0.0" y="0" width="1200.0" height="118.0" fill="url(#background)"  />
-<text id="title" x="600.00" y="24" >flame_io_ps</text>
+<text id="title" x="600.00" y="24" >flame_io (py-spy)</text>
 <text id="details" x="10.00" y="101" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
@@ -431,16 +431,16 @@
 <text id="matched" x="1090.00" y="101" > </text>
 <g id="frames">
 <g >
-<title>&lt;module&gt; (69 samples, 100.00%)</title><rect x="10.0" y="53" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
-<text  x="13.00" y="63.5" >&lt;module&gt;</text>
-</g>
-<g >
-<title>all (69 samples, 100%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<title>all (74 samples, 100%)</title><rect x="10.0" y="69" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
 <text  x="13.00" y="79.5" ></text>
 </g>
 <g >
-<title>main (69 samples, 100.00%)</title><rect x="10.0" y="37" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<title>main (74 samples, 100.00%)</title><rect x="10.0" y="37" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
 <text  x="13.00" y="47.5" >main</text>
+</g>
+<g >
+<title>&lt;module&gt; (74 samples, 100.00%)</title><rect x="10.0" y="53" width="1180.0" height="15.0" fill="rgb(252,217,52)" rx="2" ry="2" />
+<text  x="13.00" y="63.5" >&lt;module&gt;</text>
 </g>
 </g>
 </svg>
