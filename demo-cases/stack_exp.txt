@@ -1,0 +1,46 @@
+########## depth=5 ##########
+d5-base1 34.566648
+d5-base2 34.077163
+d5-int1 34.424062
+d5-int2 36.024985
+d5-unw1 36.070933
+d5-samples1 total samples: 40315, distinct stacks: 4359
+d5-unw2 34.822477
+d5-samples2 total samples: 47841, distinct stacks: 4483
+########## depth=20 ##########
+d20-base1 35.461286
+d20-base2 34.707846
+d20-int1 35.522664
+d20-int2 35.927877
+d20-unw1 36.898263
+d20-samples1 total samples: 45749, distinct stacks: 14123
+d20-unw2 36.478901
+d20-samples2 total samples: 40215, distinct stacks: 12631
+########## depth=50 ##########
+d50-base1 28.373872
+d50-base2 29.065519
+d50-int1 29.102285
+d50-int2 27.893467
+d50-unw1 29.122890
+d50-samples1 total samples: 48529, distinct stacks: 23124
+d50-unw2 28.680692
+d50-samples2 total samples: 48474, distinct stacks: 22867
+########## depth=100 ##########
+d100-base1 30.318846
+d100-base2 29.810592
+d100-int1 30.979230
+d100-int2 30.556061
+d100-unw1 31.371403
+d100-samples1 total samples: 43820, distinct stacks: 28137
+d100-unw2 31.590588
+d100-samples2 total samples: 47884, distinct stacks: 29797
+########## depth=200 ##########
+d200-base1 27.552557
+d200-base2 27.972431
+d200-int1 28.236994
+d200-int2 28.108243
+d200-unw1 30.127144
+d200-samples1 total samples: 47826, distinct stacks: 35613
+d200-unw2 29.495970
+d200-samples2 total samples: 36394, distinct stacks: 28465
+DONE
