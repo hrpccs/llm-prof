@@ -181,6 +181,9 @@ IO 等待 case（左侧 py-spy 采不到睡眠线程、右侧 llm-prof off-cpu �
 
 ## 用法
 
+> 生产环境替代 py-spy 的完整方案（能力边界、改造清单、灰度流程、故障排查）见
+> **[docs/production-migration.md](docs/production-migration.md)**。
+
 ```
 # attach 运行中的进程，采样 10 秒（on+off CPU），输出火焰图
 sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.svg
