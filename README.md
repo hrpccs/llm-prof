@@ -173,9 +173,13 @@ IO 等待 case（左侧 py-spy 采不到睡眠线程、右侧 llm-prof off-cpu �
 ### 已知差异（实事求是）
 
 1. **栈深度口径**：py-spy 默认只显示 Python 帧（解释器帧链，case_hotspot 平均 3 帧）；
-   其 `-n/--native` 开关只额外附加最外层 native 调用点（平均 4 帧，且为无符号地址）；
-   llm-prof 是完整混合栈（同负载 16+ 帧，含 CPython C 内部链并已符号化）——不是开关差异，
-   而是采样机制差异（ptrace 读解释器状态 vs eBPF 真实栈回溯）；
+   其 `-n/--native` 开关会回溯完整 native 栈，但合并策略把 CPython 段内的帧归入
+   Python 帧（`src/native_stack_trace.rs`：`PyEval_EvalFrame*` 替换为对应 Python 帧、
+   白名单 builtin 如 `time`/`os`/`PyGilState`/`lock` 保留、其余 CPython 内部帧忽略），
+   所以对外可见的 native 帧只剩非 CPython 段（libc 等，平均 4 帧，且为无符号地址）。
+   llm-prof 是完整混合栈（同负载 16+ 帧，含符号化的 CPython C 内部链）——不是开关差异，
+   而是采样机制差异（ptrace 读解释器状态 vs eBPF 真实栈回溯）。要 py-spy 同款纯
+   Python 视角可用 `-python-only`。
 2. **行号分布口径**：llm-prof 的 off-cpu 用**时长加权**、py-spy 用**采样点快照**——多线程下行号分布有约 9pp 系统差异（时长加权更接近真实时间占比，但两工具数字不可直接混用）；
 3. **启动期杂项**：py-spy 能采到进程启动/退出期的 import 等杂项栈，llm-prof 只采 on/off CPU 执行点（差异 <1%）；
 4. **部署门槛**：llm-prof 需要 root + `CAP_BPF`（仅 Linux）；py-spy 普通用户即可、跨平台；
@@ -202,7 +206,8 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.pb.gz
 #   -off-cpu-threshold P  off-cpu 采样概率 [0..1]，0 禁用（默认），1.0 全采
 #   -topn N               文本输出栈数（0 = 全部）
 #   -python-only          只保留 Python 帧（按 unwinder 报告的帧类型过滤，
-#                         不会误保留 "memcpy (libc.so.6:123)" 这类 native 帧）
+#                         不会误保留 "memcpy (libc.so.6:123)" 这类 native 帧；
+#                         视角与 py-spy 默认一致——py-spy 只显示解释器帧链）
 #   -send-error-frames    输出 unwind 失败的样本（默认 true，渲染为
 #                         [unwind-error] 帧，避免"瓶颈百分比异常"却看不到原因）
 #   -o <path>             输出路径，按扩展名选择格式：

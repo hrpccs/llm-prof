@@ -77,7 +77,10 @@ var (
 	clockSyncIntervalHelp = "Set the sync interval with the realtime clock. " +
 		"If zero, monotonic-realtime clock sync will be performed once, " +
 		"on agent startup, but not periodically."
-	sendErrorFramesHelp     = "Send error frames (devfiler only, breaks Kibana)"
+	sendErrorFramesHelp = "Output unwind-error frames (default true). Unwind failures " +
+		"(JIT/anonymous code, assembly kernels) are rendered as [unwind-error] frames " +
+		"instead of silently disappearing; ERR_NATIVE_NO_PID_PAGE_MAPPING (attach-time " +
+		"sync window) is always dropped."
 	sendIdleFramesHelp      = "Unwind and report idle states of the Linux kernel."
 	filterMinProcessAgeHelp = "Skip samples from processes younger than this minimum age. " +
 		"Set to 0 to disable minimum process age filtering."
@@ -135,7 +138,12 @@ func parseArgs() (*controller.Config, error) {
 
 	fs.IntVar(&args.TopN, "topn", 50, "Number of stacks in the text output (0 = all)")
 
-	fs.BoolVar(&args.PythonOnly, "python-only", false, "Keep only Python frames in the output")
+	fs.BoolVar(&args.PythonOnly, "python-only", false,
+		"Keep only Python frames in the output (filter by unwinder frame type, so native "+
+			"frames like 'memcpy (libc.so.6:123)' are excluded). This matches py-spy's "+
+			"default view: py-spy shows only the interpreter frame chain. llm-prof's "+
+			"default is the full mixed stack (symbolized native frames including CPython "+
+			"internals and libc).")
 
 	fs.UintVar(&args.FrameCacheSize, "frame-cache-size",
 		uint(defaultArgFrameCacheSize), frameCacheSizeHelp)
