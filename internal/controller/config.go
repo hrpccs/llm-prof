@@ -29,6 +29,9 @@ type Config struct {
 	TopN int
 	// PythonOnly keeps only Python frames in the flamegraph/text output.
 	PythonOnly bool
+	// SampleStreamPath, if set, appends every decoded raw sample to this file
+	// (one line per sample: KTime PID TID numFrames frame...). See tracer.Config.
+	SampleStreamPath string
 
 	ExecutableReporter reporter.ExecutableReporter
 	OnShutdown         func() error

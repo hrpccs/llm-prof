@@ -15,6 +15,7 @@ import (
 	"path"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -103,6 +104,10 @@ type Tracer struct {
 
 	// tracePool is cache of libpf.EbpfTrace to avoid GC pressure
 	tracePool sync.Pool
+
+	// sampleStream is the optional sample-stream exporter (see Config.SampleStreamPath).
+	sampleStream     *bufio.Writer
+	sampleStreamFile *os.File
 
 	// targetPID restricts trace processing to a single process (0 = all).
 	targetPID uint32
@@ -207,6 +212,14 @@ type Config struct {
 	BPFFSRoot string
 	// OBIProcessCtx enable the use of a known shared eBPF map with OBI.
 	OBIProcessCtx bool
+	// SampleStreamPath, if set, enables sample-stream export: every decoded
+	// eBPF trace is appended to this file as one line
+	//   "<KTime> <PID> <TID> <numFrames> <frame0> <frame1> ..."
+	// with frames in raw address-level u64 hex (frame_header layout). This is
+	// the data-profiling hook (M0): convergence curves, transfer entropy and
+	// stage detection all derive from this stream. Enabled implies a small
+	// steady write volume (~0.3-2 MB/s at 1000Hz); disable for production.
+	SampleStreamPath string
 	// PIDNamespaceTranslation toggles translation of host-level PIDs/TGIDs into
 	// their container-namespace equivalents. Useful for sidecar deployments where
 	// the profiler and the target application share a PID namespace but not host PIDs.
@@ -300,6 +313,16 @@ func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
 		targetPID:              cfg.TargetPID,
 	}
 
+	if cfg.SampleStreamPath != "" {
+		f, err := os.Create(cfg.SampleStreamPath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create sample stream file: %v", err)
+		}
+		tracer.sampleStreamFile = f
+		tracer.sampleStream = bufio.NewWriterSize(f, 1<<20)
+		log.Infof("Sample stream enabled: %s", cfg.SampleStreamPath)
+	}
+
 	return tracer, nil
 }
 
@@ -321,6 +344,16 @@ func (t *Tracer) Close() {
 
 	t.processManager.Close()
 	t.kernelSymbolizer.Close()
+	if t.sampleStream != nil {
+		if err := t.sampleStream.Flush(); err != nil {
+			log.Errorf("Failed to flush sample stream: %v", err)
+		}
+	}
+	if t.sampleStreamFile != nil {
+		if err := t.sampleStreamFile.Close(); err != nil {
+			log.Errorf("Failed to close sample stream file: %v", err)
+		}
+	}
 	t.signalDone()
 }
 
@@ -995,6 +1028,36 @@ var (
 )
 
 // loadBpfTrace parses a raw BPF trace into a `host.Trace` instance.
+// writeSampleStream appends one raw sample line to the sample-stream file
+// (enabled via Config.SampleStreamPath). Format:
+//
+//	<KTime> <PID> <TID> <numFrames> <frame0> <frame1> ...
+//
+// Frames are raw address-level u64 values (frame_header layout, see
+// tracemgmt.h) — exactly what the address-level data profiling (M0:
+// distinct-stack convergence, transfer entropy, stage detection) needs.
+// Called from the single event-reading goroutine, so no locking is needed.
+func (t *Tracer) writeSampleStream(trace *libpf.EbpfTrace) {
+	w := t.sampleStream
+	if w == nil {
+		return
+	}
+	buf := make([]byte, 0, 64+int(trace.NumFrames)*19)
+	buf = strconv.AppendInt(buf, trace.KTime, 10)
+	buf = append(buf, ' ')
+	buf = strconv.AppendUint(buf, uint64(trace.PID), 10)
+	buf = append(buf, ' ')
+	buf = strconv.AppendUint(buf, uint64(trace.TID), 10)
+	buf = append(buf, ' ')
+	buf = strconv.AppendUint(buf, uint64(trace.NumFrames), 10)
+	for i := 0; i < int(trace.NumFrames) && i < len(trace.FrameData); i++ {
+		buf = append(buf, ' ')
+		buf = strconv.AppendUint(buf, trace.FrameData[i], 16)
+	}
+	buf = append(buf, '\n')
+	_, _ = w.Write(buf)
+}
+
 func (t *Tracer) loadBpfTrace(raw []byte) (*libpf.EbpfTrace, error) {
 	frameListOffs := int(unsafe.Offsetof(support.Trace{}.Frame_data))
 

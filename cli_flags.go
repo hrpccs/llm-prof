@@ -145,6 +145,13 @@ func parseArgs() (*controller.Config, error) {
 			"default is the full mixed stack (symbolized native frames including CPython "+
 			"internals and libc).")
 
+	fs.StringVar(&args.SampleStreamPath, "sample-stream", "",
+		"Append every decoded raw sample to this file as one line "+
+			"'<KTime> <PID> <TID> <numFrames> <frame...>' (address-level frames, hex). "+
+			"Data-profiling hook: distinct-stack convergence, transfer entropy and "+
+			"stage detection all derive from this stream. Write volume ~0.3-2MB/s "+
+			"at 1000Hz single process; disable for production.")
+
 	fs.UintVar(&args.FrameCacheSize, "frame-cache-size",
 		uint(defaultArgFrameCacheSize), frameCacheSizeHelp)
 

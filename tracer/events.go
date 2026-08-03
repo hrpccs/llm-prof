@@ -245,6 +245,7 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 				if minKTime == 0 || trace.KTime < minKTime {
 					minKTime = trace.KTime
 				}
+				t.writeSampleStream(trace)
 				// TODO: This per-event channel send couples event processing in the rest of
 				// the agent with event reading from the ringbuffer slowing down the latter.
 				traceOutChan <- trace
