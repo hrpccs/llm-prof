@@ -235,7 +235,10 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 					if binary.LittleEndian.Uint64(data.RawSample[0:8]) == stackcompress.StackIDEventMagic {
 						fp := binary.LittleEndian.Uint64(data.RawSample[16:24])
 						count := int64(binary.LittleEndian.Uint32(data.RawSample[36:40]))
-						if cached := t.stackCache[fp]; cached != nil {
+						t.stackCacheMu.RLock()
+						cached := t.stackCache[fp]
+						t.stackCacheMu.RUnlock()
+						if cached != nil {
 							// Re-expand: emit count clones of the cached FULL
 							// trace with the event's ktime/pid/tid. This keeps
 							// the aggregation path identical to uncompressed
@@ -253,7 +256,9 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 						// Cache miss (should not happen: kernel only sends
 						// STACK_ID for registered fingerprints): fall back to
 						// pending counts folded onto the next FULL.
+						t.pendingStackCountsMu.Lock()
 						t.pendingStackCounts[fp] += count
+						t.pendingStackCountsMu.Unlock()
 						continue
 					}
 				}
@@ -283,10 +288,12 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 				// sees a nonzero value; subsequent STACK_IDs are folded there).
 				if t.stackCompress {
 					fp := stackcompress.Fingerprint(trace.FrameData, int(trace.NumKernelFrames))
+					t.pendingStackCountsMu.Lock()
 					if n := t.pendingStackCounts[fp]; n > 0 {
 						trace.Value += n
 						delete(t.pendingStackCounts, fp)
 					}
+					t.pendingStackCountsMu.Unlock()
 					// Cache the FULL frame data for STACK_ID re-expansion.
 					// Never evicted: capacity is bounded by the kernel
 					// stack_dict (1<<16), and a fingerprint only enters the
@@ -296,7 +303,9 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 						cached := t.tracePool.Get().(*libpf.EbpfTrace)
 						*cached = *trace
 						cached.FrameData = append([]uint64(nil), trace.FrameData...)
+						t.stackCacheMu.Lock()
 						t.stackCache[fp] = cached
+						t.stackCacheMu.Unlock()
 					}
 				}
 				t.writeSampleStream(trace)

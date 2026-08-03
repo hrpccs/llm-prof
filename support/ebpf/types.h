@@ -651,6 +651,10 @@ typedef struct Trace {
   // per sample in push_kernel_frames so the per-frame fold sites only touch a
   // trace field instead of doing a map lookup on every frame.
   u32 stack_compress;
+  // Cached compression window in seconds (M2): >0 switches the hit path from
+  // per-sample StackIDEvents to per-CPU count accumulation (stack_counts map),
+  // flushed periodically by userspace.
+  u32 stack_compress_window;
 
   // The CPU that captured this trace.
   u32 cpu_id;

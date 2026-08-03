@@ -145,6 +145,13 @@ func parseArgs() (*controller.Config, error) {
 			"default is the full mixed stack (symbolized native frames including CPython "+
 			"internals and libc).")
 
+	fs.IntVar(&args.StackCompressWindow, "stack-compress-window", 0,
+		"Window aggregation (M2): with -stack-compress, accumulate dictionary-hit "+
+			"samples into per-CPU counters and flush them every N seconds instead "+
+			"of emitting a per-sample StackIDEvent. 0 = per-sample events (M1). "+
+			"Reduces ringbuf traffic to full traces only; adds up to N seconds of "+
+			"latency. Correctness is identical (counts are drained atomically).")
+
 	fs.BoolVar(&args.StackCompress, "stack-compress", false,
 		"Enable M1 stack compression: the kernel side fingerprints each stack and "+
 			"sends compact StackIDEvent messages (fingerprint + count) instead of "+

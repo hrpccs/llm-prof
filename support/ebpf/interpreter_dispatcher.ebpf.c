@@ -129,15 +129,27 @@ struct trace_events_t {
   __uint(max_entries, 0);
 } trace_events SEC(".maps");
 
-// Runtime switch for stack compression (M1): userspace writes 1/0 here at
-// startup; push_kernel_frames caches it per sample into trace->stack_compress
-// so the per-frame fold sites avoid a map lookup on every frame.
+// Runtime switch for stack compression: userspace writes key 0 = enabled
+// (1/0) and key 1 = window seconds (M2, 0 = per-sample events) at startup;
+// push_kernel_frames caches both per sample into the trace so the per-frame
+// fold sites avoid a map lookup on every frame.
 struct stack_compress_cfg_t {
   __uint(type, BPF_MAP_TYPE_ARRAY);
   __type(key, u32);
   __type(value, u32);
-  __uint(max_entries, 1);
+  __uint(max_entries, 2);
 } stack_compress_cfg SEC(".maps");
+
+// M2: per-CPU hit counters for window aggregation. On a dictionary hit with
+// stack_compress_window > 0, the sample is counted here instead of emitting a
+// per-sample StackIDEvent; userspace periodically drains this map
+// (LookupAndDelete) and re-expands the aggregated counts.
+struct stack_counts_t {
+  __uint(type, BPF_MAP_TYPE_PERCPU_HASH);
+  __type(key, u64);
+  __type(value, u32);
+  __uint(max_entries, 1 << 16);
+} stack_counts SEC(".maps");
 
 // Kernel-side stack dictionary for stack compression (M1): maps a 64-bit
 // stack fingerprint of the frame_data sequence to a presence flag. LRU
@@ -255,6 +267,19 @@ static EBPF_INLINE bool stack_compress_try_send(UNUSED void *ctx, Trace *trace)
   u64 fp = trace->stack_fp;
 
   if (bpf_map_lookup_elem(&stack_dict, &fp)) {
+    if (trace->stack_compress_window > 0) {
+      // M2 window mode: accumulate into the per-CPU counter (the value
+      // pointer returned by a PERCPU_HASH lookup is the current CPU's
+      // slot, so the increment is race-free within this CPU).
+      u32 *c = bpf_map_lookup_elem(&stack_counts, &fp);
+      if (c) {
+        *c += 1;
+      } else {
+        u32 one = 1;
+        bpf_map_update_elem(&stack_counts, &fp, &one, BPF_NOEXIST);
+      }
+      return true;
+    }
     StackIDEvent ev = {
       .magic       = STACK_ID_EVENT_MAGIC,
       .ktime       = trace->ktime,

@@ -111,6 +111,15 @@ type Tracer struct {
 
 	// stackCompress mirrors Config.StackCompress (read on the event goroutine).
 	stackCompress bool
+	// stackCompressWindow mirrors Config.StackCompressWindow (M2 aggregation).
+	stackCompressWindow int
+	// stackCountsMap is the kernel per-CPU counter map drained by the M2
+	// aggregation goroutine.
+	stackCountsMap *cebpf.Map
+	// stackCacheMu guards stackCache (event goroutine vs. aggregation goroutine).
+	stackCacheMu sync.RWMutex
+	// pendingStackCountsMu guards pendingStackCounts (event goroutine vs. drain).
+	pendingStackCountsMu sync.Mutex
 	// pendingStackCounts accumulates STACK_ID counts by fingerprint until the
 	// matching FULL sample arrives (events.go folds them into trace.Value).
 	// Accessed only from the event-reading goroutine.
@@ -236,6 +245,10 @@ type Config struct {
 	// back onto the FULL samples (pendingStackCounts). Output is identical to
 	// the uncompressed path.
 	StackCompress bool
+	// StackCompressWindow enables M2 window aggregation: dictionary-hit
+	// samples accumulate into per-CPU counters drained every N seconds
+	// (0 = per-sample StackIDEvents, M1).
+	StackCompressWindow int
 	// SampleStreamPath, if set, enables sample-stream export: every decoded
 	// eBPF trace is appended to this file as one line
 	//   "<KTime> <PID> <TID> <numFrames> <frame0> <frame1> ..."
@@ -336,6 +349,7 @@ func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
 		origins:                origins,
 		targetPID:              cfg.TargetPID,
 		stackCompress:          cfg.StackCompress,
+		stackCompressWindow:    cfg.StackCompressWindow,
 		pendingStackCounts:     make(map[uint64]int64),
 		stackCache:             make(map[uint64]*libpf.EbpfTrace),
 	}
@@ -360,7 +374,19 @@ func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
 		if err := m.Update(&key, &val, cebpf.UpdateAny); err != nil {
 			return nil, fmt.Errorf("failed to enable stack compression: %v", err)
 		}
-		log.Info("Stack compression enabled")
+		if cfg.StackCompressWindow > 0 {
+			k1 := uint32(1)
+			v1 := uint32(cfg.StackCompressWindow)
+			if err := m.Update(&k1, &v1, cebpf.UpdateAny); err != nil {
+				return nil, fmt.Errorf("failed to set compression window: %v", err)
+			}
+			if cm, ok := ebpfMaps["stack_counts"]; ok {
+				tracer.stackCountsMap = cm
+			}
+			log.Infof("Stack compression enabled (window aggregation %ds)", cfg.StackCompressWindow)
+		} else {
+			log.Info("Stack compression enabled (per-sample events)")
+		}
 	}
 
 	return tracer, nil
@@ -1189,6 +1215,8 @@ func (t *Tracer) StartMapMonitors(ctx context.Context, traceOutChan chan<- *libp
 	if err != nil {
 		return err
 	}
+
+	t.startStackCountDrain(ctx, traceOutChan)
 
 	pidEvents := make([]libpf.PIDTID, 0)
 	periodiccaller.StartWithManualTrigger(ctx, t.intervals.MonitorInterval(),

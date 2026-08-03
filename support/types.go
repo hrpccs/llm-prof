@@ -150,9 +150,10 @@ type Trace struct {
 	Num_kernel_frames  uint16
 	Origin             uint16
 	Value              uint64
-	Stack_fp           uint64
-	Stack_compress     uint32
-	Cpu_id             uint32
+	Stack_fp             uint64
+	Stack_compress       uint32
+	Stack_compress_window uint32
+	Cpu_id               uint32
 	Frame_data         [3072]uint64
 }
 type UnwindInfo struct {

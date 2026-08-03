@@ -569,6 +569,9 @@ static inline EBPF_INLINE void push_kernel_frames(void *ctx, Trace *trace)
     u32 zero = 0;
     u32 *cfg = bpf_map_lookup_elem(&stack_compress_cfg, &zero);
     trace->stack_compress = cfg ? *cfg : 0;
+    u32 one = 1;
+    u32 *w = bpf_map_lookup_elem(&stack_compress_cfg, &one);
+    trace->stack_compress_window = w ? *w : 0;
   }
   _Static_assert(
     sizeof(trace->frame_data) > PERF_MAX_STACK_DEPTH * sizeof(u64), "frame data too small");

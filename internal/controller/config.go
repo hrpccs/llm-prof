@@ -34,6 +34,8 @@ type Config struct {
 	SampleStreamPath string
 	// StackCompress enables M1 stack compression (see tracer.Config).
 	StackCompress bool
+	// StackCompressWindow enables M2 window aggregation (seconds; 0 = per-event).
+	StackCompressWindow int
 
 	ExecutableReporter reporter.ExecutableReporter
 	OnShutdown         func() error

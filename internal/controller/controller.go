@@ -110,6 +110,7 @@ func (c *Controller) Start(ctx context.Context) error {
 		PIDNamespaceTranslation: c.config.PIDNamespaceTranslation,
 		SampleStreamPath:        c.config.SampleStreamPath,
 		StackCompress:           c.config.StackCompress,
+		StackCompressWindow:     c.config.StackCompressWindow,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to load eBPF tracer: %w", err)
