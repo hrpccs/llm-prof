@@ -226,6 +226,7 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 				}
 
 				eventCount++
+				t.totalRingbufBytes.Add(int64(len(data.RawSample)))
 
 				// Stack compression (M1): compact StackIDEvent messages arrive on
 				// the same ringbuf. They carry only the stack fingerprint; the

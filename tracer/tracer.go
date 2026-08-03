@@ -115,6 +115,10 @@ type Tracer struct {
 	// matching FULL sample arrives (events.go folds them into trace.Value).
 	// Accessed only from the event-reading goroutine.
 	pendingStackCounts map[uint64]int64
+	// totalRingbufBytes accumulates received ringbuf payload bytes (FULL
+	// traces + StackIDEvents) for bandwidth measurement.
+	totalRingbufBytes atomic.Int64
+
 	// stackCache remembers the FULL frame data per fingerprint so STACK_ID
 	// events can be re-expanded into full traces without waiting for a
 	// re-registration FULL (which only happens after kernel LRU eviction).
@@ -390,6 +394,7 @@ func (t *Tracer) Close() {
 			log.Errorf("Failed to close sample stream file: %v", err)
 		}
 	}
+	log.Infof("ringbuf bytes received: %d", t.totalRingbufBytes.Load())
 	t.signalDone()
 }
 
