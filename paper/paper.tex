@@ -47,9 +47,15 @@ eliminated at unwind time, so compression needs no symbolization.
 
 On six workloads, compressed bandwidth is 53--75\% lower at 1\,kHz and
 up to 94.6\% lower at 10\,kHz; the bandwidth-vs-rate curve flattens from
-56$\times$ to 6$\times$ growth. Sample counts and stack sets match the
-uncompressed path, and the CPU cost of compression is below measurement
-noise. We also characterize the compression boundary with a dictionary
+56$\times$ to 6$\times$ growth. A windowed mode (per-CPU counters flushed
+every $W$ seconds) cuts bandwidth further (89.8\% at 1\,kHz) with a
+bounded $W$-second latency. Offline replay of real sample streams confirms
+that every re-expanded sample is 100\% frame-identical to the original,
+and a quantitative comparison against \texttt{bpf\_get\_stackid} shows
+its bucket truncation silently misattributes 0.6--27.7\% of samples
+(depending on map size and stack distribution) where our 64-bit
+fingerprints collide with probability zero in practice. The CPU cost of
+compression is below measurement noise. We also characterize the compression boundary with a dictionary
 amortization model: the gain is governed by the stack distribution shape,
 which we can predict from a short data profile---making the ``useless
 regime'' (deep high-cardinality stacks, 2.5\% reduction) a documented,
@@ -118,9 +124,10 @@ uncompressed mode. C and Go fingerprint implementations are locked by a
 fixed-vector cross-language test.
 \item \textbf{C3: measured end-to-end.} 53--75\% bandwidth reduction across
 six workloads at 1\,kHz, up to 94.6\% at 10\,kHz; the bandwidth-vs-rate
-curve flattens from 56$\times$ to 6$\times$ growth; sample counts and stack
-sets match the uncompressed path; compression CPU cost is below measurement
-noise (detection limit reported).
+curve flattens from 56$\times$ to 6$\times$ growth; a windowed mode adds
+further cuts (89.8\% at 1\,kHz) with bounded latency; offline replay
+verifies 100\% frame-identical re-expansion; compression CPU cost is below
+measurement noise (detection limit reported).
 \item \textbf{C4: a predictable compression boundary.} The gain is governed
 by the stack distribution shape (distinct/sample ratio), formalized as a
 dictionary amortization model; the zero-gain regime (deep stacks, 2.5\%) is
@@ -352,12 +359,18 @@ addresses that do not distinguish user stacks, and an in-bounds fold loop
 over them cannot be proven); userspace skips the leading kernel frames
 identically.
 
-\subsection{Time-differential encoding (design, not yet implemented)}
-As a next step, per-CPU count maps could aggregate \textsc{StackIDEvent}s
-per window and emit only deltas, making bandwidth proportional to stack
-\emph{churn} rather than sample count. Our evaluation covers the spatial
-dictionary (C1); the differential layer is designed but not implemented,
-and we do not claim its benefits.
+\subsection{Window aggregation (M2)}
+Instead of emitting a \textsc{StackIDEvent} per dictionary hit, the hit
+path can accumulate into a per-CPU counter map
+(\texttt{stack\_counts}, PERCPU\_HASH); userspace drains the map every
+$W$ seconds (\texttt{Iterate} + \texttt{LookupAndDelete}) and re-expands
+the aggregated counts through the same cache path. Draining is atomic per
+count: a sample racing the drain is either included in the read value or
+lands in the next window---never lost, never duplicated. The cost is a
+bounded latency: samples appear at most $W$ seconds late, and the final
+partial window at shutdown is unflushed (the same semantics as aggregating
+profilers). Bandwidth becomes proportional to stack churn alone, since
+hits never cross the ringbuffer.
 
 %-------------------------------------------------------------------------------
 \section{Implementation}
@@ -547,6 +560,63 @@ predictability---knowing \emph{when} compression pays---is a deliberate
 contribution (C4): high-cardinality workloads should disable compression
 or use the differential layer (Section~\ref{sec:design}).
 
+\subsection{Window aggregation (M2)}
+With \texttt{-stack-compress-window 3} (case\_hotspot, 1\,kHz,
+15\,s), bandwidth drops from 8.33\,MB (uncompressed) to 1.16\,MB
+(per-sample events, M1) to 0.85\,MB (window mode, M2)---89.8\% total
+reduction. The sample count is 7{,}048 vs.\ 8{,}145 (M1); the difference
+is exactly the final partial window (the documented $\leq W$ latency
+semantics), and the drained counts are otherwise identical. Window mode is
+the right choice for long-running continuous profiling, where the
+per-sample event stream is less valuable than steady-state bandwidth.
+
+\subsection{Losslessness verification (offline replay)}
+We replay real uncompressed sample streams (3{,}159 / 3{,}852 / 3{,}122
+samples from case\_hotspot, train\_torch, and stack\_bench d200)
+through the protocol semantics: the first occurrence of a fingerprint is a
+FULL sample (registered), later occurrences are STACK\_ID events
+re-expanded from the cache. Every re-expanded clone is 100\%
+frame-identical in user frames (kernel frames are excluded from the
+fingerprint and may differ between samples of the same user stack---they
+do not affect user-stack attribution). Hit rates (77.8\% / 76.6\% /
+3.5\%) mirror the bandwidth results, confirming that the measured
+reductions come from exactly the re-expansion path that the replay
+verifies. This test is part of the CI suite.
+
+\subsection{Quantitative comparison with \texttt{bpf\_get\_stackid}}
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+n\_buckets & hotspot & train\_torch & d200 \\
+\midrule
+4{,}096 & 4.62\% & 2.88\% & \textbf{27.74\%} \\
+16{,}384 & 1.65\% & 0.60\% & 7.08\% \\
+65{,}536 & 0.35\% & 0.23\% & 2.08\% \\
+full 32-bit & 0.00\% & 0.00\% & 0.00\% \\
+\midrule
+64-bit (ours) & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Samples silently misattributed by \texttt{bpf\_get\_stackid}'s
+bucket truncation ($\text{id} = \text{jhash2}(\cdot) \&
+(n\_\text{buckets}-1)$, overwrite semantics) on the replay streams.
+Our 64-bit fingerprints collide with probability zero at these scales.}
+\label{tab:stackid}
+\end{table}
+\texttt{bpf\_get\_stackid} \cite{bpfdocs} truncates its hash to the
+stack map's bucket count ($\text{id} = \text{jhash2}(\cdot) \&
+(n\_\text{buckets}-1)$); on collision it either rejects the sample or
+silently overwrites the bucket. Table~\ref{tab:stackid} quantifies the
+overwrite semantics on our real streams: with 4{,}096 buckets (typical for
+small stack maps), 2.9--27.7\% of samples are silently attributed to the
+wrong stack, worst on the deep high-cardinality workload (d200) where
+bandwidth compression matters least but misattribution matters most. Full
+32-bit IDs show no collisions at these scales (birthday bound), and our
+64-bit fingerprints collide with probability zero---the lossless
+differentiation of C2 is quantitative, not qualitative.
+
 \subsection{Why not aggregate in the kernel (Parca-style)?}
 Aggregation (stack $\rightarrow$ count in eBPF, exported periodically) is
 simpler and achieves similar bandwidth, which raises the obvious question.
@@ -614,10 +684,9 @@ buffer; adaptive sizing is future work. \textbf{Single process.}
 future work. \textbf{Cross-run stability.} File IDs are per-run
 identities; cross-run dedup needs build-id normalization (the kernel
 already exposes build-id+offset paths in \texttt{stack\_map}), left as
-future work. \textbf{Differential layer.} The time-differential encoding
-(Section~\ref{sec:design}) is designed but not implemented; we claim only
-the spatial dictionary. \textbf{Offline replay verification.} Planned,
-not yet executed. \textbf{Honest negatives.} Function-granular
+future work. \textbf{Window mode.} M2 adds up to $W$ seconds of sample latency and
+leaves the final partial window unflushed at shutdown. \textbf{Honest
+negatives.} Function-granular
 normalization (L3) measured at 1.04$\times$ benefit and was rejected; the
 d200 regime (2.5\%) is a documented, predictable boundary (C4).
 

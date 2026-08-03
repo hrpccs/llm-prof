@@ -1,6 +1,6 @@
 # 论文：Kernel-Side Streaming Stack Compression for Continuous Profiling
 
-> 状态：**v2（系统论文叙事）**，7 页，USENIX ATC 模板（usenix-2020-09.sty）
+> 状态：**v3**，8 页，USENIX ATC 模板（usenix-2020-09.sty）
 > 编译：`pdflatex paper.tex && pdflatex paper.tex`
 
 ## 定位（4 位博导/博士生评审共识）
@@ -18,6 +18,17 @@
   样本/栈集合与未压缩一致；压缩 CPU 成本低于测量噪声（报告检出限）
 - **C4** 可预测的压缩边界：字典摊销模型（D×S_full ≈ N×S_id 零收益拐点），
   d200 深栈 -2.5% 是**可预测的文档化边界**而非意外
+
+## v3 更新（三块补完）
+
+- **M2 时间差分已实现**（`-stack-compress-window <sec>`）：per-CPU 计数 map +
+  用户态原子 drain（LookupAndDelete，不丢不重）；case_hotspot 1kHz 带宽
+  8.33MB → 1.16MB（M1）→ 0.85MB（M2，-89.8%）；延迟语义 = 最后窗口不 flush
+- **replay 无损验证**（CI 内 go test）：3 真实样本流（hs/tt/sb）回放压缩协议，
+  展开样本 100% 用户帧一致；命中率 77.8%/76.6%/3.5% 与带宽结果互相印证
+- **bpf_get_stackid 定量对照**（Table 6）：bucket 截断（id = jhash2 & (n-1)）
+  在 n=4096 时 2.9-27.7% 样本被静默错误归并（d200 最严重）；64 位指纹 0 冲突
+- 8 页（挂起 bug：表格行尾 `\` 被 python 转义破坏，已修）
 
 ## v2 更新（系统论文化）
 
