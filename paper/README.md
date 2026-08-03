@@ -1,6 +1,6 @@
 # 论文：Kernel-Side Streaming Stack Compression for Continuous Profiling
 
-> 状态：**初稿（v1）**，6 页，USENIX ATC 模板（usenix-2020-09.sty）
+> 状态：**v2（系统论文叙事）**，7 页，USENIX ATC 模板（usenix-2020-09.sty）
 > 编译：`pdflatex paper.tex && pdflatex paper.tex`
 
 ## 定位（4 位博导/博士生评审共识）
@@ -18,6 +18,19 @@
   样本/栈集合与未压缩一致；压缩 CPU 成本低于测量噪声（报告检出限）
 - **C4** 可预测的压缩边界：字典摊销模型（D×S_full ≈ N×S_id 零收益拐点），
   d200 深栈 -2.5% 是**可预测的文档化边界**而非意外
+
+## v2 更新（系统论文化）
+
+- 完整 ATC 结构：Introduction / Background and Motivation（成本模型、1/√n 精度、
+  带宽墙、数据画像、现有方案差距表）/ Design（架构、归一化、指纹公式、
+  fingerprint-as-key 一致性论证、消息与丢失语义、复杂度预算）/ Implementation
+  （模块、verifier 三坑、正确性锁）/ Evaluation（带宽解耦主图、采样率×负载矩阵、
+  6 负载矩阵、CPU 开销+分解、正确性三检查、边界模型、Parca 对比讨论、可复现性）/
+  Related Work / Discussion & Conclusion
+- 新增实验：采样率×负载矩阵（train_torch 100/1000/10000Hz，-53~-67%；
+  case_hotspot -43/-79/-94.6%），数据在 demo-cases/rate_matrix.txt
+- 新增：fp_step 公式、每样本成本分解（中断 ~2µs + unwind 0.3µs/帧）
+- 页数 7 页（密度高；补 M2 差分实测 + replay 验证 + 对照组后自然到 10-12 页）
 
 ## 已实现的诚实边界（Reviewer 攻击面应对）
 
