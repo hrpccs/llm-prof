@@ -109,6 +109,12 @@ func (l *LocalReporter) ReportTraceEvent(trace *libpf.Trace, meta *samples.Trace
 			w = float64(math.MaxInt64)
 		}
 		weight = int64(w)
+	} else if meta != nil && meta.Value > 0 {
+		// Stack compression (M1): on-CPU FULL samples that had pending
+		// STACK_ID counts folded in carry 1 + n in Value (folded by
+		// tracer/events.go); count them accordingly. On-CPU Value is 0
+		// otherwise, so this branch is a no-op without compression.
+		weight = 1 + meta.Value
 	}
 	l.mu.Lock()
 	l.stacks[key] += weight

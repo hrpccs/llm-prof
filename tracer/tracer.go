@@ -109,6 +109,20 @@ type Tracer struct {
 	sampleStream     *bufio.Writer
 	sampleStreamFile *os.File
 
+	// stackCompress mirrors Config.StackCompress (read on the event goroutine).
+	stackCompress bool
+	// pendingStackCounts accumulates STACK_ID counts by fingerprint until the
+	// matching FULL sample arrives (events.go folds them into trace.Value).
+	// Accessed only from the event-reading goroutine.
+	pendingStackCounts map[uint64]int64
+	// stackCache remembers the FULL frame data per fingerprint so STACK_ID
+	// events can be re-expanded into full traces without waiting for a
+	// re-registration FULL (which only happens after kernel LRU eviction).
+	// Capacity >= kernel stack_dict (1<<16), so every fingerprint that the
+	// kernel can send a STACK_ID for is guaranteed to be cached. Only the
+	// event-reading goroutine touches it.
+	stackCache map[uint64]*libpf.EbpfTrace
+
 	// targetPID restricts trace processing to a single process (0 = all).
 	targetPID uint32
 
@@ -212,6 +226,12 @@ type Config struct {
 	BPFFSRoot string
 	// OBIProcessCtx enable the use of a known shared eBPF map with OBI.
 	OBIProcessCtx bool
+	// StackCompress enables M1 stack compression: the kernel side fingerprints
+	// the frame_data sequence and sends compact StackIDEvents for stacks that
+	// are already registered in its dictionary; userspace folds the counts
+	// back onto the FULL samples (pendingStackCounts). Output is identical to
+	// the uncompressed path.
+	StackCompress bool
 	// SampleStreamPath, if set, enables sample-stream export: every decoded
 	// eBPF trace is appended to this file as one line
 	//   "<KTime> <PID> <TID> <numFrames> <frame0> <frame1> ..."
@@ -311,6 +331,9 @@ func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
 		done:                   make(chan libpf.Void),
 		origins:                origins,
 		targetPID:              cfg.TargetPID,
+		stackCompress:          cfg.StackCompress,
+		pendingStackCounts:     make(map[uint64]int64),
+		stackCache:             make(map[uint64]*libpf.EbpfTrace),
 	}
 
 	if cfg.SampleStreamPath != "" {
@@ -321,6 +344,19 @@ func NewTracer(ctx context.Context, cfg *Config) (*Tracer, error) {
 		tracer.sampleStreamFile = f
 		tracer.sampleStream = bufio.NewWriterSize(f, 1<<20)
 		log.Infof("Sample stream enabled: %s", cfg.SampleStreamPath)
+	}
+
+	if cfg.StackCompress {
+		m, ok := ebpfMaps["stack_compress_cfg"]
+		if !ok {
+			return nil, fmt.Errorf("stack_compress_cfg map not found")
+		}
+		key := uint32(0)
+		val := uint32(1)
+		if err := m.Update(&key, &val, cebpf.UpdateAny); err != nil {
+			return nil, fmt.Errorf("failed to enable stack compression: %v", err)
+		}
+		log.Info("Stack compression enabled")
 	}
 
 	return tracer, nil
@@ -1042,17 +1078,19 @@ func (t *Tracer) writeSampleStream(trace *libpf.EbpfTrace) {
 	if w == nil {
 		return
 	}
-	buf := make([]byte, 0, 64+int(trace.NumFrames)*19)
+	buf := make([]byte, 0, 64+len(trace.FrameData)*19)
 	buf = strconv.AppendInt(buf, trace.KTime, 10)
 	buf = append(buf, ' ')
 	buf = strconv.AppendUint(buf, uint64(trace.PID), 10)
 	buf = append(buf, ' ')
 	buf = strconv.AppendUint(buf, uint64(trace.TID), 10)
 	buf = append(buf, ' ')
-	buf = strconv.AppendUint(buf, uint64(trace.NumFrames), 10)
-	for i := 0; i < int(trace.NumFrames) && i < len(trace.FrameData); i++ {
+	buf = strconv.AppendUint(buf, uint64(len(trace.FrameData)), 10)
+	buf = append(buf, ' ')
+	buf = strconv.AppendUint(buf, uint64(trace.NumKernelFrames), 10)
+	for _, w := range trace.FrameData {
 		buf = append(buf, ' ')
-		buf = strconv.AppendUint(buf, trace.FrameData[i], 16)
+		buf = strconv.AppendUint(buf, w, 16)
 	}
 	buf = append(buf, '\n')
 	_, _ = w.Write(buf)

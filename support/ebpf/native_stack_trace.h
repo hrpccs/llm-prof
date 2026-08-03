@@ -23,6 +23,9 @@ push_native(UnwindState *state, Trace *trace, u64 file, u64 line, bool return_ad
     return ERR_STACK_LENGTH_EXCEEDED;
   }
   data[0] = file;
+  if (trace->stack_compress) {
+    trace->stack_fp = fp_step(trace->stack_fp, data[0]);
+  }
   return ERR_OK;
 }
 

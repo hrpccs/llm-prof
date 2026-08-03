@@ -5,6 +5,7 @@ package tracer // import "go.opentelemetry.io/ebpf-profiler/tracer"
 
 import (
 	"context"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"os"
@@ -17,6 +18,7 @@ import (
 	"github.com/cilium/ebpf/ringbuf"
 
 	"go.opentelemetry.io/ebpf-profiler/internal/log"
+	"go.opentelemetry.io/ebpf-profiler/internal/stackcompress"
 	"go.opentelemetry.io/ebpf-profiler/libpf"
 	"go.opentelemetry.io/ebpf-profiler/metrics"
 	"go.opentelemetry.io/ebpf-profiler/process"
@@ -225,6 +227,36 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 
 				eventCount++
 
+				// Stack compression (M1): compact StackIDEvent messages arrive on
+				// the same ringbuf. They carry only the stack fingerprint; the
+				// count is folded onto the matching FULL sample when it arrives.
+				if t.stackCompress && len(data.RawSample) == stackcompress.StackIDEventSize {
+					if binary.LittleEndian.Uint64(data.RawSample[0:8]) == stackcompress.StackIDEventMagic {
+						fp := binary.LittleEndian.Uint64(data.RawSample[16:24])
+						count := int64(binary.LittleEndian.Uint32(data.RawSample[36:40]))
+						if cached := t.stackCache[fp]; cached != nil {
+							// Re-expand: emit count clones of the cached FULL
+							// trace with the event's ktime/pid/tid. This keeps
+							// the aggregation path identical to uncompressed
+							// mode (no Value-folding needed).
+							for j := int64(0); j < count; j++ {
+								clone := t.tracePool.Get().(*libpf.EbpfTrace)
+								*clone = *cached
+								clone.KTime = int64(binary.LittleEndian.Uint64(data.RawSample[8:16]))
+								clone.PID = libpf.PID(binary.LittleEndian.Uint32(data.RawSample[24:28]))
+								clone.TID = libpf.PID(binary.LittleEndian.Uint32(data.RawSample[28:32]))
+								traceOutChan <- clone
+							}
+							continue
+						}
+						// Cache miss (should not happen: kernel only sends
+						// STACK_ID for registered fingerprints): fall back to
+						// pending counts folded onto the next FULL.
+						t.pendingStackCounts[fp] += count
+						continue
+					}
+				}
+
 				// Keep track of min KTime seen in this batch processing loop
 				trace, err := t.loadBpfTrace(data.RawSample)
 				switch {
@@ -244,6 +276,27 @@ func (t *Tracer) startTraceEventMonitor(ctx context.Context,
 
 				if minKTime == 0 || trace.KTime < minKTime {
 					minKTime = trace.KTime
+				}
+				// Fold pending STACK_ID counts onto the FULL sample carrying the
+				// same fingerprint (only the first FULL sample per fingerprint
+				// sees a nonzero value; subsequent STACK_IDs are folded there).
+				if t.stackCompress {
+					fp := stackcompress.Fingerprint(trace.FrameData, int(trace.NumKernelFrames))
+					if n := t.pendingStackCounts[fp]; n > 0 {
+						trace.Value += n
+						delete(t.pendingStackCounts, fp)
+					}
+					// Cache the FULL frame data for STACK_ID re-expansion.
+					// Never evicted: capacity is bounded by the kernel
+					// stack_dict (1<<16), and a fingerprint only enters the
+					// kernel dictionary after its FULL sample was sent, so a
+					// STACK_ID always finds its cache entry here.
+					if len(t.stackCache) < 1<<16 {
+						cached := t.tracePool.Get().(*libpf.EbpfTrace)
+						*cached = *trace
+						cached.FrameData = append([]uint64(nil), trace.FrameData...)
+						t.stackCache[fp] = cached
+					}
 				}
 				t.writeSampleStream(trace)
 				// TODO: This per-event channel send couples event processing in the rest of

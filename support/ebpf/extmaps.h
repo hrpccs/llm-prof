@@ -15,6 +15,8 @@ extern struct pid_events_t pid_events;
 extern struct inhibit_events_t inhibit_events;
 extern struct interpreter_offsets_t interpreter_offsets;
 extern struct trace_events_t trace_events;
+extern struct stack_compress_cfg_t stack_compress_cfg;
+extern struct stack_dict_t stack_dict;
 
 extern struct exe_id_to_8_stack_deltas_t exe_id_to_8_stack_deltas;
 extern struct exe_id_to_9_stack_deltas_t exe_id_to_9_stack_deltas;

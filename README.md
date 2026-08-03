@@ -208,6 +208,14 @@ sudo ./llm-prof/llm-prof -pid <PID> -d 10s -off-cpu-threshold 1.0 -o out.pb.gz
 #   -python-only          只保留 Python 帧（按 unwinder 报告的帧类型过滤，
 #                         不会误保留 "memcpy (libc.so.6:123)" 这类 native 帧；
 #                         视角与 py-spy 默认一致——py-spy 只显示解释器帧链）
+#   -stack-compress       开启 M1 栈压缩：内核侧对 unwind 完成的帧序列做增量
+#                         指纹（fp_step，随 push_frame 逐帧折叠），命中内核栈
+#                         字典（LRU_HASH，65536 条）的样本只发 40 字节的
+#                         StackIDEvent（指纹+计数），未命中才发完整栈。
+#                         实测（1000Hz）：case_hotspot 带宽降 81.6%、
+#                         train_torch 降 75.2%，输出与未压缩路径一致（样本
+#                         数/栈集合相同）。用户态按指纹重建栈（栈缓存与内核
+#                         字典容量一致，保证 STACK_ID 总能展开）。
 #   -send-error-frames    输出 unwind 失败的样本（默认 true，渲染为
 #                         [unwind-error] 帧，避免"瓶颈百分比异常"却看不到原因）
 #   -o <path>             输出路径，按扩展名选择格式：

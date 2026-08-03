@@ -643,6 +643,15 @@ typedef struct Trace {
   // e.g. time in nanoseconds for off-CPU traces
   u64 value;
 
+  // Incremental stack fingerprint (stack compression, M1): folded via fp_step
+  // by push_kernel_frames / push_frame / frame variable-word writers while the
+  // stack is unwound. Initialized to STACK_FP_SEED when the record is reset.
+  u64 stack_fp;
+  // Cached stack-compression switch (from stack_compress_cfg map), read once
+  // per sample in push_kernel_frames so the per-frame fold sites only touch a
+  // trace field instead of doing a map lookup on every frame.
+  u32 stack_compress;
+
   // The CPU that captured this trace.
   u32 cpu_id;
 
@@ -1012,6 +1021,25 @@ typedef struct Event {
 
 // Event types that notifications are sent for through event_send_trigger.
 #define EVENT_TYPE_GENERIC_PID 1
+
+// StackIDEvent is sent on the trace_events ringbuf when stack compression is
+// enabled and the sample's stack fingerprint is already registered in the
+// kernel-side stack dictionary. Userspace matches it back to the FULL stack
+// sample (which carries the same fingerprint) and folds the count in, so the
+// aggregation output is identical to the uncompressed path. The fingerprint is
+// the key (not a dictionary slot ID): kernel LRU eviction is therefore safe —
+// an evicted fingerprint simply goes back to FULL samples, and userspace never
+// depends on kernel dictionary state.
+#define STACK_ID_EVENT_MAGIC 0x5349434b49444556ULL // "STACKIDEV"
+typedef struct StackIDEvent {
+  u64 magic;       // STACK_ID_EVENT_MAGIC
+  u64 ktime;       // monotonic kernel time (ns), matches Trace.ktime
+  u64 fingerprint; // stack_fingerprint() of the frame_data sequence
+  u32 pid;         // tgid
+  u32 tid;
+  u32 cpu_id;
+  u32 count;       // 1 per sample (M1); window aggregate in later milestones
+} StackIDEvent;
 
 // PIDPage represents the key of the eBPF map pid_page_to_mapping_info.
 typedef struct PIDPage {

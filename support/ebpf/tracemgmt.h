@@ -3,6 +3,8 @@
 #ifndef OPTI_TRACEMGMT_H
 #define OPTI_TRACEMGMT_H
 
+#include "jhash.h"
+
 #include "bpfdefs.h"
 #include "errors.h"
 #include "extmaps.h"
@@ -388,6 +390,7 @@ static inline EBPF_INLINE PerCPURecord *get_pristine_per_cpu_record()
   trace->apm_transaction_id.as_int = 0;
 
   trace->custom_labels.len = 0;
+  trace->stack_fp          = STACK_FP_SEED;
 
   return record;
 }
@@ -521,6 +524,11 @@ static inline EBPF_INLINE u64 *push_frame(
   trace->num_frames++;
   trace->frame_data_len += frame_size;
   pos[0] = frame_header(frame_type, frame_flags, frame_size, frame_data);
+  if (trace->stack_compress) {
+    // Fold the header word (type/flags/offset). Variable words are folded by
+    // the callers right after they write them (push_native, python push).
+    trace->stack_fp = fp_step(trace->stack_fp, pos[0]);
+  }
   return &pos[1];
 }
 
@@ -554,6 +562,14 @@ static inline EBPF_INLINE void push_abort(Trace *trace, ErrorCode error)
 // many leading frame_data entries are kernel addresses.
 static inline EBPF_INLINE void push_kernel_frames(void *ctx, Trace *trace)
 {
+  // Cache the stack-compression switch once per sample (map lookup is too
+  // costly per frame; stack_compress_cfg is defined in interpreter_dispatcher
+  // and linked across compilation units like trace_events).
+  {
+    u32 zero = 0;
+    u32 *cfg = bpf_map_lookup_elem(&stack_compress_cfg, &zero);
+    trace->stack_compress = cfg ? *cfg : 0;
+  }
   _Static_assert(
     sizeof(trace->frame_data) > PERF_MAX_STACK_DEPTH * sizeof(u64), "frame data too small");
   long bytes = bpf_get_stack(ctx, trace->frame_data, PERF_MAX_STACK_DEPTH * sizeof(u64), 0);
@@ -561,6 +577,10 @@ static inline EBPF_INLINE void push_kernel_frames(void *ctx, Trace *trace)
     int nframes              = bytes / sizeof(u64);
     trace->num_kernel_frames = nframes;
     trace->frame_data_len    = nframes;
+    // NOTE: kernel frames are intentionally NOT folded into stack_fp:
+    // they are raw addresses that do not distinguish user stacks, and an
+    // in-bounds fold loop over them cannot be proven by the verifier.
+    // Userspace skips the leading num_kernel_frames entries accordingly.
   }
 }
 

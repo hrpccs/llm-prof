@@ -3,6 +3,7 @@
 // perf event and will call the appropriate tracer for a given process
 
 #include "bpfdefs.h"
+#include "jhash.h"
 #include "kernel.h"
 #include "tracemgmt.h"
 #include "tsd.h"
@@ -128,6 +129,29 @@ struct trace_events_t {
   __uint(max_entries, 0);
 } trace_events SEC(".maps");
 
+// Runtime switch for stack compression (M1): userspace writes 1/0 here at
+// startup; push_kernel_frames caches it per sample into trace->stack_compress
+// so the per-frame fold sites avoid a map lookup on every frame.
+struct stack_compress_cfg_t {
+  __uint(type, BPF_MAP_TYPE_ARRAY);
+  __type(key, u32);
+  __type(value, u32);
+  __uint(max_entries, 1);
+} stack_compress_cfg SEC(".maps");
+
+// Kernel-side stack dictionary for stack compression (M1): maps a 64-bit
+// stack fingerprint of the frame_data sequence to a presence flag. LRU
+// eviction is safe: an evicted fingerprint simply misses again and the next
+// sample of that stack is sent as a FULL trace; userspace keys its pending
+// counts on the fingerprint itself, never on kernel dictionary state.
+struct stack_dict_t {
+  __uint(type, BPF_MAP_TYPE_LRU_HASH);
+  __type(key, u64);
+  __type(value, u32);
+  __uint(max_entries, 1 << 16); // 65536 distinct stacks
+} stack_dict SEC(".maps");
+
+
 // End shared maps
 
 // Implements the specification to share span/trace IDs according to:
@@ -219,6 +243,41 @@ static EBPF_INLINE void maybe_add_apm_info(Trace *trace)
 }
 
 // unwind_stop is the tail call destination for PROG_UNWIND_STOP.
+// Stack compression (M1): returns true if the sample was consumed as a
+// compact StackIDEvent (fingerprint already registered in stack_dict).
+// On a miss, registers the fingerprint and returns false so the caller
+// proceeds with the normal FULL trace send. LRU eviction is safe: an
+// evicted fingerprint misses again and goes back to FULL traces.
+static EBPF_INLINE bool stack_compress_try_send(UNUSED void *ctx, Trace *trace)
+{
+  // Fingerprint was folded incrementally during unwinding (fp_step in
+  // push_kernel_frames / push_frame / variable-word writers).
+  u64 fp = trace->stack_fp;
+
+  if (bpf_map_lookup_elem(&stack_dict, &fp)) {
+    StackIDEvent ev = {
+      .magic       = STACK_ID_EVENT_MAGIC,
+      .ktime       = trace->ktime,
+      .fingerprint = fp,
+      .pid         = trace->pid,
+      .tid         = trace->tid,
+      .cpu_id      = bpf_get_smp_processor_id(),
+      .count       = 1,
+    };
+    if (bpf_ringbuf_output(&trace_events, &ev, sizeof(ev), BPF_RB_NO_WAKEUP) < 0) {
+      increment_metric(metricID_BPFRingbufOutputErr);
+    }
+    return true;
+  }
+
+  // Register the fingerprint (BPF_NOEXIST: first one wins; failure means a
+  // concurrent registration or the LRU rejected the entry — either way the
+  // FULL trace is sent and userspace handles the fingerprint).
+  u32 one = 1;
+  bpf_map_update_elem(&stack_dict, &fp, &one, BPF_NOEXIST);
+  return false;
+}
+
 static EBPF_INLINE int unwind_stop(struct pt_regs *ctx)
 {
   PerCPURecord *record = get_per_cpu_record();
@@ -227,8 +286,7 @@ static EBPF_INLINE int unwind_stop(struct pt_regs *ctx)
   Trace *trace       = &record->trace;
   UnwindState *state = &record->state;
 
-  maybe_add_apm_info(trace);
-  if (
+  maybe_add_apm_info(trace);  if (
     trace->apm_trace_id.as_int.hi == 0 && trace->apm_trace_id.as_int.lo == 0 &&
     trace->apm_transaction_id.as_int == 0) {
     // Populate OTel span/trace ID only if span/trace ID is not yet set.
@@ -291,6 +349,13 @@ static EBPF_INLINE int unwind_stop(struct pt_regs *ctx)
     }
   }
   // TEMPORARY HACK END
+
+  // Stack compression (M1): if the sample's stack fingerprint is already in
+  // the kernel-side dictionary, send a compact StackIDEvent instead of the
+  // full trace. Must stay before send_trace since it may consume the sample.
+  if (trace->stack_compress && stack_compress_try_send(ctx, trace)) {
+    return 0;
+  }
 
   // Must be last since it may not return (it will call send_trace).
   send_trace(ctx, trace);

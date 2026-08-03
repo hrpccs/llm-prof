@@ -599,6 +599,7 @@ func loadRodataVars(coll *cebpf.CollectionSpec, kmod *kallsyms.Module, cfg *Conf
 		return fmt.Errorf("failed to set off_cpu_threshold: %v", err)
 	}
 
+
 	if err := coll.Variables["target_pid"].Set(uint32(cfg.TargetPID)); err != nil {
 		return fmt.Errorf("failed to set target_pid: %v", err)
 	}

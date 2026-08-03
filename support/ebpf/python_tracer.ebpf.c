@@ -172,6 +172,13 @@ push_frame:
     DEBUG_PRINT("failed to push python frame");
     return error;
   }
+  if (trace->stack_compress) {
+    // push_python wrote the two variable words (file_id, lineno) at the
+    // position push_frame returned; fold them in to match userspace.
+    u64 *data = &trace->frame_data[trace->frame_data_len - 3];
+    trace->stack_fp = fp_step(trace->stack_fp, data[1]);
+    trace->stack_fp = fp_step(trace->stack_fp, data[2]);
+  }
   increment_metric(metricID_UnwindPythonFrames);
   return ERR_OK;
 }

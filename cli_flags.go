@@ -145,6 +145,13 @@ func parseArgs() (*controller.Config, error) {
 			"default is the full mixed stack (symbolized native frames including CPython "+
 			"internals and libc).")
 
+	fs.BoolVar(&args.StackCompress, "stack-compress", false,
+		"Enable M1 stack compression: the kernel side fingerprints each stack and "+
+			"sends compact StackIDEvent messages (fingerprint + count) instead of "+
+			"the full frame sequence for stacks already seen, cutting ringbuf "+
+			"bandwidth for high-repetition workloads. Output is identical to the "+
+			"uncompressed path.")
+
 	fs.StringVar(&args.SampleStreamPath, "sample-stream", "",
 		"Append every decoded raw sample to this file as one line "+
 			"'<KTime> <PID> <TID> <numFrames> <frame...>' (address-level frames, hex). "+
