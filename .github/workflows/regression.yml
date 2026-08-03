@@ -1,0 +1,22 @@
+name: regression
+
+# llm-prof 回归测试：LLM 训练/推理场景的性能诊断能力与性能开销。
+# 需要 root + eBPF 权限，必须跑在 self-hosted runner 上：
+#   - 机器需装 clang-17 / go / miniconda python3.13（/home/ubuntu/.vmr/...）
+#   - runner 用户需有免密 sudo
+#   - 首次运行前先执行一次 `sudo bash ci/run_regression.sh --baseline` 生成基线
+#     （基线存 ci/baseline.json，commit 到仓库）
+#   - 一次完整回归约 20 分钟
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run regression
+        run: sudo bash ci/run_regression.sh

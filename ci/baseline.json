@@ -1,0 +1,17 @@
+{
+  "base_sec": 30,
+  "diag_off_samples": 8575,
+  "diag_off_distinct": 1165,
+  "diag_on_samples": 9140,
+  "diag_python_visible": 1,
+  "hs_1k_off_sec": 30,
+  "hs_1k_on_sec": 30,
+  "hs_10k_off_sec": 31,
+  "hs_10k_on_sec": 31,
+  "tt_1k_off_sec": 28,
+  "tt_1k_on_sec": 28,
+  "cap_off_bytes": 47671312,
+  "cap_on_bytes": 3039336,
+  "cap_off_samples": 47047,
+  "cap_on_samples": 47200
+}
