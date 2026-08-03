@@ -155,10 +155,14 @@ its volume.
 \subsection{Why high sampling rates matter for LLM workloads}
 Short-lived phenomena dominate LLM performance: GIL contention, data-loader
 I/O waits, synchronization points in training loops, prefill/decode phase
-transitions. Profiling is an unbiased estimator: with $n$ samples a count
+transitions. Profiling is an unbiased estimator \cite{jain}: with $n$
+samples a count
 estimate carries relative error $\sim 1/\sqrt{n}$, so capturing a
 sub-millisecond wait that occupies 1\% of runtime at 100\,Hz yields only
-$\sim$1 expected sample---unusable. 1\,kHz is the practical minimum for
+$\sim$1 expected sample---unusable. The CPython community reached the same
+conclusion: PEP~669 \cite{pep669} standardizes low-impact monitoring
+because interpreter-level instrumentation perturbs exactly the behaviors
+profilers must observe. 1\,kHz is the practical minimum for
 LLM diagnosis; 10\,kHz materially improves short-stack capture. ptrace-based
 profilers make such rates expensive: py-spy at 1\,kHz adds 18--81\% CPU
 overhead on our workloads, and its sampling itself perturbs the GIL
@@ -182,8 +186,10 @@ We instrumented our sampler with a raw sample-stream export (one line per
 sample: kernel timestamp, pid/tid, raw frame words) and measured
 address-level stack distributions. Three facts drive the design.
 \textbf{(a) Zipf concentration:} the top-20 stacks cover 70--80\% of
-samples; a single-hotspot loop has 155:1 sample-to-distinct redundancy, and
-even the LLM training loop shows 6.3:1 (Figure~\ref{fig:profile}a).
+samples (flame-graph visualization \cite{flamegraph} makes this visible
+in practice); a single-hotspot loop has 155:1 sample-to-distinct
+redundancy, and even the LLM training loop shows 6.3:1
+(Figure~\ref{fig:profile}a).
 \textbf{(b) Convergence:} distinct stacks accumulate quickly and then
 saturate---the dictionary warm-up cost is paid once.
 \textbf{(c) Frame stability:} even ``unsigned'' frames (JIT/anonymous
@@ -660,12 +666,25 @@ profiles v1 \cite{otelprof} dictionaries stacks at the protocol layer
 time-differential encoding for time series, which motivates our planned
 differential layer.
 
+\textbf{Profiling lineage.} Sampling profilers date to gprof
+\cite{gprof}; Google-Wide Profiling \cite{gwp} established continuous
+profiling at datacenter scale; HPCToolkit \cite{hpctoolkit} pioneered
+call-path attribution for optimized binaries; perf \cite{perf} remains
+the standard kernel sampler. Our contribution sits in the transfer stage
+that these systems leave untouched: they all move full stacks.
+
 \textbf{Continuous profiling systems.} Parca \cite{parca} and Pyroscope
 \cite{pyroscope} aggregate stacks in agents, trading per-sample fidelity
-for bandwidth; bpftime and UniProf explore user-space eBPF alternatives.
-Our work differs from all of these in compressing \emph{post-unwind mixed}
-stacks losslessly while preserving the per-sample stream
-(Table~\ref{tab:related}).
+for bandwidth; bpftime \cite{bpftime} explores user-space eBPF as an
+alternative runtime; async-profiler \cite{asyncprof} and JFR \cite{jfr}
+are JVM-scoped. Our work differs from all of these in compressing
+\emph{post-unwind mixed} stacks losslessly while preserving the
+per-sample stream (Table~\ref{tab:related}).
+
+\textbf{LLM systems.} LLM serving stacks such as vLLM \cite{vllm}
+introduce their own scheduling and memory layers whose performance is
+exactly what high-rate profiling must attribute; our workloads model this
+class.
 
 %-------------------------------------------------------------------------------
 \section{Discussion and Limitations}
@@ -704,18 +723,47 @@ mandatory and bandwidth grows with every added process---this makes
 high-rate sampling economical rather than prohibitive.
 
 %-------------------------------------------------------------------------------
-\begin{thebibliography}{9}
+\begin{thebibliography}{20}\small
+\bibitem{gprof} S.~L. Graham, P.~B. Kessler, and M.~K. McKusick.
+gprof: A call graph execution profiler. In \emph{SIGPLAN Symposium on
+Compiler Construction}, 1982.
+\bibitem{gwp} G.~Ren, E.~Tune, T.~Moseley, Y.~Shi, S.~Rus, and R.~Hundt.
+Google-wide profiling: A continuous profiling infrastructure for data
+centers. \emph{IEEE Micro}, 30(4):65--79, 2010.
+\bibitem{hpctoolkit} L.~Adhianto et al. HPCToolkit: Tools for performance
+analysis of optimized parallel programs. \emph{Concurrency and
+Computation: Practice and Experience}, 22(6):685--701, 2010.
+\bibitem{perf} perf: Performance analysis tools for Linux.
+\url{https://man7.org/linux/man-pages/man1/perf.1.html}.
+\bibitem{flamegraph} B.~Gregg. The flame graph.
+\emph{Communications of the ACM}, 59(6):48--57, 2016.
 \bibitem{bpfdocs} BPF and XDP Reference Guide: bpf\_get\_stackid.
 \url{https://docs.kernel.org/bpf/} (accessed 2026).
-\bibitem{jfr} J.~J.~E.~et al. JEP 328: Flight Recorder. OpenJDK, 2018.
-\bibitem{gorilla} T.~Pelkonen et al. Gorilla: A Fast, Scalable, In-Memory
-Time Series Database. VLDB 2015.
+\bibitem{stackdepot} Linux kernel stack depot.
+\url{https://docs.kernel.org/}/lib/stackdepot.c (accessed 2026).
+\bibitem{jenkins} B.~Jenkins. A hash function for hash table lookup.
+\emph{Dr.~Dobb's Journal}, 1997.
+\bibitem{jfr} JEP 328: Flight Recorder. OpenJDK, 2018.
+\bibitem{asyncprof} A.~Pangin. async-profiler: Sampling CPU and heap
+profiler for Java. \url{https://github.com/async-profiler/async-profiler}.
+\bibitem{gorilla} T.~Pelkonen et al. Gorilla: A fast, scalable,
+in-memory time series database. In \emph{VLDB}, 2015.
 \bibitem{parca} Parca: Continuous profiling for infrastructure.
 \url{https://parca.dev}.
 \bibitem{pyroscope} Grafana Pyroscope: Continuous profiling.
 \url{https://grafana.com/pyroscope/}.
 \bibitem{otelprof} OpenTelemetry Profiling signal.
 \url{https://opentelemetry.io/docs/specs/otel/profiling/}.
+\bibitem{bpftime} Y.~Zheng et al. Extending applications safely and
+efficiently. In \emph{19th USENIX OSDI}, 2025.
+\bibitem{pyspy} B.~Frederickson. py-spy: Sampling profiler for Python
+programs. \url{https://github.com/benfred/py-spy}.
+\bibitem{pep669} M.~Shannon. PEP 669: Low impact monitoring for CPython.
+\url{https://peps.python.org/pep-0669/}, 2021.
+\bibitem{vllm} W.~Kwon et al. Efficient memory management for large
+language model serving with PagedAttention. In \emph{SOSP}, 2023.
+\bibitem{jain} R.~Jain. \emph{The Art of Computer Systems Performance
+Analysis}. John Wiley \& Sons, 1991.
 \end{thebibliography}
 
 \end{document}
