@@ -1,0 +1,13 @@
+label rate mode samples distinct bytes
+case_hotspot-off 1000 off 3156 26 3199640
+case_hotspot-on 1000 on 3157 25 817416
+case_gil-off 1000 off 3088 83 2963512
+case_gil-on 1000 on 3068 44 865512
+case_io-off 1000 off 1533 48 1553816
+case_io-on 1000 on 590 24 368056
+case_misleading-off 1000 off 3148 26 3190432
+case_misleading-on 1000 on 3173 31 809720
+stack_bench 1000 off 3067 1495 10552728
+stack_bench 1000 on 3100 1558 10292624
+train_torch 1000 off 2424 385 2140160
+train_torch 1000 on 3140 497 1008344
