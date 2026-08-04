@@ -70,9 +70,12 @@ AI training and inference clusters \cite{parca,pyroscope,otelprof}: operators
 need to attribute latency and utilization to code paths across Python, C++,
 and CUDA. LLM workloads make this especially demanding: training loops
 alternate between I/O waits, compute, and synchronization on sub-millisecond
-time scales; inference has distinct prefill/decode phases; and both exhibit
-GIL contention that ptrace-based profilers not only measure poorly but
-actively perturb (Section~\ref{sec:motive}).
+time scales; inference has distinct prefill/decode phases whose resource
+profiles diverge sharply \cite{splitwise,sarathi}; and both exhibit GIL
+contention \cite{parpython,pep703} that ptrace-based profilers not only
+measure poorly but actively perturb (Section~\ref{sec:motive}). Production
+studies of LLM datacenters confirm short-lived, bursty hotspots
+\cite{llmdc}.
 
 eBPF-based samplers remove the CPU-side barrier: llm-prof (our system)
 profiles Python\,$+$\,native\,$+$\,kernel mixed stacks at 10\,kHz with
@@ -659,24 +662,37 @@ three axes: the compressed unit is the post-unwind mixed frame sequence
 (not a lossy 32-bit truncation), and correctness does not depend on
 dictionary state (fingerprint-as-key).
 
-\textbf{Streaming dictionaries.} JFR/JEP 328 \cite{jfr} deduplicates JVM
-stack traces in user space with a stack-table + index scheme; OTLP
-profiles v1 \cite{otelprof} dictionaries stacks at the protocol layer
-(post-hoc, after transport); Gorilla \cite{gorilla} pioneered
-time-differential encoding for time series, which motivates our planned
-differential layer.
+\textbf{Streaming dictionaries and stack dedup.} JFR/JEP 328 \cite{jfr}
+deduplicates JVM stack traces in user space with a stack-table + index
+scheme; OTLP profiles v1 \cite{otelprof} dictionaries stacks at the
+protocol layer (post-hoc, after transport); perf and crash-reporting
+systems deduplicate stacks in user space. To our knowledge---verified by
+title-level searches across OpenAlex and Semantic Scholar---no prior work
+compresses \emph{post-unwind} stacks in the kernel. The closest technical
+lineage is time-series compression: Gorilla \cite{gorilla} pioneered
+delta-of-delta timestamps and XOR values, Sprintz \cite{sprintz} and
+Chimp \cite{chimp} refined it with byte-level schemes; our window
+aggregation is the stack-domain analogue. On the unwinding side,
+Bastian et al. \cite{dwarf} optimize DWARF-based unwinding itself, which
+is orthogonal to (and composable with) our transfer compression.
 
 \textbf{Profiling lineage.} Sampling profilers date to gprof
-\cite{gprof}; Google-Wide Profiling \cite{gwp} established continuous
-profiling at datacenter scale; HPCToolkit \cite{hpctoolkit} pioneered
-call-path attribution for optimized binaries; perf \cite{perf} remains
-the standard kernel sampler. Our contribution sits in the transfer stage
-that these systems leave untouched: they all move full stacks.
+\cite{gprof}; Continuous Profiling \cite{cpi} established the
+sampling-based continuous paradigm (its diagnostic bias against rare
+events motivates our high-rate stance); Google-Wide Profiling
+\cite{gwp} and warehouse-scale profiling \cite{warehouse} scaled it to
+production fleets; Coz \cite{coz} showed that time attribution alone
+under-predicts optimization payoff; HPCToolkit \cite{hpctoolkit}
+pioneered call-path attribution; perf \cite{perf} remains the standard
+kernel sampler. Our contribution sits in the transfer stage that these
+systems leave untouched: they all move full stacks.
 
-\textbf{Continuous profiling systems.} Parca \cite{parca} and Pyroscope
+\textbf{eBPF observability.} eBPF has become the standard substrate for
+low-overhead observability \cite{ebpfcsur}; recent work extends it to
+LLM tracing (eInfer \cite{einfer}) and user-space execution
+(bpftime \cite{bpftime}). Parca \cite{parca} and Pyroscope
 \cite{pyroscope} aggregate stacks in agents, trading per-sample fidelity
-for bandwidth; bpftime \cite{bpftime} explores user-space eBPF as an
-alternative runtime; async-profiler \cite{asyncprof} and JFR \cite{jfr}
+for bandwidth; async-profiler \cite{asyncprof} and JFR \cite{jfr}
 are JVM-scoped. Our work differs from all of these in compressing
 \emph{post-unwind mixed} stacks losslessly while preserving the
 per-sample stream (Table~\ref{tab:related}).
@@ -754,6 +770,37 @@ in-memory time series database. In \emph{VLDB}, 2015.
 \url{https://grafana.com/pyroscope/}.
 \bibitem{otelprof} OpenTelemetry Profiling signal.
 \url{https://opentelemetry.io/docs/specs/otel/profiling/}.
+\bibitem{cpi} J.~M. Anderson, L.~M. Berc, J.~Dean, S.~Ghemawat, M.~R.
+Henzinger, S.-T.~A. Leung, R.~L. Sites, M.~T. Vandevoorde, C.~A.
+Waldspurger, and W.~E. Weihl. Continuous profiling: Where have all the
+cycles gone? In \emph{SOSP}, 1997.
+\bibitem{warehouse} S.~Kanev et al. Profiling a warehouse-scale computer.
+In \emph{ISCA}, 2015.
+\bibitem{coz} C.~Curtsinger and E.~D. Berger. Coz: Finding code that
+counts with causal profiling. In \emph{SOSP}, 2015.
+\bibitem{sprintz} D.~Blalock, S.~Madden, and J.~Guttag. Sprintz: Time
+series compression for the internet of things. In \emph{VLDB}, 2018.
+\bibitem{chimp} P.~Limenburger, D.~Plattner, and A.~Shatavi. Chimp:
+Time series compression with linear prediction and delta encoding.
+In \emph{VLDB}, 2022.
+\bibitem{dwarf} B.~Bastian, S.~Kell, and F.~Zappa Nardelli. Reliable and
+fast DWARF-based stack unwinding. In \emph{OOPSLA}, 2019.
+\bibitem{ebpfcsur} M.~Vieira et al. Fast packet processing with eBPF and
+XDP. \emph{ACM Computing Surveys}, 2020.
+\bibitem{einfer} Y.~Chu et al. eInfer: Tracing for distributed LLM
+inference with eBPF. In \emph{eBPF@SIGCOMM}, 2025.
+\bibitem{splitwise} P.~Patel et al. Splitwise: Effective generative LLM
+inference using phase splitting. In \emph{ISCA}, 2024.
+\bibitem{sarathi} A.~Agrawal et al. SARATHI: Efficient LLM inference by
+piggybacking decodes with chunked prefills. \emph{arXiv:2308.16369},
+2023.
+\bibitem{llmdc} Q.~Hu et al. Characterization of large language model
+development in the datacenter. \emph{arXiv:2403.07648}, 2024.
+\bibitem{parpython} S.~Meier and C.~G. Meier. Reflections on the
+compatibility, performance, and scalability of parallel Python.
+In \emph{DLS}, 2019.
+\bibitem{pep703} PEP 703: Making the global interpreter lock optional in
+CPython. \url{https://peps.python.org/pep-0703/}, 2023.
 \bibitem{bpftime} Y.~Zheng et al. Extending applications safely and
 efficiently. In \emph{19th USENIX OSDI}, 2025.
 \bibitem{pyspy} B.~Frederickson. py-spy: Sampling profiler for Python
